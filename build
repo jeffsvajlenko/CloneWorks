@@ -1,0 +1,11 @@
+#!/bin/bash
+
+# Clean
+cd txl
+make clean
+cd ..
+
+# Compile TXL
+cd txl
+make
+
