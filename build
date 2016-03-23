@@ -5,7 +5,11 @@ cd txl
 make clean
 cd ..
 
+# Compile Java
+find src/ -name "*.java" > sources.txt
+javac -cp bin/:libs/commons-io-2.4/commons-io-2.4.jar -d bin/ @sources.txt
+
 # Compile TXL
 cd txl
 make
-
+cd ..
