@@ -1,0 +1,2 @@
+#!/bin/bash
+./txl/java-extract-functions.x "$1" | ./txl/java-tokenize-functions.x /dev/stdin

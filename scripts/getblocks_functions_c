@@ -1,0 +1,2 @@
+#!/bin/bash
+./txl/ifdef.x "$1" | ./txl/c-extract-functions.x /dev/stdin | ./txl/c-tokenize-functions.x /dev/stdin

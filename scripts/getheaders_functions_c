@@ -1,0 +1,2 @@
+#!/bin/bash
+./txl/c-extract-function-headers.x "$1" /dev/stdin

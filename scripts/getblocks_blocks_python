@@ -1,0 +1,2 @@
+#!/bin/bash
+./txl/pyindent.x "$1" | ./txl/py-extract-blocks.x /dev/stdin | ./txl/py-tokenize-blocks.x /dev/stdin

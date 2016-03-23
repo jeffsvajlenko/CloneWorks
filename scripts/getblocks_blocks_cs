@@ -1,0 +1,2 @@
+#!/bin/bash
+./txl/ifdef.x "$1" | ./txl/cs-extract-blocks.x /dev/stdin | ./txl/cs-tokenize-blocks.x /dev/stdin

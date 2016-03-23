@@ -1,0 +1,2 @@
+#!/bin/bash
+./txl/pyindent.x "$1" | ./txl/py-extract-functions.x /dev/stdin | ./txl/py-tokenize-functions.x /dev/stdin
