@@ -4,6 +4,8 @@
 cd txl
 make clean
 cd ..
+rm -rf bin/
+mkdir bin
 
 # Compile Java
 find src/ -name "*.java" > sources.txt
