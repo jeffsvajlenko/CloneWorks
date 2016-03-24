@@ -1,2 +1,0 @@
-#!/bin/bash
-./txl/py-extract-function-headers.x "$1" /dev/stdin

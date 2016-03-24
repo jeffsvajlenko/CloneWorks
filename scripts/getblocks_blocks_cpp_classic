@@ -1,2 +1,0 @@
-#!/bin/bash
-./txl/cpp-extract-blocks.x "$1" /dev/stdin

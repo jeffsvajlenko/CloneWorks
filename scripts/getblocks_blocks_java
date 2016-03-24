@@ -1,2 +1,0 @@
-#!/bin/bash
-./txl/java-extract-blocks.x "$1" | ./txl/java-tokenize-blocks.x /dev/stdin
