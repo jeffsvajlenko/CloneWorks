@@ -12,7 +12,7 @@ public class LanguageConstants {
 	 * @param language
 	 * @return
 	 */
-	public static boolean checkValidLanguage(String language) {
+	public static boolean checkValid(String language) {
 		if(language.equals(JAVA) || language.equals(C) || language.equals(CS) || language.equals(CPP) || language.equals(PYTHON))
 			return true;
 		else
@@ -23,9 +23,15 @@ public class LanguageConstants {
 	 * Throws IllegalArgumentException if language is not supported.
 	 * @param language
 	 */
-	public static void checkValidLanguageThrowException(String language) {
-		if(!checkValidLanguage(language))
+	public static void ifInvalidThrowException(String language) {
+		if(!checkValid(language))
 			throw new IllegalArgumentException("Language '" + language + "' is not a valid language.");
 	}
 	
+	public static boolean isIfDefLanguage(String language) {
+		if(language.equals(C) || language.equals(CPP))
+			return true;
+		else
+			return false;
+	}
 }
