@@ -15,7 +15,14 @@ import constants.LanguageConstants;
 import constants.TokenGranularityConstants;
 import input.block.InputBlock;
 import input.file.InputFile;
+import input.tokenprocessors.FilterOperators;
+import input.tokenprocessors.FilterSeperators;
 import input.tokenprocessors.ITokenProcessor;
+import input.tokenprocessors.RemoveEmpty;
+import input.tokenprocessors.SplitStrings;
+import input.tokenprocessors.Stemmer;
+import input.tokenprocessors.ToLowerCase;
+import input.txl.ITXLCommand;
 import input.utils.FilePathStreamUtil;
 import input.worker.BlockConsumer_BlockWriter;
 import input.worker.FileConsumer_BlockProducer;
@@ -24,15 +31,16 @@ import input.worker.FileProducer;
 public class InputBuilder {
 	
 	public static void main(String args[]) throws InterruptedException, IOException {
+		long time = System.currentTimeMillis();
 		Path finput = Paths.get("/home/jeff/files");
 		Path ffileids = Paths.get("/home/jeff/files.ids");
 		Path fblocks = Paths.get("/home/jeff/blocks");
-		int numthreads = 1;
+		int numthreads = 8;
 		
 		String language = LanguageConstants.JAVA;
 		String block_granularity = BlockGranularityConstants.FUNCTION;
 		String token_granularity = TokenGranularityConstants.TOKEN;
-		List<String> txl_normalizations = new ArrayList<String>(0);
+		List<ITXLCommand> txl_normalizations = new ArrayList<ITXLCommand>(0);
 		List<ITokenProcessor> token_processors = new ArrayList<ITokenProcessor>(0);
 		
 		BlockingQueue<List<InputFile>> qfiles = new ArrayBlockingQueue<List<InputFile>>(50);
@@ -40,6 +48,16 @@ public class InputBuilder {
 		
 		Writer fileids_writer = new FileWriter(ffileids.toFile());
 		Writer block_writer = new FileWriter(fblocks.toFile());
+		
+		//txl_normalizations.add("rename-blind");
+		
+		token_processors.add(new FilterOperators(language));
+		token_processors.add(new FilterSeperators(language));
+		//token_processors.add(new NormalizeStrings());
+		token_processors.add(new SplitStrings());
+		token_processors.add(new ToLowerCase());
+		token_processors.add(new RemoveEmpty());
+		token_processors.add(new Stemmer());
 		
 	// Initialize Workers
 		FileProducer fp = new FileProducer(FilePathStreamUtil.createFilePathStream(finput), qfiles, fileids_writer, numthreads*5);
@@ -73,6 +91,8 @@ public class InputBuilder {
 		block_writer.flush();
 		block_writer.close();
 		
+		time = System.currentTimeMillis() - time;
+		System.out.println(time/1000.0 + " seconds.");
 	}
 	
 }

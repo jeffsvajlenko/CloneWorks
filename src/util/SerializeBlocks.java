@@ -13,7 +13,7 @@ import input.block.TermFrequency;
 public class SerializeBlocks {
 	
 	public static String getInputBlockString(InputBlock block) {
-		String retval = ">" + block.getFileid() + "," + block.getStartline() + "," + block.getEndline() + "\n";
+		String retval = ">" + block.getFileid() + "," + block.getStartline() + "," + block.getEndline() + "," + block.numLines() + "," + block.numTokens() + "\n";
 		for(TermFrequency tf : block.getTokens()) {
 			retval += "\t" + tf.getFrequency() + ":" + tf.getTerm() + "\n";
 		}

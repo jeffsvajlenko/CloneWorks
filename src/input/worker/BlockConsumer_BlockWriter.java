@@ -33,11 +33,8 @@ public class BlockConsumer_BlockWriter extends Thread {
 				continue; // If interrupted, ignore and continue.
 			}
 			
-			System.out.println(buffer.size());
-			
 			//Check for poison (end-condition)
 			if(buffer.size() == 0) {
-				System.out.println("poison");
 				break;
 			}
 			
