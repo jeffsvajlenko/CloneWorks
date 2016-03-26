@@ -1,25 +1,53 @@
 package input.txl;
 
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
 public class TXLNormalization implements ITXLCommand {
 
-	private String name;
-	private String[] arguments;
-	private String language;
-	private String block_granularity;
+	String[] arguments;
+	
+	private String script;
+	private String executable;
+	
+	private boolean existsExec;
+	private boolean existsScript;
 	
 	public TXLNormalization(String name, String[] arguments, String language, String block_granularity) {
-		this.name = name;
+		script = language + "-" + name + "-" + block_granularity + "s.txl";
+		executable = language + "-" + name + "-" + block_granularity + "s.x";
 		this.arguments = arguments;
-		this.language = language;
-		this.block_granularity = block_granularity;
+		
+		existsExec = Files.exists(Paths.get(TXLUtil.getTXLRoot() + "/" + executable));
+		existsScript = Files.exists(Paths.get(TXLUtil.getTXLRoot() + "/" + script));
 	}
 
 	@Override
-	public String getCommand() {
-		String command = TXLUtil.getTXLRoot() + "/" + language + "-" + name + "-" + block_granularity + "s.x stdin";
+	public String getCommandExec() {
+		String command = TXLUtil.getTXLRoot() + "/" + executable + " stdin - ";
 		for(String str : arguments) {
 			command += str + " ";
 		}
 		return command;
+	}
+
+	@Override
+	public String getCommandScript() {
+		String command;
+		command = "txl stdin " + TXLUtil.getTXLRoot() + "/" + script + " - ";
+		for(String str : arguments) {
+			command += str + " ";
+		}
+		return command;
+	}
+
+	@Override
+	public boolean existsExec() {
+		return this.existsExec;
+	}
+
+	@Override
+	public boolean existsScript() {
+		return this.existsScript;
 	}
 }

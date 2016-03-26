@@ -8,6 +8,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.SystemUtils;
 
 import util.StreamGobbler;
 
@@ -30,17 +31,31 @@ public class TXLUtil {
 		
 		while(iter.hasNext()) {
 			ITXLCommand command = iter.next();
-			chain += command.getCommand();
+			
+			if(command.existsExec()) {
+				chain += command.getCommandExec();
+				
+			} else if (command.existsScript()) {
+				chain += command.getCommandScript();
+			} else {
+				System.err.println("One of the TXL commands is impossible to execute (does not exist in script or compiled).");
+				System.exit(-1);
+			}
+			
 			if(iter.hasNext())
 				chain += " | ";
 		}
 		
 		List<String> exec = new LinkedList<String>();
-		exec.add("/bin/sh");
-		exec.add("-c");
-		exec.add(chain);
 		
-		System.out.println(chain);
+		if(SystemUtils.IS_OS_WINDOWS) {
+			exec.add("powershell.exe");
+		} else {
+			exec.add("sh");
+			exec.add("-c");
+		}
+		
+		exec.add(chain);
 		
 	// Execute Process and Collect Output
 		int retval = 0;

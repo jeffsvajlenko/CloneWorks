@@ -10,6 +10,9 @@ import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
+import org.apache.commons.io.filefilter.IOFileFilter;
+import org.apache.commons.io.filefilter.SuffixFileFilter;
+
 import constants.BlockGranularityConstants;
 import constants.LanguageConstants;
 import constants.TokenGranularityConstants;
@@ -32,9 +35,12 @@ public class InputBuilder {
 	
 	public static void main(String args[]) throws InterruptedException, IOException {
 		long time = System.currentTimeMillis();
-		Path finput = Paths.get("/home/jeff/files");
-		Path ffileids = Paths.get("/home/jeff/files.ids");
-		Path fblocks = Paths.get("/home/jeff/blocks");
+		
+		Path root = Paths.get("C:/Users/jeffs/Desktop/NiCad-4.0/examples/JHotDraw54b1/");
+		IOFileFilter filter = new SuffixFileFilter(".java");
+		
+		Path ffileids = Paths.get("files.ids");
+		Path fblocks = Paths.get("blocks");
 		int numthreads = 8;
 		
 		String language = LanguageConstants.JAVA;
@@ -51,16 +57,16 @@ public class InputBuilder {
 		
 		//txl_normalizations.add("rename-blind");
 		
-		token_processors.add(new FilterOperators(language));
-		token_processors.add(new FilterSeperators(language));
+		//token_processors.add(new FilterOperators(language));
+		//token_processors.add(new FilterSeperators(language));
 		//token_processors.add(new NormalizeStrings());
-		token_processors.add(new SplitStrings());
-		token_processors.add(new ToLowerCase());
-		token_processors.add(new RemoveEmpty());
-		token_processors.add(new Stemmer());
+		//token_processors.add(new SplitStrings());
+		//token_processors.add(new ToLowerCase());
+		//token_processors.add(new RemoveEmpty());
+		//token_processors.add(new Stemmer());
 		
 	// Initialize Workers
-		FileProducer fp = new FileProducer(FilePathStreamUtil.createFilePathStream(finput), qfiles, fileids_writer, numthreads*5);
+		FileProducer fp = new FileProducer(FilePathStreamUtil.createReadAtOnceFilePathStream(root, filter), qfiles, fileids_writer, numthreads*5);
 		FileConsumer_BlockProducer fc_bp[] = new FileConsumer_BlockProducer[numthreads];
 		for(int i = 0; i < numthreads; i++)
 			fc_bp[i] = new FileConsumer_BlockProducer(qfiles, qblocks,

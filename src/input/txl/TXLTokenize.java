@@ -1,18 +1,41 @@
 package input.txl;
 
-public class TXLTokenize implements ITXLCommand {
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
-	private String language;
-	private String block_granularity;
+public class TXLTokenize implements ITXLCommand {
+	
+	private String script;
+	private String executable;
+	
+	private boolean existsExec;
+	private boolean existsScript;
 	
 	public TXLTokenize(String language, String block_granularity) {
-		this.language = language;
-		this.block_granularity = block_granularity;
+		script = language + "-tokenize-" + block_granularity + "s.txl";
+		executable = language + "-tokenize-" + block_granularity + "s.x";
+		
+		existsExec = Files.exists(Paths.get(TXLUtil.getTXLRoot() + "/" + executable));
+		existsScript = Files.exists(Paths.get(TXLUtil.getTXLRoot() + "/" + script));
+	}
+	
+	public boolean existsExec() {
+		return this.existsExec;
+	}
+	
+	public boolean existsScript() {
+		return this.existsScript;
 	}
 	
 	@Override
-	public String getCommand() {
-		return TXLUtil.getTXLRoot() + "/" + language + "-tokenize-" + block_granularity + "s.x stdin";
+	public String getCommandExec() {
+		return TXLUtil.getTXLRoot() + "/" + executable + " stdin";
 	}
+
+	@Override
+	public String getCommandScript() {
+		return "txl stdin " + TXLUtil.getTXLRoot() + "/" + script;
+	}
+	
 
 }
