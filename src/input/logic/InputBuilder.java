@@ -41,7 +41,7 @@ public class InputBuilder {
 		
 		Path ffileids = Paths.get("files.ids");
 		Path fblocks = Paths.get("blocks");
-		int numthreads = 8;
+		int numthreads = 4;
 		
 		String language = LanguageConstants.JAVA;
 		String block_granularity = BlockGranularityConstants.FUNCTION;

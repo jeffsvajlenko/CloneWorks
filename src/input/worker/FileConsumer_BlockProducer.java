@@ -134,7 +134,7 @@ public class FileConsumer_BlockProducer extends Thread {
 		commands.addAll(this.txl_normalizations);
 		if(this.token_granularity == TokenGranularityConstants.TOKEN)
 			commands.add(new TXLTokenize(this.language, this.block_granularity));
-		List<String> lines = TXLUtil.run(commands, file.getPath());
+		List<String> lines = TXLUtil.run2(commands, file.getPath());
 		
 	// Parse
 		boolean inBlock = false;

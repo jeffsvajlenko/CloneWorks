@@ -5,8 +5,10 @@ import java.io.InputStreamReader;
 import java.nio.file.Path;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.exec.StreamPumper;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.SystemUtils;
 
@@ -23,7 +25,7 @@ public class TXLUtil {
 	}
 	
 	public static List<String> run(List<ITXLCommand> commands, Path file) {
-		
+	
 	// Build Command
 		String chain = "";
 		chain += TXLUtil.getPrintFileCommand(file) + " | ";
@@ -70,9 +72,7 @@ public class TXLUtil {
 			e.printStackTrace();
 			return null;
 		}
-		if(retval != 0) {
-			return null;
-		}
+		
 		
 		// Wait for completion
 		boolean success = false;
@@ -85,8 +85,67 @@ public class TXLUtil {
 		} while(!success);
 		p.destroy();
 		
+		if(retval != 0) {
+			return null;
+		}
 		
 		return lines;
 	}
 	
+	public static List<String> run2(List<ITXLCommand> commands, Path file) {
+		long time = System.currentTimeMillis();
+		
+		List<ProcessBuilder> pbs = new ArrayList<ProcessBuilder>(commands.size()+1);
+		List<Process> processes = new ArrayList<Process>(commands.size()+1);
+		
+		List<String> retval = new LinkedList<String>();
+		
+		pbs.add(new ProcessBuilder("cmd","/c","type " + file.toString()));
+			
+		for(ITXLCommand cmd : commands) {
+			String command;
+			if(cmd.existsExec())
+				command = cmd.getCommandExec();
+			else if(cmd.existsScript())
+				command = cmd.getCommandScript();
+			else {
+				return null;
+			}
+			pbs.add(new ProcessBuilder(command.split("\\s+")));
+		}
+			
+		try {
+			for(int i = 0; i < pbs.size(); i++) {
+				Process p = pbs.get(i).start();
+				processes.add(p);
+				new StreamGobbler(p.getErrorStream()).start();
+			}
+			
+			for(int i = 1; i < pbs.size(); i++) {
+				StreamPumper pipe = new StreamPumper(processes.get(i-1).getInputStream(), processes.get(i).getOutputStream(), true);
+				Thread thread = new Thread(pipe);
+				thread.start();
+			}
+			
+			retval = IOUtils.readLines(processes.get(processes.size()-1).getInputStream());
+			
+			for(Process p : processes) {
+				p.waitFor();
+				p.destroy();
+			}
+			
+		} catch(Exception e) {
+			for(Process p : processes) {
+				try {
+					p.destroy();
+				} catch(Exception ee) {
+					ee.printStackTrace();
+				}
+			}
+			e.printStackTrace();
+			return null;
+		}
+		System.out.println(System.currentTimeMillis() - time);
+		return retval;
+	}
 }
