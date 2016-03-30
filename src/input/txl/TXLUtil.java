@@ -66,7 +66,7 @@ public class TXLUtil {
 		exec.add("sh");
 		exec.add("-c");
 		
-		exec.add("\"" + chain + "\"");
+		exec.add("" + chain + "");
 		
 		//for(String s : exec) {
 		//	System.out.print(s + " ");
@@ -100,6 +100,7 @@ public class TXLUtil {
 		p.destroy();
 		
 		if(retval != 0) {
+			System.out.println(lines.size());
 			System.out.println("FAILED: " + file + " Code: " + retval);
 			return null;
 		}
