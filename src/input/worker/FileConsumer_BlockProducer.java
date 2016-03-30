@@ -76,6 +76,8 @@ public class FileConsumer_BlockProducer extends Thread {
 			
 			// Get Blocks
 			List<InputBlock> blocks = getBlocks(file_buffer);
+			if(blocks == null)
+				continue;
 			
 			// Put Blocks -- In case of interruption, retry.
 			for(InputBlock block : blocks) {
@@ -114,6 +116,8 @@ public class FileConsumer_BlockProducer extends Thread {
 		
 	// 1 - Extract Blocks with TXL Normalizations		
 		List<TempBlock> blocks = extractBlocks(file);
+		if(blocks == null)
+			return null;
 	
 	// 2 - Token Processors
 		for(ITokenProcessor processor : this.token_processors) {
@@ -141,13 +145,16 @@ public class FileConsumer_BlockProducer extends Thread {
 		commands.addAll(this.txl_normalizations);
 		if(this.token_granularity == TokenGranularityConstants.TOKEN)
 			commands.add(new TXLTokenize(this.language, this.block_granularity));
-		List<String> lines = TXLUtil.run2(commands, file.getPath());
+		List<String> lines = TXLUtil.run(commands, file.getPath());
+		if(lines == null)
+			return null;
 		
 	// Parse
 		boolean inBlock = false;
 		int startline=0, endline=0;
 		List<String> terms = null;
 		for(String line : lines) {
+			//System.out.println(line);
 			if(line.startsWith("<source") && !inBlock) {
 				inBlock = true;
 				terms = new LinkedList<String>();

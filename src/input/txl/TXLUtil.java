@@ -8,6 +8,7 @@ import java.util.LinkedList;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.exec.OS;
 import org.apache.commons.exec.StreamPumper;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.SystemUtils;
@@ -20,10 +21,6 @@ public class TXLUtil {
 		return "./txl";
 	}
 	
-	public static String getPrintFileCommand(Path p) {
-		return "cat " + p.toString();
-	}
-	
 	public static List<String> run(List<ITXLCommand> commands, Path file) {
 		if(SystemUtils.IS_OS_WINDOWS) {
 			return TXLUtil.run_windows(commands,file);
@@ -33,14 +30,23 @@ public class TXLUtil {
 	}
 	
 	public static List<String> run_linux(List<ITXLCommand> commands, Path file) {
-	
+		//long time = System.currentTimeMillis();
+		
 	// Build Command
 		String chain = "";
-		chain += TXLUtil.getPrintFileCommand(file) + " | ";
+		
+		if(OS.isFamilyWindows()) {
+			chain += "cat `cygpath -up '" + file.toString() + "'`";
+		} else {
+			chain += "cat " + file.toString();
+		}
+		
 		Iterator<ITXLCommand> iter = commands.iterator();
 		
 		while(iter.hasNext()) {
 			ITXLCommand command = iter.next();
+			
+			chain += " | ";
 			
 			if(command.existsExec()) {
 				chain += command.getCommandExec();
@@ -51,21 +57,16 @@ public class TXLUtil {
 				System.err.println("One of the TXL commands is impossible to execute (does not exist in script or compiled).");
 				System.exit(-1);
 			}
-			
-			if(iter.hasNext())
-				chain += " | ";
 		}
 		
 		List<String> exec = new LinkedList<String>();
 		
-		if(SystemUtils.IS_OS_WINDOWS) {
-			exec.add("powershell.exe");
-		} else {
-			exec.add("sh");
-			exec.add("-c");
-		}
+		//System.out.println(chain);
 		
-		exec.add(chain);
+		exec.add("sh");
+		exec.add("-c");
+		
+		exec.add("\"" + chain + "\"");
 		
 	// Execute Process and Collect Output
 		int retval = 0;
@@ -94,13 +95,17 @@ public class TXLUtil {
 		p.destroy();
 		
 		if(retval != 0) {
+			System.out.println("FAILED: " + file);
 			return null;
 		}
+		
+		//System.out.println(System.currentTimeMillis() - time);
 		
 		return lines;
 	}
 	
 	public static List<String> run_windows(List<ITXLCommand> commands, Path file) {
+		long time = System.currentTimeMillis();
 		
 		List<ProcessBuilder> pbs = new ArrayList<ProcessBuilder>(commands.size()+1);
 		List<Process> processes = new ArrayList<Process>(commands.size()+1);
@@ -141,7 +146,10 @@ public class TXLUtil {
 			retval = IOUtils.readLines(processes.get(processes.size()-1).getInputStream());
 			
 			for(Process p : processes) {
-				p.waitFor();
+				int exitvalue = p.waitFor();
+				if(exitvalue != 0) {
+					System.out.println("Something failed for " + file);
+				}
 				p.destroy();
 			}
 			
@@ -156,6 +164,9 @@ public class TXLUtil {
 			e.printStackTrace();
 			return null;
 		}
+		
+		System.out.println(System.currentTimeMillis() - time);
+		
 		return retval;
 	}
 }
