@@ -93,7 +93,7 @@ public class TXLUtil {
 	}
 	
 	public static List<String> run2(List<ITXLCommand> commands, Path file) {
-		long time = System.currentTimeMillis();
+		//long time = System.currentTimeMillis();
 		
 		List<ProcessBuilder> pbs = new ArrayList<ProcessBuilder>(commands.size()+1);
 		List<Process> processes = new ArrayList<Process>(commands.size()+1);
@@ -145,7 +145,7 @@ public class TXLUtil {
 			e.printStackTrace();
 			return null;
 		}
-		System.out.println(System.currentTimeMillis() - time);
+		//System.out.println(System.currentTimeMillis() - time);
 		return retval;
 	}
 }

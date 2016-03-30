@@ -14,7 +14,7 @@ public class InputBlock implements Serializable {
 	private int startline;
 	private int endline;
 	private int numtokens;
-	private ArrayList<TermFrequency> tokens;
+	private List<TermFrequency> tokens;
 	
 	public InputBlock(long fileid, int startline, int endline, ArrayList<TermFrequency> tokens, int numtokens) {
 		this.fileid = fileid;
@@ -45,7 +45,7 @@ public class InputBlock implements Serializable {
 			this.tokens.add(new TermFrequency(token, map.get(token)));
 		}
 			// Make unmodifiable for immutability
-		this.tokens = (ArrayList<TermFrequency>) Collections.unmodifiableList(this.tokens);
+		this.tokens = Collections.unmodifiableList(this.tokens);
 		
 		// Count number of tokens
 		this.numtokens = 0;

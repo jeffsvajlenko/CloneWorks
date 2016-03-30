@@ -1,52 +1,49 @@
 package input.worker;
 
 import java.io.Writer;
-import java.util.List;
-import java.util.concurrent.BlockingQueue;
 
 import input.block.InputBlock;
+import util.blockingqueue.IReceiver;
 
 public class BlockConsumer_BlockWriter extends Thread {
 	
 	private Writer output;
-	private BlockingQueue<List<InputBlock>> blocks_in;
+	private IReceiver<InputBlock> blocks_in;
 	
 	private Integer exitStatus;
 	private String exitMessage;
 	
-	public BlockConsumer_BlockWriter(Writer output, BlockingQueue<List<InputBlock>> blocks_in) {
+	public BlockConsumer_BlockWriter(Writer output, IReceiver<InputBlock> receiver) {
 		super();
 		this.output = output;
-		this.blocks_in = blocks_in;
+		this.blocks_in = receiver;
 	}
 	
 	
 	@Override
 	public void run() {
-		List<InputBlock> buffer = null;
+		InputBlock buffer;
 		
 		while(true) {
 			// Read next buffer
 			try {
 				buffer = blocks_in.take();
 			} catch (InterruptedException e) {
-				continue; // If interrupted, ignore and continue.
+				continue; // If interrupted, ignore and retry.
 			}
 			
 			//Check for poison (end-condition)
-			if(buffer.size() == 0) {
+			if(blocks_in.isPoisoned()) {
 				break;
 			}
 			
-			// Write blocks, handle errors
-			for(InputBlock block : buffer) {
-				try {
-					output.write(InputBlock.getInputBlockString(block));
-				} catch (Exception e) {
-					exitStatus = -1;
-					exitMessage = "Failed with exception: " + e.getMessage() + ".";
-					break;
-				}
+			// Write block, handle error
+			try {
+				output.write(InputBlock.getInputBlockString(buffer));
+			} catch (Exception e) {
+				exitStatus = -1;
+				exitMessage = "Failed with exception: " + e.getMessage() + ".";
+				break;
 			}
 		}
 		

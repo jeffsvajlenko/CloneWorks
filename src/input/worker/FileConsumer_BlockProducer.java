@@ -3,7 +3,6 @@ package input.worker;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.BlockingQueue;
 
 import constants.BlockGranularityConstants;
 import constants.LanguageConstants;
@@ -15,23 +14,25 @@ import input.txl.ITXLCommand;
 import input.txl.TXLExtract;
 import input.txl.TXLTokenize;
 import input.txl.TXLUtil;
+import util.blockingqueue.IEmitter;
+import util.blockingqueue.IReceiver;
 
 public class FileConsumer_BlockProducer extends Thread {
 
-	private BlockingQueue<List<InputFile>> files_in;
-	private BlockingQueue<List<InputBlock>> blocks_out;
+	private IReceiver<InputFile> files_in;
+	private IEmitter<InputBlock> blocks_out;
 	
-	String language;
-	String block_granularity;
-	String token_granularity;
-	List<ITXLCommand> txl_normalizations;
+	private String language;
+	private String block_granularity;
+	private String token_granularity;
+	private List<ITXLCommand> txl_normalizations;
 	
-	List<ITokenProcessor> token_processors;
+	private List<ITokenProcessor> token_processors;
 	
 	private Integer exitStatus;
 	private String exitMessage;
 	
-	public FileConsumer_BlockProducer(BlockingQueue<List<InputFile>> files_in, BlockingQueue<List<InputBlock>> blocks_out,
+	public FileConsumer_BlockProducer(IReceiver<InputFile> files_in, IEmitter<InputBlock> blocks_out,
 			                          String language, String block_granularity, String token_granularity, List<ITXLCommand> txl_normalizations,
 			                          List<ITokenProcessor> token_processors) {
 		
@@ -53,12 +54,12 @@ public class FileConsumer_BlockProducer extends Thread {
 	
 	@Override
 	public void run() {
-		List<InputFile> file_buffer = null;
-		List<InputBlock> block_buffer;
+		InputFile file_buffer = null;
+		boolean success;
 		
 		while(true) {
 			// Get Files -- In case of interruption, retry.
-			boolean success = false;
+			success = false;
 			do {
 				try {
 					file_buffer = files_in.take();
@@ -69,32 +70,38 @@ public class FileConsumer_BlockProducer extends Thread {
 			} while(!success);
 			
 			// Check for Poison (end-condition)
-			if(file_buffer.size() == 0) {
+			if(files_in.isPoisoned()) {
 				break;
 			}
 			
 			// Get Blocks
-			block_buffer = new LinkedList<InputBlock>();
-			for(InputFile p : file_buffer) {
-				List<InputBlock> blocks = getBlocks(p);
-				if(blocks.size() > 0)
-					block_buffer.addAll(blocks);
-			}
+			List<InputBlock> blocks = getBlocks(file_buffer);
 			
-			// Put Blocks (if not empty) -- In case of interruption, retry.
-			if(block_buffer.size() > 0) {
-				
+			// Put Blocks -- In case of interruption, retry.
+			for(InputBlock block : blocks) {
 				success = false;
 				do {
 					try {
-						blocks_out.put(block_buffer);
+						blocks_out.put(block);
 						success = true;
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
+					success = true;
 				} while(!success);
 			}
 		}
+		
+		// Flush Emitter.
+		success = false;
+		do {
+			try {
+				blocks_out.flush();
+				success = true;
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		} while(!success);
 		
 		if(exitStatus == null) {
 			exitStatus = 0;

@@ -33,8 +33,9 @@ public class GroupQueue<E> implements IQueue<E> {
 
 	@Override
 	public void poisonReceivers() throws InterruptedException {
-		for(int i = 0; i < numReceivers; i++) {
-			
+		while(numReceivers != 0) {
+			queue.put(QueueElement.getPoison());
+			numReceivers--;
 		}
 	}
 	

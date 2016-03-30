@@ -1,12 +1,10 @@
 package input.worker;
 import java.io.Writer;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.BlockingQueue;
 
 import input.file.InputFile;
 import input.utils.FilePathStream;
+import util.blockingqueue.IEmitter;
 
 /**
  * 
@@ -19,8 +17,7 @@ import input.utils.FilePathStream;
 public class FileProducer extends Thread {
 	
 	FilePathStream in;
-	private int maxGroupSize;
-	private BlockingQueue<List<InputFile>> output;
+	private IEmitter<InputFile> output;
 	private Integer exitStatus;
 	private String exitMessage;
 	private long currentid;
@@ -33,10 +30,9 @@ public class FileProducer extends Thread {
 	 * @param root The directory to search files in.
 	 * @param maxGroupSize File group sizes.
 	 */
-	public FileProducer(FilePathStream in, BlockingQueue<List<InputFile>> files, Writer writer, int maxGroupSize) {
+	public FileProducer(FilePathStream in, IEmitter<InputFile> files, Writer writer) {
 		this.in= in;
 		this.output = files;
-		this.maxGroupSize = maxGroupSize;
 		this.exitStatus = null;
 		this.exitMessage = null;
 		this.writer = writer;
@@ -64,26 +60,28 @@ public class FileProducer extends Thread {
 		try {
 			// Fill buffer, output buffer when full
 			Path path;
-			InputFile ifile;
-			ArrayList<InputFile> buffer = new ArrayList<InputFile>(maxGroupSize);
+			
 			while((path = in.next()) != null) {
-				ifile = new InputFile(currentid++, path);
+				InputFile ifile = new InputFile(currentid++, path);
 				
-				// Output to file
+				// Output to file tracker (optionally)
 				if(writer != null)
 					writer.write(ifile.getId() + "\t" + ifile.getPath() + "\n");
 				
-				// Add to buffer, emit if buffer full
-				buffer.add(ifile);
-				if(buffer.size() == maxGroupSize) {
-					put(buffer);
-					buffer.clear();
-				}
+				// Emit, in case of interruption re-try until succeeds
+				boolean success = false;
+				do {
+					try {
+						output.put(ifile);
+						success = true;
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				} while(!success);
 			}
 			
-			// Output final (potentially partial) buffer
-			if(buffer.size() > 0)
-				put(buffer);
+			// Flush Emitter
+			output.flush();
 			
 			// Exit Status
 			exitStatus = 0;
@@ -93,23 +91,5 @@ public class FileProducer extends Thread {
 			exitStatus = -1;
 			exitMessage = "Failed with exception: " + e.getMessage() + ".";
 		}
-	}
-	
-	private void put(List<InputFile> flist) {
-		boolean succeed = false;
-		
-		// Create new array of the files
-		ArrayList<InputFile> out = new ArrayList<InputFile>(flist.size());
-		out.addAll(flist);
-		
-		// Add to concurrent queue, re-try if interrupted while waiting.
-		do {
-			try {
-				output.put(out);
-				succeed = true;
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		} while(!succeed);
 	}
 }
