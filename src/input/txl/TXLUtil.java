@@ -25,6 +25,14 @@ public class TXLUtil {
 	}
 	
 	public static List<String> run(List<ITXLCommand> commands, Path file) {
+		if(SystemUtils.IS_OS_WINDOWS) {
+			return TXLUtil.run_windows(commands,file);
+		} else {
+			return TXLUtil.run_linux(commands, file);
+		}	
+	}
+	
+	public static List<String> run_linux(List<ITXLCommand> commands, Path file) {
 	
 	// Build Command
 		String chain = "";
@@ -92,15 +100,18 @@ public class TXLUtil {
 		return lines;
 	}
 	
-	public static List<String> run2(List<ITXLCommand> commands, Path file) {
-		//long time = System.currentTimeMillis();
+	public static List<String> run_windows(List<ITXLCommand> commands, Path file) {
 		
 		List<ProcessBuilder> pbs = new ArrayList<ProcessBuilder>(commands.size()+1);
 		List<Process> processes = new ArrayList<Process>(commands.size()+1);
 		
 		List<String> retval = new LinkedList<String>();
 		
-		pbs.add(new ProcessBuilder("cmd","/c","type " + file.toString()));
+		if(SystemUtils.IS_OS_WINDOWS) {
+			pbs.add(new ProcessBuilder("cmd","/c","type " + file.toString()));
+		} else {
+			pbs.add(new ProcessBuilder("cat",file.toString()));
+		}		
 			
 		for(ITXLCommand cmd : commands) {
 			String command;
@@ -145,7 +156,6 @@ public class TXLUtil {
 			e.printStackTrace();
 			return null;
 		}
-		//System.out.println(System.currentTimeMillis() - time);
 		return retval;
 	}
 }
