@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.concurrent.BlockingQueue;
 
 import input.block.InputBlock;
-import util.SerializeBlocks;
 
 public class BlockConsumer_BlockWriter extends Thread {
 	
@@ -16,6 +15,7 @@ public class BlockConsumer_BlockWriter extends Thread {
 	private String exitMessage;
 	
 	public BlockConsumer_BlockWriter(Writer output, BlockingQueue<List<InputBlock>> blocks_in) {
+		super();
 		this.output = output;
 		this.blocks_in = blocks_in;
 	}
@@ -41,7 +41,7 @@ public class BlockConsumer_BlockWriter extends Thread {
 			// Write blocks, handle errors
 			for(InputBlock block : buffer) {
 				try {
-					output.write(SerializeBlocks.getInputBlockString(block));
+					output.write(InputBlock.getInputBlockString(block));
 				} catch (Exception e) {
 					exitStatus = -1;
 					exitMessage = "Failed with exception: " + e.getMessage() + ".";
