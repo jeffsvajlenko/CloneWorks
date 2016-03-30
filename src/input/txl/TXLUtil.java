@@ -23,7 +23,7 @@ public class TXLUtil {
 	
 	public static List<String> run(List<ITXLCommand> commands, Path file) {
 		if(SystemUtils.IS_OS_WINDOWS) {
-			return TXLUtil.run_windows(commands,file);
+			return TXLUtil.run_linux(commands,file);
 		} else {
 			return TXLUtil.run_linux(commands, file);
 		}	
@@ -68,6 +68,11 @@ public class TXLUtil {
 		
 		exec.add("\"" + chain + "\"");
 		
+		//for(String s : exec) {
+		//	System.out.print(s + " ");
+		//}
+		//System.out.println("");
+		
 	// Execute Process and Collect Output
 		int retval = 0;
 		List<String> lines = null;
@@ -95,7 +100,7 @@ public class TXLUtil {
 		p.destroy();
 		
 		if(retval != 0) {
-			System.out.println("FAILED: " + file);
+			System.out.println("FAILED: " + file + " Code: " + retval);
 			return null;
 		}
 		

@@ -3,6 +3,7 @@ package input.block;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -80,6 +81,10 @@ public class InputBlock implements Serializable {
 	 */
 	public List<TermFrequency> getTokens() {
 		return tokens;
+	}
+	
+	public void sort(Comparator<TermFrequency> comparator) {
+		Collections.sort(this.tokens, comparator);
 	}
 
 	public static String getInputBlockString(InputBlock block) {

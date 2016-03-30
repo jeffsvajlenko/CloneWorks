@@ -30,7 +30,8 @@ public class InputBuilder {
 	public static void main(String args[]) throws InterruptedException, IOException {
 		long time = System.currentTimeMillis();
 		
-		Path root = Paths.get("C:/Users/jeffs/Desktop/NiCad-4.0/examples/JHotDraw54b1/");
+		Path root = Paths.get("/home/jeff/Applications/NiCad-4.0/examples/JHotDraw54b1/");
+		//Path root = Paths.get("C:/Users/jeffs/Desktop/NiCad-4.0/examples/JHotDraw54b1/");
 		IOFileFilter filter = new SuffixFileFilter(".java");
 		
 		Path ffileids = Paths.get("files.ids");
