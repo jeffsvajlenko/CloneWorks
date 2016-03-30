@@ -104,8 +104,8 @@ public class InputBlock implements Serializable {
 		for(String tf : tfs) {
 			tf = tf.substring(1);
 			String[] term_freq = tf.split(":",2);
-			int frequency = Integer.parseInt(term_freq[1]);
-			String term = term_freq[0];
+			int frequency = Integer.parseInt(term_freq[0]);
+			String term = term_freq[1];
 			tokens.add(new TermFrequency(term,frequency));
 		}
 		
