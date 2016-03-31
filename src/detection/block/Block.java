@@ -19,7 +19,7 @@ public class Block implements Serializable {
 	private List<BlockElement> blockAsList;
 	private int numTokens;
 	
-	public Block(long fileid, int startline, int endline, ArrayList<BlockElement> block, double sim) {
+	public Block(long fileid, int startline, int endline, ArrayList<BlockElement> block) {
 		this.fileid = fileid;
 		this.startline = startline;
 		this.endline = endline;
@@ -35,6 +35,21 @@ public class Block implements Serializable {
 			
 		}
 		this.blockAsMap = Collections.unmodifiableMap(this.blockAsMap);
+	}
+	
+	public boolean doesOverlap(Block block) {
+		if(fileid == block.fileid)
+			if(startline >= block.startline && startline <= block.endline)     // Case #1: This block starts within the other block (ends wherever).
+				return true;
+			else if (endline >= block.startline && endline <= block.endline)   // Case #2: This block ends within the other block (starts wherever).
+				return true;
+			else if (startline <= block.startline && endline >= block.endline) // Case #3: This block captures the other block.
+				return true;
+		return false;
+	}
+	
+	public int numLines() {
+		return this.endline - this.startline + 1;
 	}
 	
 	public long getFileID() {

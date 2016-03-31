@@ -66,7 +66,7 @@ public class TXLUtil {
 		exec.add("sh");
 		exec.add("-c");
 		
-		exec.add("\"" + chain + "\"");
+		exec.add("" + chain + "");
 		
 		//for(String s : exec) {
 		//	System.out.print(s + " ");
