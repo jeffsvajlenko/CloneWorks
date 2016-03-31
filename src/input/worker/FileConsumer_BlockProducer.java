@@ -76,7 +76,7 @@ public class FileConsumer_BlockProducer extends Thread {
 			
 			// Get Blocks
 			List<InputBlock> blocks = getBlocks(file_buffer);
-			if(blocks == null)
+			if(blocks == null)     // Error
 				continue;
 			
 			// Put Blocks -- In case of interruption, retry.

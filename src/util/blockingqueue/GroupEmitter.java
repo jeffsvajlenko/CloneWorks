@@ -35,8 +35,10 @@ public class GroupEmitter<E> implements IEmitter<E> {
 
 	@Override
 	public void flush() throws InterruptedException {
-		queue.put(new QueueElement<List<E>>(buffer));
-		buffer = new ArrayList<E>(size);
+		if(buffer.size() != 0) {
+			queue.put(new QueueElement<List<E>>(buffer));
+			buffer = new ArrayList<E>(size);
+		}
 	}
 
 	@Override
