@@ -9,17 +9,16 @@ import detection.prefixer.Prefixer;
 import detection.requirements.Requirements;
 import input.block.InputBlock;
 import input.block.TermFrequency;
-import util.blockingqueue.IReceiver;
 
 public class BlockIndexer implements Runnable {
 
-	private IReceiver<InputBlock> input;
+	private InputBlockInput input;
 	private IIndex index;
 	private Prefixer prefixer;
 	private Comparator<TermFrequency> sorter;
 	private Requirements requirements;
 	
-	public BlockIndexer(IReceiver<InputBlock> input, IIndex index, Comparator<TermFrequency> sorter, Prefixer prefixer, Requirements requirements) {
+	public BlockIndexer(InputBlockInput input, IIndex index, Comparator<TermFrequency> sorter, Prefixer prefixer, Requirements requirements) {
 		Objects.requireNonNull(input);
 		Objects.requireNonNull(index);
 		Objects.requireNonNull(prefixer);
@@ -37,7 +36,7 @@ public class BlockIndexer implements Runnable {
 		while(true) {
 			
 			// Get an Input Block
-			InputBlock iblock = take();
+			InputBlock iblock = input.take();
 			
 			// Check Poison -- If poison, quit.
 			if(input.isPoisoned())
@@ -56,16 +55,6 @@ public class BlockIndexer implements Runnable {
 			
 			// Index
 			index.put(dblock);
-		}
-	}
-	
-	private InputBlock take() {
-		while(true) {
-			try {
-				return input.take();
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
 		}
 	}
 
