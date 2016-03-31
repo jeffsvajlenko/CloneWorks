@@ -4,18 +4,17 @@ import detection.GTF.GTFHashMap;
 import input.block.InputBlock;
 import input.block.TermFrequency;
 import util.blockingqueue.IEmitter;
-import util.blockingqueue.IReceiver;
 
 public class GTFBuilder implements Runnable {
 
-	private IReceiver<InputBlock> input;
+	private InputBlockInput input;
 	private IEmitter<InputBlock> output;
 	private GTFHashMap gtf;
 	
 	private Integer exitStatus;
 	private String exitMessage;
 	
-	public GTFBuilder(IReceiver<InputBlock> input, IEmitter<InputBlock> output, GTFHashMap gtf) {
+	public GTFBuilder(InputBlockInput input, IEmitter<InputBlock> output, GTFHashMap gtf) {
 		this.input = input;
 		this.output = output;
 		this.gtf = gtf;
@@ -32,7 +31,7 @@ public class GTFBuilder implements Runnable {
 			}
 			
 			// Get next input block
-			InputBlock block = take();
+			InputBlock block = input.take();
 			
 			// Check for poison
 			if(input.isPoisoned())
@@ -50,18 +49,6 @@ public class GTFBuilder implements Runnable {
 		
 		exitStatus = 0;
 		exitMessage = "Success.";
-	}
-	
-	private InputBlock take() {
-		while(true) {
-			try {
-				InputBlock block = input.take();
-				return block;
-			} catch (InterruptedException e) {
-				Thread.currentThread().interrupt();
-				e.printStackTrace();
-			}
-		}
 	}
 	
 	private void put(InputBlock block) {
