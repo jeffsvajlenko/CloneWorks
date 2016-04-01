@@ -6,6 +6,8 @@ public interface IQueue<E> {
 
 	IReceiver<E> getReceiver();
 
+	public int size();
+	
 	int numReceivers();
 
 	/**

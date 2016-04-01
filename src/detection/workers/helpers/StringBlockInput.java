@@ -45,7 +45,8 @@ public class StringBlockInput implements BlockInput {
 				return null;
 			
 			// Parse
-			InputBlock iblock = InputBlock.readDetectionBlock(sblock);
+			InputBlock iblock  = InputBlock.readDetectionBlock(sblock);
+			
 			
 			// Check Requirements
 			if(!requirements.approve(iblock))

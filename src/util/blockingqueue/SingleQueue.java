@@ -38,4 +38,9 @@ public class SingleQueue<E> implements IQueue<E> {
 		}
 	}
 	
+	@Override
+	public int size() {
+		return queue.size();
+	}
+	
 }

@@ -40,7 +40,7 @@ public class BlockConsumer_BlockWriter extends Thread {
 			// Write block, handle error
 			try {
 				output.write(InputBlock.getInputBlockString(buffer));
-				output.write(">");
+				output.write(">\n");
 			} catch (Exception e) {
 				exitStatus = -1;
 				exitMessage = "Failed with exception: " + e.getMessage() + ".";

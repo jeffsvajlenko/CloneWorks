@@ -55,6 +55,7 @@ public class CloneDetection extends Thread {
 			while(true) {
 				try {
 					output.put(clone);
+					break;
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}

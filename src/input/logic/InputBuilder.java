@@ -16,6 +16,8 @@ import constants.LanguageConstants;
 import constants.TokenGranularityConstants;
 import input.block.InputBlock;
 import input.file.InputFile;
+import input.tokenprocessors.FilterOperators;
+import input.tokenprocessors.FilterSeperators;
 import input.tokenprocessors.ITokenProcessor;
 import input.txl.ITXLCommand;
 import input.utils.FilePathStreamUtil;
@@ -48,8 +50,8 @@ public class InputBuilder {
 		
 	// Token Processors
 		List<ITokenProcessor> token_processors = new ArrayList<ITokenProcessor>(0);
-		//token_processors.add(new FilterOperators(language));
-		//token_processors.add(new FilterSeperators(language));
+		token_processors.add(new FilterOperators(language));
+		token_processors.add(new FilterSeperators(language));
 		//token_processors.add(new NormalizeStrings());
 		//token_processors.add(new SplitStrings());
 		//token_processors.add(new ToLowerCase());

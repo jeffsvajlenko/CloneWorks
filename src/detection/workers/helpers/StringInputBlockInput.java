@@ -15,7 +15,10 @@ public class StringInputBlockInput implements InputBlockInput {
 	public InputBlock take() {
 		while(true) {
 			try {
-				String sblock = input.take(); 
+				String sblock = input.take();
+				if(input.isPoisoned()) {
+					return null;
+				}
 				return InputBlock.readDetectionBlock(sblock);
 			} catch (InterruptedException e) {
 				e.printStackTrace();

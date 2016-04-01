@@ -23,6 +23,7 @@ public class GTFBuilder extends Thread {
 	
 	@Override
 	public void run() {
+		int num = 0;
 		while(true) {
 			
 			if(Thread.currentThread().isInterrupted()) {
@@ -34,34 +35,51 @@ public class GTFBuilder extends Thread {
 			// Get next input block
 			InputBlock block = input.take();
 			
+			
 			// Check for poison
 			if(input.isPoisoned())
 				break;
+			
+			num++;
 			
 			// Update GTF
 			for(TermFrequency tf : block.getTokens()) {
 				gtf.add(tf.getTerm(), tf.getFrequency());
 			}
 			
-			// Put input block (if desired
-			if(output != null)
-				put(block);
+			// Put input block (if desired)
+			put(block);
 		}
 		
+		flush();
+		
 		exitStatus = 0;
-		exitMessage = "Success.";
+		exitMessage = "Success. " + num + " blocks processed.";
 	}
 	
 	private void put(InputBlock block) {
-		while(true) {
-			try {
-				output.put(block);
-				return;
-			} catch (InterruptedException e) {
-				Thread.currentThread().interrupt();
-				e.printStackTrace();
+		if(output != null)
+			while(true) {
+				try {
+					output.put(block);
+					return;
+				} catch (InterruptedException e) {
+					Thread.currentThread().interrupt();
+					e.printStackTrace();
+				}
 			}
-		}
+	}
+	
+	private void flush() {
+		if(output != null)
+			while(true) {
+				try {
+					output.flush();
+					break;
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
 	}
 	
 	public int getExitStatus() {
