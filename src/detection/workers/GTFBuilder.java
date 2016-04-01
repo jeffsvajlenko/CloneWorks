@@ -1,11 +1,12 @@
 package detection.workers;
 
 import detection.GTF.GTFHashMap;
+import detection.workers.helpers.InputBlockInput;
 import input.block.InputBlock;
 import input.block.TermFrequency;
 import util.blockingqueue.IEmitter;
 
-public class GTFBuilder implements Runnable {
+public class GTFBuilder extends Thread {
 
 	private InputBlockInput input;
 	private IEmitter<InputBlock> output;

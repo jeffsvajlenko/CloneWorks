@@ -6,7 +6,7 @@ import java.io.Writer;
 import detection.detection.Clone;
 import util.blockingqueue.IReceiver;
 
-public class CloneWriter implements Runnable {
+public class CloneWriter extends Thread {
 
 	private IReceiver<Clone> input;
 	private Writer output;

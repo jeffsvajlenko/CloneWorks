@@ -1,13 +1,13 @@
-package detection.workers;
+package detection.workers.helpers;
 
 import input.block.InputBlock;
 import util.blockingqueue.IReceiver;
 
-public class ObjectInputBlockInput implements InputBlockInput {
+public class StringInputBlockInput implements InputBlockInput {
 
-	private IReceiver<InputBlock> input;
+	private IReceiver<String> input;
 	
-	public ObjectInputBlockInput(IReceiver<InputBlock> input) {
+	public StringInputBlockInput(IReceiver<String> input) {
 		this.input = input;
 	}
 	
@@ -15,7 +15,8 @@ public class ObjectInputBlockInput implements InputBlockInput {
 	public InputBlock take() {
 		while(true) {
 			try {
-				return input.take();
+				String sblock = input.take(); 
+				return InputBlock.readDetectionBlock(sblock);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}

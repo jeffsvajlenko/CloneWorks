@@ -1,4 +1,4 @@
-package detection.workers;
+package detection.workers.helpers;
 
 import java.util.List;
 
@@ -13,6 +13,7 @@ public class MultSourceInputBlockInput implements InputBlockInput {
 	public MultSourceInputBlockInput(List<InputBlockInput> inputs) {
 		this.inputs = inputs;
 		currentInput = inputs.remove(0);
+		this.isPoison = false;
 	}
 	
 	@Override

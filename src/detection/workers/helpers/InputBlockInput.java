@@ -1,4 +1,4 @@
-package detection.workers;
+package detection.workers.helpers;
 
 import input.block.InputBlock;
 

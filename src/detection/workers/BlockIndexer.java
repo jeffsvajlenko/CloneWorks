@@ -7,10 +7,11 @@ import detection.block.Block;
 import detection.index.IIndex;
 import detection.prefixer.Prefixer;
 import detection.requirements.Requirements;
+import detection.workers.helpers.InputBlockInput;
 import input.block.InputBlock;
 import input.block.TermFrequency;
 
-public class BlockIndexer implements Runnable {
+public class BlockIndexer extends Thread {
 
 	private InputBlockInput input;
 	private IIndex index;
