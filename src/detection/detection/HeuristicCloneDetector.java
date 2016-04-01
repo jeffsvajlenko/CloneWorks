@@ -12,6 +12,10 @@ public class HeuristicCloneDetector implements CloneDetector {
 
 	private double sim;
 	
+	public HeuristicCloneDetector(double sim) {
+		this.sim = sim;
+	}
+	
 	@Override
 	public List<Clone> detectClones(Block qBlock, IIndex index) {
 		List<Clone> clones = new LinkedList<Clone>();
