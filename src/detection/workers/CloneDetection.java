@@ -48,9 +48,23 @@ public class CloneDetection extends Thread {
 			// Output
 			output(clones);
 		}
+		
+		flush();
 	}
 	
-	public void output(List<Clone> clones) {
+	private void flush() {
+		while(true) {
+			try {
+				output.flush();
+				break;
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	private void output(List<Clone> clones) {
 		for(Clone clone : clones) {
 			while(true) {
 				try {

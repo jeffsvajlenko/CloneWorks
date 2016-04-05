@@ -75,5 +75,33 @@ public class Block implements Serializable {
 	public int numTokens() {
 		return numTokens;
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + endline;
+		result = prime * result + (int) (fileid ^ (fileid >>> 32));
+		result = prime * result + startline;
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Block other = (Block) obj;
+		if (endline != other.endline)
+			return false;
+		if (fileid != other.fileid)
+			return false;
+		if (startline != other.startline)
+			return false;
+		return true;
+	}
 	
 }

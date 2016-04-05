@@ -43,14 +43,16 @@ public class HeuristicCloneDetector implements CloneDetector {
 			if(isClone(qBlock,cBlock))
 				clones.add(new Clone(qBlock.getFileID(), qBlock.getStartLine(), qBlock.getEndLine(), cBlock.getFileID(), cBlock.getStartLine(), cBlock.getEndLine()));
 		}
-		
+
 		return clones;
 	}
 	
 	private boolean isClone(Block qBlock, Block iBlock) {
 		// Check for overlap (don't want to report self-clones or overlapping clones)
-		if(qBlock.doesOverlap(iBlock))
+		System.out.println(qBlock + " " + iBlock);
+		if(qBlock.doesOverlap(iBlock)) {
 			return false;
+		}
 		
 		// Sort blocks as min/max size
 		Block min, max;
@@ -67,8 +69,9 @@ public class HeuristicCloneDetector implements CloneDetector {
 		int remainingTokens = max.numTokens();
 		
 		// Heuristic: Small block does not contain enough tokens to be a clone
-		if(min.numTokens() < threshold)
+		if(min.numTokens() < threshold) {
 			return false;
+		}
 		
 		for(BlockElement be : max.getBlockAsList()) {
 			
@@ -83,12 +86,14 @@ public class HeuristicCloneDetector implements CloneDetector {
 			remainingTokens -= maxFreq;
 			
 			// Heuristic: If already exceed threshold, return true now.
-			if(sharedTokens >= threshold)
+			if(sharedTokens >= threshold) {
 				return true;
+			}
 			
 			// Heuristic: If not enough remaining tokens for threshold to be achieved, return false now.
-			if((sharedTokens + remainingTokens) < threshold)
+			if((sharedTokens + remainingTokens) < threshold) {
 				return false;
+			}
 		}
 		
 		// ** Need for compilation, but I don't think should end up here **

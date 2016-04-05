@@ -240,6 +240,7 @@ public class SelfCloneDetection {
 		out.close();
 		
 		System.out.println("Total time: " + (System.currentTimeMillis() - time)/1000.0);
+		
 	}
 	
 }
