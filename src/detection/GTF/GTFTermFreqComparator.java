@@ -18,10 +18,12 @@ public class GTFTermFreqComparator implements Comparator<TermFrequency> {
 	
 	@Override
 	public int compare(TermFrequency tf1, TermFrequency tf2) {
-		if(tf1.getFrequency() != tf2.getFrequency()) // Compare by Frequency
-			return Long.compare(gtf.getFrequency(tf1.getTerm()), gtf.getFrequency(tf2.getTerm()));
-		else
-			return tf1.getTerm().compareTo(tf2.getTerm()); // If same frequency, compare terms for definite order
+		int lcomp = Long.compare(gtf.getFrequency(tf1.getTerm()), gtf.getFrequency(tf2.getTerm()));
+		if(lcomp == 0) { // Global frequency is the same, order by term (to ensure definite order)
+			return tf1.getTerm().compareTo(tf2.getTerm());
+		} else {
+			return lcomp;
+		}
 	}
 
 }

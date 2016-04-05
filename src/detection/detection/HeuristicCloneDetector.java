@@ -47,20 +47,24 @@ public class HeuristicCloneDetector implements CloneDetector {
 		return clones;
 	}
 	
-	private boolean isClone(Block qBlock, Block iBlock) {
+	private boolean isClone(Block qBlock, Block cBlock) {
+		
+		// Skip if they are the same block, or query block is after candidate block to prevent duplicate checks (cblock is/was a qblock and will find this clone then)
+		if(qBlock.getID() > cBlock.getID())
+			return false;
+		
 		// Check for overlap (don't want to report self-clones or overlapping clones)
-		System.out.println(qBlock + " " + iBlock);
-		if(qBlock.doesOverlap(iBlock)) {
+		if(qBlock.doesOverlap(cBlock)) {
 			return false;
 		}
 		
 		// Sort blocks as min/max size
 		Block min, max;
-		if(qBlock.numTokens() > iBlock.numTokens()) {
+		if(qBlock.numTokens() > cBlock.numTokens()) {
 			max = qBlock;
-			min = iBlock;
+			min = cBlock;
 		} else {
-			max = iBlock;
+			max = cBlock;
 			min = qBlock;
 		}
 		

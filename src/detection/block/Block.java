@@ -11,6 +11,7 @@ public class Block implements Serializable {
 	
 	private static final long serialVersionUID = 8197034157690373765L;
 	
+	private long id;
 	private long fileid;
 	private int startline;
 	private int endline;
@@ -19,7 +20,8 @@ public class Block implements Serializable {
 	private List<BlockElement> blockAsList;
 	private int numTokens;
 	
-	public Block(long fileid, int startline, int endline, ArrayList<BlockElement> block) {
+	public Block(long id, long fileid, int startline, int endline, ArrayList<BlockElement> block) {
+		this.id = id;
 		this.fileid = fileid;
 		this.startline = startline;
 		this.endline = endline;
@@ -46,6 +48,10 @@ public class Block implements Serializable {
 			else if (startline <= block.startline && endline >= block.endline) // Case #3: This block captures the other block.
 				return true;
 		return false;
+	}
+	
+	public long getID() {
+		return this.id;
 	}
 	
 	public int numLines() {
@@ -82,6 +88,7 @@ public class Block implements Serializable {
 		int result = 1;
 		result = prime * result + endline;
 		result = prime * result + (int) (fileid ^ (fileid >>> 32));
+		result = prime * result + (int) (id ^ (id >>> 32));
 		result = prime * result + startline;
 		return result;
 	}
@@ -98,6 +105,8 @@ public class Block implements Serializable {
 		if (endline != other.endline)
 			return false;
 		if (fileid != other.fileid)
+			return false;
+		if (id != other.id)
 			return false;
 		if (startline != other.startline)
 			return false;

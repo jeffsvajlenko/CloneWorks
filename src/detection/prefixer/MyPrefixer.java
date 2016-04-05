@@ -30,7 +30,7 @@ public class MyPrefixer implements Prefixer {
 			num = num + tf.getFrequency();
 			tfs.add(new BlockElement(tf.getTerm(), tf.getFrequency(), isPrefixTerm));
 		}
-		return new Block(block.getFileid(), block.getStartline(), block.getEndline(), tfs);
+		return new Block(block.getId(), block.getFileid(), block.getStartline(), block.getEndline(), tfs);
 	}
 	
 }

@@ -11,6 +11,8 @@ import java.util.Map;
 public class InputBlock implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
+	
+	private long id;
 	private long fileid;
 	private int startline;
 	private int endline;
@@ -18,6 +20,8 @@ public class InputBlock implements Serializable {
 	private List<TermFrequency> tokens;
 	
 	public InputBlock(long fileid, int startline, int endline, ArrayList<TermFrequency> tokens, int numtokens) {
+		this.id = -1;
+		
 		this.fileid = fileid;
 		this.startline = startline;
 		this.endline = endline;
@@ -26,6 +30,8 @@ public class InputBlock implements Serializable {
 	}
 	
 	public InputBlock(long fileid, int startline, int endline, List<String> tokens)  {
+		this.id = -1;
+		
 		this.fileid = fileid;
 		this.startline = startline;
 		this.endline = endline;
@@ -55,6 +61,20 @@ public class InputBlock implements Serializable {
 		}
 	}
 
+	public Long getId() {
+		return this.id;
+	}
+	
+	public void setId(Long id) {
+		if(id < 0)
+			throw new IllegalArgumentException("id must be >= 0.");
+		this.id = id;
+	}
+	
+	public void unsetId() {
+		this.id = -1;
+	}
+	
 	public long getFileid() {
 		return fileid;
 	}
@@ -88,7 +108,7 @@ public class InputBlock implements Serializable {
 	}
 
 	public static String getInputBlockString(InputBlock block) {
-		String retval = block.getFileid() + "," + block.getStartline() + "," + block.getEndline() + "," + block.numTokens() + "\n";
+		String retval = block.getId() + "," + block.getFileid() + "," + block.getStartline() + "," + block.getEndline() + "," + block.numTokens() + "\n";
 		for(TermFrequency tf : block.getTokens()) {
 			retval += "\t" + tf.getFrequency() + ":" + tf.getTerm() + "\n";
 		}
@@ -100,10 +120,11 @@ public class InputBlock implements Serializable {
 		String[] header = parts[0].split(",");
 		String[] tfs = parts[1].split("\n");
 		
-		long fileid = Long.parseLong(header[0]);
-		int startline = Integer.parseInt(header[1]);
-		int endline = Integer.parseInt(header[2]);
-		int numtokens = Integer.parseInt(header[3]);
+		long id = Long.parseLong(header[0]);
+		long fileid = Long.parseLong(header[1]);
+		int startline = Integer.parseInt(header[2]);
+		int endline = Integer.parseInt(header[3]);
+		int numtokens = Integer.parseInt(header[4]);
 		
 		ArrayList<TermFrequency> tokens = new ArrayList<TermFrequency>(tfs.length);
 		for(String tf : tfs) {
@@ -114,7 +135,9 @@ public class InputBlock implements Serializable {
 			tokens.add(new TermFrequency(term,frequency));
 		}
 		
-		return new InputBlock(fileid, startline, endline, tokens, numtokens);
+		InputBlock iblock = new InputBlock(fileid, startline, endline, tokens, numtokens);
+		iblock.setId(id);
+		return iblock;
 	}
 	
 }

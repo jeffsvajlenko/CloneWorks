@@ -13,8 +13,10 @@ public class BlockConsumer_BlockWriter extends Thread {
 	private Integer exitStatus;
 	private String exitMessage;
 	
+	private long currentid;
+	
 	public BlockConsumer_BlockWriter(Writer output, IReceiver<InputBlock> receiver) {
-		super();
+		this.currentid = 0;
 		this.output = output;
 		this.blocks_in = receiver;
 	}
@@ -39,6 +41,7 @@ public class BlockConsumer_BlockWriter extends Thread {
 			
 			// Write block, handle error
 			try {
+				buffer.setId(currentid++);
 				output.write(InputBlock.getInputBlockString(buffer));
 				output.write(">\n");
 			} catch (Exception e) {
