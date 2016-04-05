@@ -16,23 +16,23 @@ public class FilterSeperators implements ITokenProcessor {
 		
 		filter = new HashSet<String>();
 		
-		if(language == LanguageConstants.JAVA) {
+		if(language.equals(LanguageConstants.JAVA)) {
 			filter.add("("); filter.add(")"); filter.add("{"); filter.add("}");   filter.add("["); filter.add("]"); 
 			filter.add(";"); filter.add(","); filter.add("."); filter.add("..."); filter.add("@"); filter.add("::");
 		}
-		if(language == LanguageConstants.C) {
+		if(language.equals(LanguageConstants.C)) {
 			filter.add("("); filter.add(")"); filter.add("{"); filter.add("}");  filter.add("["); filter.add("]"); 
 			filter.add(";"); filter.add(","); filter.add("."); filter.add(".."); filter.add("..."); 
 		}
-		if(language == LanguageConstants.CS) {
+		if(language.equals(LanguageConstants.CS)) {
 			filter.add("{");  filter.add("}");  filter.add("[");  filter.add("]");  filter.add("(");  filter.add(")");
 			filter.add(".");  filter.add(",");  filter.add(":");  filter.add(";");
 		}
-		if(language == LanguageConstants.PYTHON) {
+		if(language.equals(LanguageConstants.PYTHON)) {
 			filter.add("("); filter.add(")"); filter.add("["); filter.add("]"); filter.add("{"); filter.add("}"); 
 			filter.add(","); filter.add(":"); filter.add("."); filter.add(";"); filter.add("@"); filter.add("->"); 
 		}
-		if(language == LanguageConstants.CPP) {
+		if(language.equals(LanguageConstants.CPP)) {
 			filter.add("("); filter.add(")"); filter.add("{"); filter.add("}");  filter.add("["); filter.add("]"); 
 			filter.add(";"); filter.add(","); filter.add("."); filter.add(".."); filter.add("..."); 
 		}
