@@ -49,6 +49,8 @@ public class SelfCloneDetection {
 	}
 	
 	public static void detect(Path input, Path output, int numThreads, int minLines, int maxLines, int minTokens, int maxTokens, double sim) throws IOException {
+		long time = System.currentTimeMillis();
+		
 // -- Data
 		// Queues
 		IQueue<String>     Q_input_gtf         = QueueBuilder.<String>groupQueue_arrayBacked(50, 10);
@@ -237,7 +239,7 @@ public class SelfCloneDetection {
 		out.flush();
 		out.close();
 		
-		
+		System.out.println("Total time: " + (System.currentTimeMillis() - time)/1000.0);
 	}
 	
 }
