@@ -38,5 +38,10 @@ public class GroupQueue<E> implements IQueue<E> {
 			numReceivers--;
 		}
 	}
+
+	@Override
+	public int size() {
+		return queue.size();
+	}
 	
 }

@@ -1,6 +1,7 @@
 package detection.index;
 
 import java.util.Queue;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -29,6 +30,10 @@ public class ConcurrentHashMapIndex extends AbstractIndex {
 	@Override
 	public void clear() {
 		index.clear();
+	}
+	
+	public Set<String> getTerms() {
+		return index.keySet();
 	}
 	
 }

@@ -15,6 +15,7 @@ public class CloneWriter extends Thread {
 	private String exitmessage;
 	
 	public CloneWriter(IReceiver<Clone> input, Writer output) {
+		this.input = input;
 		this.output = output;
 		this.input = input;
 	}
