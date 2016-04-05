@@ -1,8 +1,10 @@
 package detection.detection;
 
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
+import java.util.Set;
 
 import detection.block.Block;
 import detection.block.BlockElement;
@@ -19,7 +21,9 @@ public class HeuristicCloneDetector implements CloneDetector {
 	@Override
 	public List<Clone> detectClones(Block qBlock, IIndex index) {
 		List<Clone> clones = new LinkedList<Clone>();
-
+		Set<Block> candidates = new HashSet<Block>();
+		
+		// Build Candidate Set
 		for(BlockElement be : qBlock.getBlockAsList()) {
 			
 			// If this term is not a prefix term, then the search is over.
@@ -30,13 +34,14 @@ public class HeuristicCloneDetector implements CloneDetector {
 			Queue<Block> blocks = index.get(be.getTerm());
 			
 			// If no blocks for this term, continue
-			if(blocks == null)
-				continue;
-			
-			for(Block cBlock : blocks) {
-				if(isClone(qBlock,cBlock))
-					clones.add(new Clone(qBlock.getFileID(), qBlock.getStartLine(), qBlock.getEndLine(), cBlock.getFileID(), cBlock.getStartLine(), cBlock.getEndLine()));
-			}
+			if(blocks != null)
+				candidates.addAll(blocks);
+		}
+		
+		// Detect
+		for(Block cBlock : candidates) {
+			if(isClone(qBlock,cBlock))
+				clones.add(new Clone(qBlock.getFileID(), qBlock.getStartLine(), qBlock.getEndLine(), cBlock.getFileID(), cBlock.getStartLine(), cBlock.getEndLine()));
 		}
 		
 		return clones;
