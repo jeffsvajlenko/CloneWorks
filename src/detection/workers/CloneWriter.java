@@ -16,6 +16,7 @@ public class CloneWriter extends Thread {
 	
 	public CloneWriter(IReceiver<Clone> input, Writer output) {
 		this.output = output;
+		this.input = input;
 	}
 	
 	@Override

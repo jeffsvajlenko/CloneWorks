@@ -11,9 +11,19 @@ public class SizeRequirements implements Requirements {
 	
 	public SizeRequirements(int minLines, int maxLines, int minTokens, int maxTokens) {
 		this.minLines = minLines;
-		this.maxLines = maxLines;
 		this.minTokens = minTokens;
-		this.maxTokens = maxTokens;
+		
+		if(maxLines != 0) {
+			this.maxLines = maxLines;
+		} else {
+			this.maxLines = Integer.MAX_VALUE;
+		}
+		
+		if(maxTokens != 0) {
+			this.maxTokens = maxTokens;
+		} else {
+			this.maxTokens = Integer.MAX_VALUE;
+		}
 	}
 	
 	@Override

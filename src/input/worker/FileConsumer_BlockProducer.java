@@ -28,6 +28,7 @@ public class FileConsumer_BlockProducer extends Thread {
 	private List<ITXLCommand> txl_normalizations;
 	
 	private List<ITokenProcessor> token_processors;
+	private List<ITXLCommand> commands;
 	
 	private Integer exitStatus;
 	private String exitMessage;
@@ -50,6 +51,17 @@ public class FileConsumer_BlockProducer extends Thread {
 		this.txl_normalizations = txl_normalizations;
 		
 		this.token_processors = token_processors;
+		
+		// Prepare Command
+		commands = new LinkedList<ITXLCommand>();
+		if(LanguageConstants.isIfDefLanguage(this.language))
+			commands.add(TXLUtil.getIfDef());
+		if(this.language.equals(LanguageConstants.PYTHON))
+			commands.add(TXLUtil.getPythonPreprocess());
+		commands.add(new TXLExtract(this.language, this.block_granularity));
+		commands.addAll(this.txl_normalizations);
+		if(this.token_granularity == TokenGranularityConstants.TOKEN)
+			commands.add(new TXLTokenize(this.language, this.block_granularity));
 	}
 	
 	@Override
@@ -140,11 +152,8 @@ public class FileConsumer_BlockProducer extends Thread {
 		List<TempBlock> ret = new LinkedList<TempBlock>();
 			
 	// Execute and Capture Output
-		List<ITXLCommand> commands = new LinkedList<ITXLCommand>();
-		commands.add(new TXLExtract(this.language, this.block_granularity));
-		commands.addAll(this.txl_normalizations);
-		if(this.token_granularity == TokenGranularityConstants.TOKEN)
-			commands.add(new TXLTokenize(this.language, this.block_granularity));
+		
+		
 		List<String> lines = TXLUtil.run(commands, file.getPath());
 		if(lines == null)
 			return null;

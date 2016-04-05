@@ -1,5 +1,6 @@
 package input.logic;
 
+import java.io.FileFilter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
@@ -8,38 +9,41 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.io.filefilter.IOFileFilter;
-import org.apache.commons.io.filefilter.SuffixFileFilter;
-
-import constants.BlockGranularityConstants;
 import constants.LanguageConstants;
 import constants.TokenGranularityConstants;
 import input.block.InputBlock;
 import input.file.InputFile;
+import input.tokenprocessors.FilterOperators;
+import input.tokenprocessors.FilterSeperators;
 import input.tokenprocessors.ITokenProcessor;
 import input.txl.ITXLCommand;
-import input.utils.FilePathStreamUtil;
 import input.worker.BlockConsumer_BlockWriter;
 import input.worker.FileConsumer_BlockProducer;
-import input.worker.FileProducer;
+import input.worker.FileProducer_FromRoot;
 import util.blockingqueue.IQueue;
 import util.blockingqueue.QueueBuilder;
 
 public class InputBuilder {
 	
+	
+	// root fileids blocks language granularity
 	public static void main(String args[]) throws InterruptedException, IOException {
+		Path root = Paths.get(args[0]);
+		Path fileids = Paths.get(args[1]);
+		Path blocks = Paths.get(args[2]);
+		String language = args[3].toLowerCase();
+		FileFilter filter = LanguageConstants.getFileFilter(language);
+		String granularity = args[4].toLowerCase();
+		int numthreads = Integer.parseInt(args[5]);
+		InputBuilder.parse(root, fileids, blocks, filter, numthreads, granularity);
+	}
+	
+	public static void parse(Path root, Path fileids, Path blocks, FileFilter filter, int numthreads, String block_granularity) throws InterruptedException, IOException  {
+	
 		long time = System.currentTimeMillis();
-		
-		//Path root = Paths.get("/home/jeff/Applications/NiCad-4.0/examples/JHotDraw54b1/");
-		Path root = Paths.get("C:/Users/jeffs/Desktop/NiCad-4.0/examples/JHotDraw54b1/");
-		IOFileFilter filter = new SuffixFileFilter(".java");
-		
-		Path ffileids = Paths.get("files.ids");
-		Path fblocks = Paths.get("blocks");
 		
 	// Extract Properties
 		String language = LanguageConstants.JAVA;
-		String block_granularity = BlockGranularityConstants.FUNCTION;
 		String token_granularity = TokenGranularityConstants.TOKEN;
 		
 	// TXL Normalizations
@@ -56,19 +60,16 @@ public class InputBuilder {
 		//token_processors.add(new RemoveEmpty());
 		//token_processors.add(new Stemmer());
 		
-	// Properties
-		int numthreads = 1;
-		
 	// Output
-		Writer fileids_writer = new FileWriter(ffileids.toFile());
-		Writer block_writer = new FileWriter(fblocks.toFile());
+		Writer fileids_writer = new FileWriter(fileids.toFile());
+		Writer block_writer = new FileWriter(blocks.toFile());
 		
 	// Queues
 		IQueue<InputFile> file_queue = QueueBuilder.<InputFile>groupQueue_arrayBacked(50, 20);
 		IQueue<InputBlock> block_queue = QueueBuilder.<InputBlock>groupQueue_arrayBacked(500000, 20);
 		
 	// Initialize Workers
-		FileProducer fp = new FileProducer(FilePathStreamUtil.createReadAtOnceFilePathStream(root, filter), file_queue.getEmitter(), fileids_writer);
+		FileProducer_FromRoot fp = new FileProducer_FromRoot(root, filter, file_queue.getEmitter(), fileids_writer);
 		FileConsumer_BlockProducer fc_bp[] = new FileConsumer_BlockProducer[numthreads];
 		for(int i = 0; i < numthreads; i++)
 			fc_bp[i] = new FileConsumer_BlockProducer(file_queue.getReceiver(), block_queue.getEmitter(),

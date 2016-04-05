@@ -29,6 +29,14 @@ public class TXLUtil {
 		}	
 	}
 	
+	public static ITXLCommand getIfDef() {
+		return new TXLNamed("ifdef");
+	}
+	
+	public static ITXLCommand getPythonPreprocess() {
+		return new TXLNamed("pyindent");
+	}
+	
 	public static List<String> run_linux(List<ITXLCommand> commands, Path file) {
 		//long time = System.currentTimeMillis();
 		

@@ -13,9 +13,13 @@ public class StringInputBlockInput implements InputBlockInput {
 	
 	@Override
 	public InputBlock take() {
+		if(input.isPoisoned()) return null;
 		while(true) {
 			try {
 				String sblock = input.take(); 
+				if(input.isPoisoned()) {
+					return null;
+				}
 				return InputBlock.readDetectionBlock(sblock);
 			} catch (InterruptedException e) {
 				e.printStackTrace();

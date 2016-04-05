@@ -14,7 +14,7 @@ import util.blockingqueue.IEmitter;
  *      -1 = IOException 
  * 
  */
-public class FileProducer extends Thread {
+public class FileProducer_FromFileList extends Thread {
 	
 	FilePathStream in;
 	private IEmitter<InputFile> output;
@@ -30,7 +30,7 @@ public class FileProducer extends Thread {
 	 * @param root The directory to search files in.
 	 * @param maxGroupSize File group sizes.
 	 */
-	public FileProducer(FilePathStream in, IEmitter<InputFile> files, Writer writer) {
+	public FileProducer_FromFileList(FilePathStream in, IEmitter<InputFile> files, Writer writer) {
 		this.in= in;
 		this.output = files;
 		this.exitStatus = null;

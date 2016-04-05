@@ -33,16 +33,22 @@ import util.blockingqueue.QueueBuilder;
 public class SelfCloneDetection {
 
 	public static void main(String args[]) throws IOException {
-		Path input = Paths.get("blocks");
-		Path output = Paths.get("clones");
+		Path input = Paths.get(args[0]);
+		Path output = Paths.get(args[1]);
 		
-		int numThreads = 8;
-		int minLines = 10;
-		int maxLines = Integer.MAX_VALUE;
-		int minTokens = 50;
-		int maxTokens = Integer.MAX_VALUE;
-		double sim = 0.70;
+		int numThreads = Integer.parseInt(args[2]);
 		
+		int minLines = Integer.parseInt(args[3]);
+		int maxLines = Integer.parseInt(args[4]);
+		int minTokens = Integer.parseInt(args[5]);
+		int maxTokens = Integer.parseInt(args[6]);
+		double sim = Double.parseDouble(args[7]);
+		
+		SelfCloneDetection.detect(input, output, numThreads, minLines, maxLines, minTokens, maxTokens, sim);
+		
+	}
+	
+	public static void detect(Path input, Path output, int numThreads, int minLines, int maxLines, int minTokens, int maxTokens, double sim) throws IOException {
 // -- Data
 		// Queues
 		IQueue<String>     Q_input_gtf         = QueueBuilder.<String>groupQueue_arrayBacked(50, 10);
