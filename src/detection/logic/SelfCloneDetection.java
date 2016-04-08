@@ -6,7 +6,6 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
 import detection.GTF.GTFHashMap;
 import detection.GTF.GTFTermFreqComparator;
@@ -16,7 +15,7 @@ import detection.detection.HeuristicCloneDetector;
 import detection.index.ConcurrentHashMapIndex;
 import detection.index.IIndex;
 import detection.prefixer.MyPrefixer;
-import detection.requirements.SizeRequirements;
+import detection.requirements.Requirements;
 import detection.util.BlockFileReader;
 import detection.workers.BlockIndexer;
 import detection.workers.CloneDetection;
@@ -31,24 +30,14 @@ import util.blockingqueue.IQueue;
 import util.blockingqueue.QueueBuilder;
 
 public class SelfCloneDetection {
-
-	public static void main(String args[]) throws IOException {
-		Path input = Paths.get(args[0]);
-		Path output = Paths.get(args[1]);
-		
-		int numThreads = Integer.parseInt(args[2]);
-		
-		int minLines = Integer.parseInt(args[3]);
-		int maxLines = Integer.parseInt(args[4]);
-		int minTokens = Integer.parseInt(args[5]);
-		int maxTokens = Integer.parseInt(args[6]);
-		double sim = Double.parseDouble(args[7]);
-		
-		SelfCloneDetection.detect(input, output, numThreads, minLines, maxLines, minTokens, maxTokens, sim);
-		
-	}
 	
-	public static void detect(Path input, Path output, int numThreads, int minLines, int maxLines, int minTokens, int maxTokens, double sim) throws IOException {
+	public static void detect(
+							  Path input,
+							  Path output,
+							  Requirements requirements,
+							  double sim,
+							  int numThreads
+							 ) throws IOException {
 		long time = System.currentTimeMillis();
 		
 // -- Data
@@ -79,7 +68,7 @@ public class SelfCloneDetection {
 					                      	 index,
 					                         new GTFTermFreqComparator(gtf),
 					                         new MyPrefixer(sim),
-					                         new SizeRequirements(minLines /*minLines*/, maxLines /*maxLines*/, minTokens /*minTokens*/, maxTokens /*maxTokens*/));
+					                         requirements);
 		
 		// Detectors
 		CloneDetection [] W_detection = new CloneDetection[numThreads];

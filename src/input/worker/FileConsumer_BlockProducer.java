@@ -60,8 +60,9 @@ public class FileConsumer_BlockProducer extends Thread {
 			commands.add(TXLUtil.getPythonPreprocess());
 		commands.add(new TXLExtract(this.language, this.block_granularity));
 		commands.addAll(this.txl_normalizations);
-		if(this.token_granularity == TokenGranularityConstants.TOKEN)
+		if(this.token_granularity.equals(TokenGranularityConstants.TOKEN)) {
 			commands.add(new TXLTokenize(this.language, this.block_granularity));
+		}
 	}
 	
 	@Override
@@ -141,6 +142,8 @@ public class FileConsumer_BlockProducer extends Thread {
 	// 3 - Build InputBlocks
 		List<InputBlock> retval = new ArrayList<InputBlock>(blocks.size());
 		for(TempBlock block : blocks) {
+			if(block.tokens.size() == 0) // Skip 0-size blocks.
+				continue;
 			InputBlock iblock = new InputBlock(file.getId(), block.startline, block.endline, block.tokens);
 			retval.add(iblock);
 		}

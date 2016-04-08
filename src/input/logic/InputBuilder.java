@@ -5,16 +5,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.List;
 
-import constants.LanguageConstants;
-import constants.TokenGranularityConstants;
 import input.block.InputBlock;
 import input.file.InputFile;
-import input.tokenprocessors.FilterOperators;
-import input.tokenprocessors.FilterSeperators;
 import input.tokenprocessors.ITokenProcessor;
 import input.txl.ITXLCommand;
 import input.worker.BlockConsumer_BlockWriter;
@@ -25,40 +19,24 @@ import util.blockingqueue.QueueBuilder;
 
 public class InputBuilder {
 	
-	
-	// root fileids blocks language granularity
-	public static void main(String args[]) throws InterruptedException, IOException {
-		Path root = Paths.get(args[0]);
-		Path fileids = Paths.get(args[1]);
-		Path blocks = Paths.get(args[2]);
-		String language = args[3].toLowerCase();
-		FileFilter filter = LanguageConstants.getFileFilter(language);
-		String granularity = args[4].toLowerCase();
-		int numthreads = Integer.parseInt(args[5]);
-		InputBuilder.parse(root, fileids, blocks, filter, numthreads, granularity);
-	}
-	
-	public static void parse(Path root, Path fileids, Path blocks, FileFilter filter, int numthreads, String block_granularity) throws InterruptedException, IOException  {
-	
-		long time = System.currentTimeMillis();
+	public static void parse(Path root,
+						     Path fileids,
+						     Path blocks,
+						     String language,
+						     String block_granularity,
+						     String token_granularity,
+						     FileFilter filter,
+						     List<ITokenProcessor> token_processors,
+						     List<ITXLCommand> txl_normalizations,
+						     int numthreads
+						    ) throws InterruptedException, IOException  {
 		
-	// Extract Properties
-		String language = LanguageConstants.JAVA;
-		String token_granularity = TokenGranularityConstants.TOKEN;
-		
-	// TXL Normalizations
-		List<ITXLCommand> txl_normalizations = new ArrayList<ITXLCommand>(0);
-		//txl_normalizations.add("rename-blind");
-		
-	// Token Processors
-		List<ITokenProcessor> token_processors = new ArrayList<ITokenProcessor>(0);
-		token_processors.add(new FilterOperators(language));
-		token_processors.add(new FilterSeperators(language));
-		//token_processors.add(new NormalizeStrings());
-		//token_processors.add(new SplitStrings());
-		//token_processors.add(new ToLowerCase());
-		//token_processors.add(new RemoveEmpty());
-		//token_processors.add(new Stemmer());
+		Thread.UncaughtExceptionHandler exception_handler = new Thread.UncaughtExceptionHandler() {
+		    public void uncaughtException(Thread th, Throwable ex) {
+		        System.out.println("Failed with exception: " + ex);
+		        System.exit(-1);
+		    }
+		};
 		
 	// Output
 		Writer fileids_writer = new FileWriter(fileids.toFile());
@@ -79,9 +57,13 @@ public class InputBuilder {
 		
 	// Execute
 		// Start
+		fp.setUncaughtExceptionHandler(exception_handler);
 		fp.start();
-		for(int i = 0; i < numthreads; i++)
+		for(int i = 0; i < numthreads; i++) {
+			fc_bp[i].setUncaughtExceptionHandler(exception_handler);
 			fc_bp[i].start();
+		}
+		bc_bw.setUncaughtExceptionHandler(exception_handler);
 		bc_bw.start();
 		
 		// Wait-Poison
@@ -103,9 +85,6 @@ public class InputBuilder {
 		block_writer.flush();
 		block_writer.close();
 		
-	// End
-		time = System.currentTimeMillis() - time;
-		System.out.println(time/1000.0 + " seconds.");
 	}
 	
 }

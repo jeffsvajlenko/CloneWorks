@@ -97,6 +97,10 @@ public class FileProducer_FromRoot extends Thread {
 				
 			});
 			
+			
+			// Flush
+			flush();
+			
 			// Exit Status
 			exitStatus = 0;
 			exitMessage = "Success.";
@@ -105,12 +109,26 @@ public class FileProducer_FromRoot extends Thread {
 			exitStatus = -1;
 			exitMessage = "Failed with exception: " + e.getMessage() + ".";
 		}
+		
+		
+		
 	}
 	
 	private void put(InputFile file) {
 		while(true) {
 			try {
 				output.put(file);
+				break;
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	private void flush() {
+		while(true) {
+			try {
+				output.flush();
 				break;
 			} catch (InterruptedException e) {
 				e.printStackTrace();

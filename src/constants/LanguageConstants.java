@@ -16,13 +16,30 @@ public class LanguageConstants {
 	public final static String CPP = "cpp";
 	public final static String PYTHON = "python";
 	
+	public static String getCanonical(String language) {
+		language = language.toLowerCase();
+		if(language.equals(JAVA))
+			return JAVA;
+		else if (language.equals(C))
+			return C;
+		else if (language.equals(CS))
+			return CS;
+		else if (language.equals(CPP))
+			return CPP;
+		else if (language.equals(PYTHON))
+			return PYTHON;
+		else
+			throw new IllegalArgumentException("Language '" + language + "' is not a valid language.");
+	}
+	
 	/**
 	 * Checks if language is supported.
 	 * @param language
 	 * @return
 	 */
 	public static boolean checkValid(String language) {
-		if(language.equals(JAVA) || language.equals(C) || language.equals(CS) || language.equals(CPP) || language.equals(PYTHON))
+		language = language.toLowerCase();
+		if(language == JAVA || language == C || language == CS || language == CPP || language == PYTHON)
 			return true;
 		else
 			return false;
@@ -76,7 +93,7 @@ public class LanguageConstants {
 	}
 	
 	public static boolean isIfDefLanguage(String language) {
-		if(language.equals(C) || language.equals(CPP))
+		if(language == C || language == CPP)
 			return true;
 		else
 			return false;
