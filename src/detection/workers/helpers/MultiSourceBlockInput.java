@@ -10,8 +10,10 @@ public class MultiSourceBlockInput implements BlockInput {
 	private List<BlockInput> inputs;
 	private BlockInput currentInput;
 	
-	public MultiSourceBlockInput(List<BlockInput> inputs) {
-		this.inputs = new LinkedList<BlockInput>(inputs);
+	public MultiSourceBlockInput(BlockInput ... inputs) {
+		this.inputs = new LinkedList<BlockInput>();
+		for(BlockInput input : inputs)
+			this.inputs.add(input);
 		this.currentInput = this.inputs.remove(0);
 	}
 	

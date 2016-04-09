@@ -81,8 +81,7 @@ public class SelfCloneDetection {
 		
 		// Outputer
 		BufferedWriter out = new BufferedWriter(new FileWriter(output.toFile()));
-		CloneWriter W_output = new CloneWriter(Q_detection_output.getReceiver(),
-				                               out);
+		CloneWriter W_output = new CloneWriter(Q_detection_output.getReceiver(), out);
 		
 // -- Orchestrate
 		

@@ -50,7 +50,7 @@ public class HeuristicCloneDetector implements CloneDetector {
 	private boolean isClone(Block qBlock, Block cBlock) {
 		
 		// Skip if they are the same block, or query block is after candidate block to prevent duplicate checks (cblock is/was a qblock and will find this clone then)
-		if(qBlock.getID() > cBlock.getID())
+		if(qBlock.getID() < cBlock.getID())
 			return false;
 		
 		// Check for overlap (don't want to report self-clones or overlapping clones)

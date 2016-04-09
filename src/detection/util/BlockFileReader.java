@@ -11,6 +11,19 @@ public class BlockFileReader {
 		this.reader = reader;
 	}
 	
+	public void skipBlock() throws IOException {
+		String line;
+		while((line = reader.readLine()) != null) {
+			if(line.equals(">"))
+				break;
+		}
+	}
+	
+	public void skipBlocks(long num) throws IOException {
+		for(long i = 0; i < num; i++)
+			skipBlock();
+	}
+	
 	public String nextInputBlockString() throws IOException {
 		String retval = "";
 		
@@ -24,6 +37,10 @@ public class BlockFileReader {
 			retval += line + "\n";
 		}
 		return retval;
+	}
+	
+	public void close() throws IOException {
+		reader.close();
 	}
 	
 }
