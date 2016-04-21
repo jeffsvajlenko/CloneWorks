@@ -9,6 +9,10 @@ import constants.LanguageConstants;
 
 public class FilterSeperators implements ITokenProcessor {
 
+	public String toString() {
+		return this.getClass().getName();
+	}
+	
 	Set<String> filter;
 	
 	public FilterSeperators(String language) {

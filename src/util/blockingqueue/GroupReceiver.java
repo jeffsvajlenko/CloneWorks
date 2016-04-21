@@ -38,7 +38,7 @@ public class GroupReceiver<E> implements IReceiver<E> {
 				}
 			}
 			
-			// Return next elemetn from buffer
+			// Return next element from buffer
 			return buffer.remove(0);
 		}
 	}

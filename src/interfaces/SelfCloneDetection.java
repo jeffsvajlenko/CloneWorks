@@ -10,6 +10,19 @@ import detection.requirements.SizeRequirements;
 public class SelfCloneDetection {
 
 	public static void main(String args[]) throws IOException {
+		if(args.length != 8) {
+			System.out.println("Usage: blockfile clonefile numThreads minLines maxLines minTokens maxTokens minSimilarity");
+			System.out.println("        blockfile: Path to file containing the blocks.");
+			System.out.println("        clonefile: Path to file to write clones to.");
+			System.out.println("       numThreads: Number of threads to use per parallelized task.");
+			System.out.println("         minLines: Minimum clone size in lines.");
+			System.out.println("         maxLines: Maximum clone size in lines.");
+			System.out.println("        minTokens: Minimum clone size in tokens.");
+			System.out.println("        maxTokens: Maximum clone size in tokens.");
+			System.out.println("    minSimilarity: Minimum clone similarity.");
+			System.exit(-1);
+		}
+		
 		Path input = Paths.get(args[0]);
 		Path output = Paths.get(args[1]);
 		

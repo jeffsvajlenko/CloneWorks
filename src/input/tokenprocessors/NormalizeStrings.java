@@ -10,6 +10,10 @@ import java.util.List;
  */
 public class NormalizeStrings implements ITokenProcessor {
 
+	public String toString() {
+		return this.getClass().getName();
+	}
+	
 	public NormalizeStrings() {
 	}
 	

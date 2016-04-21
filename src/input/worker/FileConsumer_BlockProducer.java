@@ -178,7 +178,10 @@ public class FileConsumer_BlockProducer extends Thread {
 				TempBlock block = new TempBlock(startline, endline, terms);
 				ret.add(block);
 			} else if(inBlock) {
-				terms.add(line.trim());
+				line = line.trim();
+				if(!line.equals("")) {
+					terms.add(line.trim());
+				}
 			} else {
 				System.err.println("Line found outside of a block: " + line + " for file: " + file.toString());
 			}

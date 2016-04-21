@@ -5,6 +5,15 @@ import java.nio.file.Paths;
 
 public class TXLNormalization implements ITXLCommand {
 
+	@Override
+	public String toString() {
+		String retval = script;
+		for(String arg : arguments) {
+			retval += " " + arg;
+		}
+		return retval;
+	}
+	
 	String[] arguments;
 	
 	private String script;

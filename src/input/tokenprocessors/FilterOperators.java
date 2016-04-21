@@ -8,7 +8,11 @@ import java.util.Set;
 import constants.LanguageConstants;
 
 public class FilterOperators implements ITokenProcessor {
-
+	
+	public String toString() {
+		return this.getClass().getName();
+	}
+	
 	Set<String> filter;
 	
 	public FilterOperators(String language) {

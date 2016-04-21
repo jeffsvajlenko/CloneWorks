@@ -1,14 +1,12 @@
 package detection.logic;
 
-import java.io.IOException;
-import java.nio.file.Path;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.Path;
 
-import detection.GTF.GTFHashMap;
-import detection.GTF.GTFTermFreqComparator;
 import detection.block.Block;
 import detection.detection.Clone;
 import detection.detection.HeuristicCloneDetector;
@@ -21,18 +19,15 @@ import detection.util.BlockFileReader;
 import detection.workers.BlockIndexer;
 import detection.workers.CloneDetection;
 import detection.workers.CloneWriter;
-import detection.workers.GTFBuilder;
 import detection.workers.helpers.MultiSourceBlockInput;
 import detection.workers.helpers.ObjectBlockInput;
-import detection.workers.helpers.ObjectInputBlockInput;
 import detection.workers.helpers.StringBlockInput;
 import detection.workers.helpers.StringInputBlockInput;
-import input.block.InputBlock;
 import util.blockingqueue.IEmitter;
 import util.blockingqueue.IQueue;
 import util.blockingqueue.QueueBuilder;
 
-public class SelfPartitionedCloneDetection {
+public class SelfPartitionedCloneDetectionPreSorted {
 	
 	public static void detect(
 			  Path input,
@@ -62,29 +57,21 @@ public class SelfPartitionedCloneDetection {
 			System.out.println("Indexing " + blockPosition + " to " + (blockPosition + blockgroupsize));
 			
 // Data
-			GTFHashMap gtf = new GTFHashMap(1000);
 			IIndex index = new ConcurrentHashMapIndex(1000);
-			GTFTermFreqComparator sorter = new GTFTermFreqComparator(gtf);
 			
 			//Queues
-			IQueue<String> Q_input_gtf = QueueBuilder.<String>groupQueue_arrayBacked(capacity, maxGroupSize);
-			IQueue<InputBlock> Q_gtf_indexer = QueueBuilder.groupQueue_linkedListBacked(maxGroupSize);
+			IQueue<String> Q_indexer_in = QueueBuilder.groupQueue_linkedListBacked(maxGroupSize);
 			IQueue<Block> Q_indexer_out = QueueBuilder.groupQueue_linkedListBacked(maxGroupSize);
 			IQueue<String> Q_detection_in = QueueBuilder.groupQueue_arrayBacked(capacity, maxGroupSize);
 // Workers
-			// GTF Builders
-			GTFBuilder [] W_gtfbuilder = new GTFBuilder[numThreads];
-			for(int i = 0; i < numThreads; i++)
-				W_gtfbuilder[i] = new GTFBuilder(new StringInputBlockInput(Q_input_gtf.getReceiver()),
-						                         Q_gtf_indexer.getEmitter(),
-						                         gtf);
+			
 			// Indexers
 			BlockIndexer [] W_indexers = new BlockIndexer[numThreads];
 			for(int i = 0; i < numThreads; i++)
-				W_indexers[i] = new BlockIndexer(new ObjectInputBlockInput(Q_gtf_indexer.getReceiver()),
+				W_indexers[i] = new BlockIndexer(new StringInputBlockInput(Q_indexer_in.getReceiver()),
 												 Q_indexer_out.getEmitter(),
 						                      	 index,
-						                         sorter,
+						                         null,
 						                         prefixer,
 						                         requirements);
 			
@@ -92,7 +79,7 @@ public class SelfPartitionedCloneDetection {
 			CloneDetection [] W_detection = new CloneDetection[numThreads];
 			for(int i = 0; i < numThreads; i++) {
 				ObjectBlockInput blockFromIndexer = new ObjectBlockInput(Q_indexer_out.getReceiver());
-				StringBlockInput blockFromFile = new StringBlockInput(Q_detection_in.getReceiver(), sorter, prefixer, requirements);
+				StringBlockInput blockFromFile = new StringBlockInput(Q_detection_in.getReceiver(), null, prefixer, requirements);
 				MultiSourceBlockInput detectionInput = new MultiSourceBlockInput(blockFromIndexer, blockFromFile);
 				W_detection[i] = new CloneDetection(detectionInput,
 													Q_output.getEmitter(),
@@ -101,13 +88,14 @@ public class SelfPartitionedCloneDetection {
 			}
 			
 // Orchestrate
-			// Build GTF
-			//System.out.println("\tBuilding GTF....");
-			for(int i = 0; i < numThreads; i++)
-				W_gtfbuilder[i].start();
 			
-			// Feed
-			IEmitter<String> sblock_emitter = Q_input_gtf.getEmitter();
+	// Index
+			// Start Indexers
+			for(int i = 0; i < numThreads; i++)
+				W_indexers[i].start();
+			
+			// Feed Next set of blocks
+			IEmitter<String> sblock_emitter = Q_indexer_in.getEmitter();
 			String sblock;
 			for(int i = 0; i < blockgroupsize; i++) {
 				sblock = indexBlockReader.nextInputBlockString();
@@ -126,36 +114,13 @@ public class SelfPartitionedCloneDetection {
 					}
 				}
 			}
-			while(true) {try {sblock_emitter.flush(); break;} catch (InterruptedException e) {e.printStackTrace();}}
-			//System.out.println("\t\t" + (blockPosition-originalBlockPosition) + " blocks fed.");
+			while(true) {try {sblock_emitter.flush(); break;} catch (InterruptedException e) {e.printStackTrace();}} // flush
 			
-			// Poison GTF
-			while(true) {try {Q_input_gtf.poisonReceivers(); break;} catch (InterruptedException e) { e.printStackTrace();}}
-			
-			// Wait for GTF to complete
-			for(int i = 0; i < numThreads; i++) {
-				while(true) {
-					try {
-						W_gtfbuilder[i].join();
-						//System.out.println("\t\tGTF Builder [" + i + "] has completed with exit: " + W_gtfbuilder[i].getExitStatus() + " - " + W_gtfbuilder[i].getExitMessage());
-						W_gtfbuilder[i] = null;
-						break;
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-				}
-			}
-			//System.out.println("\t" + gtf.getKeySet().size() + " terms tracked.\n");
-			
-	// Index
-			//System.out.println("\tIndexing... " + Q_gtf_indexer.size() + " blocks to process.");
-			for(int i = 0; i < numThreads; i++)
-				W_indexers[i].start();
 			
 			// Poison (unbounded queue already full)
 			while(true) {
 				try {
-					Q_gtf_indexer.poisonReceivers();
+					Q_indexer_in.poisonReceivers();
 					break;
 				} catch (InterruptedException e) {
 					e.printStackTrace();

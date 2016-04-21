@@ -5,6 +5,11 @@ import java.nio.file.Paths;
 
 public class TXLNamed implements ITXLCommand {
 
+	@Override
+	public String toString() {
+		return script;
+	}
+	
 	String name;
 	
 	private String script;

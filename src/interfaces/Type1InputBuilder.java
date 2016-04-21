@@ -10,31 +10,21 @@ import java.util.List;
 import constants.BlockGranularityConstants;
 import constants.LanguageConstants;
 import constants.TokenGranularityConstants;
-import input.tokenprocessors.FilterOperators;
-import input.tokenprocessors.FilterSeperators;
 import input.tokenprocessors.ITokenProcessor;
-import input.tokenprocessors.NGram;
-import input.tokenprocessors.NormalizeStrings;
+import input.tokenprocessors.Joiner;
 import input.tokenprocessors.RemoveEmpty;
-import input.tokenprocessors.SplitStrings;
-import input.tokenprocessors.Stemmer;
-import input.tokenprocessors.ToLowerCase;
 import input.tokenprocessors.TrimLeadingTrailingWhitespace;
 import input.txl.ITXLCommand;
-import input.txl.TXLNormalization;
 
-public class InputBuilder {
-
+public class Type1InputBuilder {
 	public static void main(String args[]) throws InterruptedException, IOException {
-		if(args.length != 7 && args.length != 1) {
-			System.out.println("Usage: ");
+		if(args.length != 6) {
 			System.out.println("Usage: system fileids_out blocks_out language granularity token_type numthreads");
 			System.out.println("               system: Path to input system.");
 			System.out.println("          fileids_out: File to track file ids.");
 			System.out.println("           blocks_out: File to write tokenized blocks to.");
 			System.out.println("             language: Language of input system.  One of: {java,c,cs,py}.");
 			System.out.println("    block_granularity: The granularity of the blocks.  One of: {file,function,block}.");
-			System.out.println("           token_type: The type of tokenization.  One of: {token,line}.");
 			System.out.println("           numthreads: Number of threads to use per parallelized task.");
 			System.exit(-1);
 		}
@@ -44,27 +34,26 @@ public class InputBuilder {
 		Path blocks              = Paths.get(args[2]);
 		String language          = LanguageConstants.getCanonical(args[3]);
 		String block_granularity = BlockGranularityConstants.getCanonical(args[4]);
-		String token_granularity = TokenGranularityConstants.getCanonized(args[5]);
-		int numthreads           = Integer.parseInt(args[6]);
+		String token_granularity = TokenGranularityConstants.LINE;
+		int numthreads           = Integer.parseInt(args[5]);
 		
 		FileFilter filter = LanguageConstants.getFileFilter(language);
 		
 		// Token Processors
 		List<ITokenProcessor> token_processors = new ArrayList<ITokenProcessor>(0);
-		token_processors.add(new FilterOperators(language));
-		token_processors.add(new FilterSeperators(language));
-		token_processors.add(new NGram(6));
+		token_processors.add(new TrimLeadingTrailingWhitespace());
+		token_processors.add(new RemoveEmpty());
+		token_processors.add(new Joiner());
+		//token_processors.add(new FilterOperators(language));
+		//token_processors.add(new FilterSeperators(language));
 		//token_processors.add(new NormalizeStrings());
 		//token_processors.add(new SplitStrings());
 		//token_processors.add(new ToLowerCase());
 		//token_processors.add(new RemoveEmpty());
-		//token_processors.add(new TrimLeadingTrailingWhitespace());
 		//token_processors.add(new Stemmer());
 		
 		// TXL Normalizations
 		List<ITXLCommand> txl_normalizations = new ArrayList<ITXLCommand>(0);
-		txl_normalizations.add(new TXLNormalization("rename-blind", new String[]{}, language, block_granularity));
-		txl_normalizations.add(new TXLNormalization("abstract", new String[]{"literal"}, language, block_granularity));
 		
 		
 		
@@ -84,5 +73,4 @@ public class InputBuilder {
 		time = System.currentTimeMillis() - time;
 		System.out.println(time/1000.0 + " seconds.");
 	}
-	
 }

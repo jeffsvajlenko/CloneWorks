@@ -5,6 +5,10 @@ import java.nio.file.Paths;
 
 public class TXLTokenize implements ITXLCommand {
 	
+	public String toString() {
+		return script;
+	}
+	
 	private String script;
 	private String executable;
 	

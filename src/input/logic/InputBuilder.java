@@ -38,6 +38,23 @@ public class InputBuilder {
 		    }
 		};
 		
+	// Echo Config
+		System.out.println("ThriftyClone - InputBuilder");
+		System.out.println("Input = " + root);
+		System.out.println("Files = " + fileids);
+		System.out.println("Blocks = " + blocks);
+		System.out.println("Language = " + language);
+		System.out.println("Block Granularity = " + block_granularity);
+		System.out.println("Token Granularity = " + token_granularity);
+		System.out.println("TXL Normalizations:");
+		for(ITXLCommand command : txl_normalizations) {
+			System.out.println("\t" + command);
+		}
+		System.out.println("Token Processors:");
+		for(ITokenProcessor processor : token_processors) {
+			System.out.println("\t" + processor);
+		}
+		
 	// Output
 		Writer fileids_writer = new FileWriter(fileids.toFile());
 		Writer block_writer = new FileWriter(blocks.toFile());

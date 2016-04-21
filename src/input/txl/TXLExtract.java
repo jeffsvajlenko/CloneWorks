@@ -5,6 +5,11 @@ import java.nio.file.Paths;
 
 public class TXLExtract implements ITXLCommand {
 
+	@Override
+	public String toString() {
+		return script;
+	}
+	
 	private String script;
 	private String executable;
 	

@@ -10,6 +10,46 @@ import java.util.Map;
 
 public class InputBlock implements Serializable {
 	
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + endline;
+		result = prime * result + (int) (fileid ^ (fileid >>> 32));
+		result = prime * result + (int) (id ^ (id >>> 32));
+		result = prime * result + numtokens;
+		result = prime * result + startline;
+		result = prime * result + ((tokens == null) ? 0 : tokens.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		InputBlock other = (InputBlock) obj;
+		if (endline != other.endline)
+			return false;
+		if (fileid != other.fileid)
+			return false;
+		if (id != other.id)
+			return false;
+		if (numtokens != other.numtokens)
+			return false;
+		if (startline != other.startline)
+			return false;
+		if (tokens == null) {
+			if (other.tokens != null)
+				return false;
+		} else if (!tokens.equals(other.tokens))
+			return false;
+		return true;
+	}
+
 	private static final long serialVersionUID = 1L;
 	
 	private long id;

@@ -10,6 +10,10 @@ import java.util.List;
  */
 public class SplitStrings implements ITokenProcessor {
 
+	public String toString() {
+		return this.getClass().getName();
+	}
+	
 	@Override
 	public List<String> process(List<String> tokens) {
 		List<String> retval = new LinkedList<String>();
