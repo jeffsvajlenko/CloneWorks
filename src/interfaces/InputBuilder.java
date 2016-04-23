@@ -1,88 +1,93 @@
 package interfaces;
 
-import java.io.FileFilter;
 import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
 
-import constants.BlockGranularityConstants;
-import constants.LanguageConstants;
-import constants.TokenGranularityConstants;
-import input.tokenprocessors.FilterOperators;
-import input.tokenprocessors.FilterSeperators;
+import org.apache.commons.lang3.time.DurationFormatUtils;
+
 import input.tokenprocessors.ITokenProcessor;
-import input.tokenprocessors.NGram;
-import input.tokenprocessors.NormalizeStrings;
-import input.tokenprocessors.RemoveEmpty;
-import input.tokenprocessors.SplitStrings;
-import input.tokenprocessors.Stemmer;
-import input.tokenprocessors.ToLowerCase;
-import input.tokenprocessors.TrimLeadingTrailingWhitespace;
 import input.txl.ITXLCommand;
-import input.txl.TXLNormalization;
 
 public class InputBuilder {
 
 	public static void main(String args[]) throws InterruptedException, IOException {
-		if(args.length != 7 && args.length != 1) {
-			System.out.println("Usage: ");
-			System.out.println("Usage: system fileids_out blocks_out language granularity token_type numthreads");
-			System.out.println("               system: Path to input system.");
-			System.out.println("          fileids_out: File to track file ids.");
-			System.out.println("           blocks_out: File to write tokenized blocks to.");
-			System.out.println("             language: Language of input system.  One of: {java,c,cs,py}.");
-			System.out.println("    block_granularity: The granularity of the blocks.  One of: {file,function,block}.");
-			System.out.println("           token_type: The type of tokenization.  One of: {token,line}.");
-			System.out.println("           numthreads: Number of threads to use per parallelized task.");
+		if (args.length != 6 && args.length != 7) {
+			System.out.println("Usage: system fileids blocks language granularity configurationFile [numthreads]");
+			System.out.println("         system: Path to input system.");
+			System.out.println("       filesids: File to track file ids.");
+			System.out.println("         blocks: File to write tokenized blocks to.");
+			System.out.println("       language: Language of input system.  One of: {java,c,cs,py}.");
+			System.out.println("    granularity: The granularity of the blocks.  One of: {file,function,block}.");
+			System.out.println("  configuration: The name of the configuration file in 'config/'.");
+			System.out.println("     numthreads: Number of threads to use per parallelized task.  Optional, default is number of cores.");
 			System.exit(-1);
+			return;
 		}
 		
-		Path root                = Paths.get(args[0]);
-		Path fileids             = Paths.get(args[1]);
-		Path blocks              = Paths.get(args[2]);
-		String language          = LanguageConstants.getCanonical(args[3]);
-		String block_granularity = BlockGranularityConstants.getCanonical(args[4]);
-		String token_granularity = TokenGranularityConstants.getCanonized(args[5]);
-		int numthreads           = Integer.parseInt(args[6]);
+		String system = args[0];
+		String fileids = args[1];
+		String blocks = args[2];
+		String language = args[3];
+		String granularity = args[4];
+		String configfile = args[5];
+		String numthreads = null;
+		if(args.length == 7) {
+			numthreads = args[6];
+		}
 		
-		FileFilter filter = LanguageConstants.getFileFilter(language);
+		InputBuilderConfiguration config;
+		try {
+			config = new InputBuilderConfiguration(system, fileids, blocks, language, granularity, configfile, numthreads);
+		} catch(ConfigurationException e) {
+			System.err.println("Error: " + e.getMessage());
+			System.exit(-1);
+			return;
+		}
 		
-		// Token Processors
-		List<ITokenProcessor> token_processors = new ArrayList<ITokenProcessor>(0);
-		token_processors.add(new FilterOperators(language));
-		token_processors.add(new FilterSeperators(language));
-		token_processors.add(new NGram(6));
-		//token_processors.add(new NormalizeStrings());
-		//token_processors.add(new SplitStrings());
-		//token_processors.add(new ToLowerCase());
-		//token_processors.add(new RemoveEmpty());
-		//token_processors.add(new TrimLeadingTrailingWhitespace());
-		//token_processors.add(new Stemmer());
+		// Echo Config
+		System.out.println();
+		System.out.println("ThriftyClone Version 1.0");
+		System.out.println();
+		System.out.println("Input Builder");
+		System.out.println();
+		System.out.println("System=" + config.getSystem().toAbsolutePath());
+		System.out.println("FileIDs=" + config.getFileids().toAbsolutePath());
+		System.out.println("Blocks=" + config.getBlocks().toAbsolutePath());
+		System.out.println("Language=" + config.getLanguage());
+		System.out.println("Granularity=" + config.getBlock_granularity());
+		System.out.println("Configuration=" + configfile);
 		
-		// TXL Normalizations
-		List<ITXLCommand> txl_normalizations = new ArrayList<ITXLCommand>(0);
-		txl_normalizations.add(new TXLNormalization("rename-blind", new String[]{}, language, block_granularity));
-		txl_normalizations.add(new TXLNormalization("abstract", new String[]{"literal"}, language, block_granularity));
+		if(config.getTxl_commands().size() > 0) {
+			System.out.println();
+			int i = 1;
+			for(ITXLCommand txlc : config.getTxl_commands()) {
+				System.out.println("txl[" + (i++) + "]=" + txlc);
+			}
+		}
 		
+		if(config.getToken_processors().size() > 0) {
+			System.out.println();
+			int i = 1;
+			for(ITokenProcessor tokproc : config.getToken_processors()) {
+				System.out.println("tokproc[" + (i++) + "]=" + tokproc);
+			}
+		}
 		
+		System.out.println("");
+		System.out.println("Parsing....");
+		System.out.println("");
 		
-		// RUN
 		long time = System.currentTimeMillis();
-		input.logic.InputBuilder.parse( /*Input*/ root,
-						          /*File Output*/ fileids,
-						         /*Block Output*/ blocks,
-						             /*Language*/ language,
-						    /*Block Granularity*/ block_granularity,
-						    /*Token Granularity*/ token_granularity,
-						          /*File Filter*/ filter,
-						     /*Token Processors*/ token_processors,
-						   /*TXL Normalizations*/ txl_normalizations,
-						    /*Number of Threads*/ numthreads
-				          );
+		try {
+			input.logic.InputBuilder.parse(config);
+		} catch(Exception e) {
+			System.out.println("ERROR: Failed with exception: " + e.getMessage());
+			e.printStackTrace();
+			System.exit(-1);
+			return;
+		}
 		time = System.currentTimeMillis() - time;
-		System.out.println(time/1000.0 + " seconds.");
+		System.out.println("");
+		System.out.println("Elapsed Time: " + DurationFormatUtils.formatDurationHMS(time));
 	}
 	
 }

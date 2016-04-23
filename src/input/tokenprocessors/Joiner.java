@@ -9,13 +9,16 @@ import java.util.List;
  *
  */
 public class Joiner implements ITokenProcessor {
-
-	public String toString() {
-		return this.getClass().getName();
+	
+	public Joiner(String init) {
+		this();
+	}
+	
+	public Joiner() {
 	}
 	
 	@Override
-	public List<String> process(List<String> tokens) {
+	public List<String> process(List<String> tokens, int language, int granularity, int tokenType) {
 		List<String> retval = new ArrayList<String>(1);
 		String join = "";
 		for(String token : tokens) {
@@ -23,6 +26,10 @@ public class Joiner implements ITokenProcessor {
 		}
 		retval.add(join);
 		return retval;
+	}
+	
+	public String toString() {
+		return this.getClass().getName();
 	}
 
 }

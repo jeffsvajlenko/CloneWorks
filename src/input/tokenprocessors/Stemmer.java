@@ -5,12 +5,14 @@ import java.util.List;
 
 public class Stemmer implements ITokenProcessor {
 
-	public String toString() {
-		return this.getClass().getName();
+	public Stemmer(String init) {
+		this();
 	}
 	
+	public Stemmer() {}
+	
 	@Override
-	public List<String> process(List<String> tokens) {
+	public List<String> process(List<String> tokens, int language, int granularity, int tokenType) {
 		List<String> retval = new LinkedList<String>();
 		for(String str : tokens) {
 			util.Stemmer stemmer = new util.Stemmer();
@@ -20,6 +22,10 @@ public class Stemmer implements ITokenProcessor {
 			retval.add(stemmer.toString());
 		}
 		return retval;
+	}
+	
+	public String toString() {
+		return this.getClass().getName();
 	}
 
 }

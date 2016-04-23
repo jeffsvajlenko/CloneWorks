@@ -28,6 +28,8 @@ public class BCBConvert {
 		String line;
 		BufferedReader in_files = new BufferedReader(new FileReader(files.toFile()));
 		while((line = in_files.readLine()) != null) {
+			if(line.startsWith("#"))
+				continue;
 			String [] parts = line.split("\t",2);
 			Long fileid = Long.parseLong(parts[0]);
 			Path path = Paths.get(parts[1]);

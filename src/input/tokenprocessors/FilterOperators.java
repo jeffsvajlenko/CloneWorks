@@ -13,14 +13,21 @@ public class FilterOperators implements ITokenProcessor {
 		return this.getClass().getName();
 	}
 	
-	Set<String> filter;
+	Set<String> java_filter = new HashSet<String>();
+	Set<String> c_filter = new HashSet<String>();
+	Set<String> cs_filter = new HashSet<String>();
+	Set<String> cpp_filter = new HashSet<String>();
+	Set<String> python_filter = new HashSet<String>();
 	
-	public FilterOperators(String language) {
-		LanguageConstants.ifInvalidThrowException(language);
+	public FilterOperators(String init) {
+		this();
+	}
+	
+	public FilterOperators() {
+		Set<String> filter;
 		
-		filter = new HashSet<String>();
-		
-		if(language.equals(LanguageConstants.JAVA)) {
+		filter = java_filter;
+		{	
 			// Unary Operators
 			filter.add("=");   filter.add(">");  filter.add("<");   filter.add("!");  filter.add("~");  filter.add("?");
 			filter.add(":");
@@ -32,14 +39,18 @@ public class FilterOperators implements ITokenProcessor {
 			filter.add("/=");  filter.add("&="); filter.add("|=");  filter.add("^="); filter.add("%="); filter.add("<<=");
 			filter.add(">>="); filter.add(">>>=");
 		}
-		if(language.equals(LanguageConstants.C)) {
+		
+		filter = c_filter;
+		{
 			filter.add("&");  filter.add("*");  filter.add("+");  filter.add("-");  filter.add("~");   filter.add("!");
 			filter.add("->"); filter.add("++"); filter.add("--"); filter.add("<<"); filter.add(">>");  filter.add("<=");
 			filter.add(">="); filter.add("=="); filter.add("!="); filter.add("&&"); filter.add("||");  filter.add("*=");
 			filter.add("/="); filter.add("%="); filter.add("+="); filter.add("-="); filter.add("<<="); filter.add(">>=");
 			filter.add("&="); filter.add("^="); filter.add("|=");
 		}
-		if(language.equals(LanguageConstants.CPP)) {
+		
+		filter = cpp_filter;
+		{
 			// non_gt_binary_operator
 			filter.add("||"); filter.add("&&"); filter.add("|");  filter.add("^");  filter.add("&");   filter.add("=="); filter.add("!=");
 			filter.add("<");  filter.add("<="); filter.add(">="); filter.add("<<"); filter.add(">>");  filter.add("+");  filter.add("-");
@@ -70,7 +81,9 @@ public class FilterOperators implements ITokenProcessor {
 			filter.add("&="); filter.add("^="); filter.add("|="); filter.add("->*"); filter.add(".*"); filter.add("::");
 			filter.add("**");
 		}
-		if(language.equals(LanguageConstants.CS)) {
+		
+		filter = cs_filter;
+		{
 			filter.add("+");  filter.add("-");  filter.add("*");   filter.add("/");   filter.add("%");   filter.add("&");  
 			filter.add("|");  filter.add("^");  filter.add("!");   filter.add("~");   filter.add("=");   filter.add("<");  
 			filter.add(">");  filter.add("?");  filter.add("??");  filter.add("::");  filter.add("++");  filter.add("--");
@@ -79,7 +92,9 @@ public class FilterOperators implements ITokenProcessor {
 			filter.add("&="); filter.add("|="); filter.add("^=");  filter.add("<<");  filter.add("<<="); filter.add("=>");
 			filter.add(">>"); filter.add(">>=");  
 		}
-		if(language.equals(LanguageConstants.PYTHON)) {
+		
+		filter = python_filter;
+		{
 			filter.add("="); filter.add("+="); filter.add("-="); filter.add("*="); filter.add("/="); filter.add("//="); 
 			filter.add("%="); filter.add("&="); filter.add("|="); filter.add("^="); filter.add(">>="); filter.add("<<="); 
 			filter.add("**=");
@@ -88,7 +103,30 @@ public class FilterOperators implements ITokenProcessor {
 	}
 	
 	@Override
-	public List<String> process(List<String> tokens) {
+	public List<String> process(List<String> tokens, int language, int granularity, int tokenType) {
+		LanguageConstants.ifInvalidThrowException(language);
+		
+		Set<String> filter;
+		switch(language) {
+		case LanguageConstants.JAVA:
+			filter = java_filter;
+			break;
+		case LanguageConstants.C:
+			filter = c_filter;
+			break;
+		case LanguageConstants.CPP:
+			filter = cpp_filter;
+			break;
+		case LanguageConstants.CS:
+			filter = cs_filter;
+			break;
+		case LanguageConstants.PYTHON:
+			filter = python_filter;
+			break;
+		default:
+			throw new IllegalArgumentException("Invalid language.  How did this happen?  It was checked!  Code bug!");
+		}
+		
 		List<String> retval = new LinkedList<String>();
 		for(String str : tokens) {
 			if (!filter.contains(str))

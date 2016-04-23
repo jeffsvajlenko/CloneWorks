@@ -1,8 +1,8 @@
 package input.worker;
-import java.io.Writer;
 import java.nio.file.Path;
 
 import input.file.InputFile;
+import input.utils.FileIDWriter;
 import input.utils.FilePathStream;
 import util.blockingqueue.IEmitter;
 
@@ -21,7 +21,7 @@ public class FileProducer_FromFileList extends Thread {
 	private Integer exitStatus;
 	private String exitMessage;
 	private long currentid;
-	private Writer writer;
+	private FileIDWriter writer;
 	
 	/**
 	 * 
@@ -30,7 +30,7 @@ public class FileProducer_FromFileList extends Thread {
 	 * @param root The directory to search files in.
 	 * @param maxGroupSize File group sizes.
 	 */
-	public FileProducer_FromFileList(FilePathStream in, IEmitter<InputFile> files, Writer writer) {
+	public FileProducer_FromFileList(FilePathStream in, IEmitter<InputFile> files, FileIDWriter writer) {
 		this.in= in;
 		this.output = files;
 		this.exitStatus = null;
@@ -66,7 +66,7 @@ public class FileProducer_FromFileList extends Thread {
 				
 				// Output to file tracker (optionally)
 				if(writer != null)
-					writer.write(ifile.getId() + "\t" + ifile.getPath() + "\n");
+					writer.write(ifile.getId(), ifile.getPath());
 				
 				// Emit, in case of interruption re-try until succeeds
 				boolean success = false;

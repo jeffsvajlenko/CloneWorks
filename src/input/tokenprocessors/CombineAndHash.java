@@ -23,7 +23,7 @@ public class CombineAndHash implements ITokenProcessor {
 	}
 	
 	@Override
-	public List<String> process(List<String> tokens) {
+	public List<String> process(List<String> tokens, int language, int granularity, int tokenType) {
 		// Create String
 		String combine = "";
 		for(String token : tokens)

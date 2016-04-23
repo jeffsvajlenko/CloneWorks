@@ -28,8 +28,8 @@ public class SizeRequirements implements Requirements {
 	
 	@Override
 	public boolean approve(InputBlock block) {
-		if(block.numTokens() > maxTokens) return false;
-		else if (block.numTokens() < minTokens) return false;
+		if(block.getNumOriginalTokens() > maxTokens) return false;
+		else if (block.getNumOriginalTokens() < minTokens) return false;
 		else if (block.numLines() > maxLines) return false;
 		else if (block.numLines() < minLines) return false;
 		else return true;

@@ -5,12 +5,14 @@ import java.util.List;
 
 public class ToLowerCase implements ITokenProcessor {
 
-	public String toString() {
-		return this.getClass().getName();
+	public ToLowerCase(String init) {
+		this();
 	}
 	
+	public ToLowerCase() {}
+	
 	@Override
-	public List<String> process(List<String> tokens) {
+	public List<String> process(List<String> tokens, int language, int granularity, int tokenType) {
 		List<String> retval = new LinkedList<String>();
 		
 		for(String str : tokens) {
@@ -18,6 +20,10 @@ public class ToLowerCase implements ITokenProcessor {
 		}
 		
 		return retval;
+	}
+	
+	public String toString() {
+		return this.getClass().getName();
 	}
 
 }

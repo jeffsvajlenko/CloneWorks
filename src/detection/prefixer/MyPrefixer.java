@@ -17,7 +17,7 @@ public class MyPrefixer implements Prefixer {
 
 	@Override
 	public Block prefix(InputBlock block) {
-		int numTokens = block.numTokens();
+		int numTokens = block.getNumProcessedTokens();
 		int prefixLength = numTokens - (int) Math.ceil(sim * numTokens) + 1;
 		
 		ArrayList<BlockElement> tfs = new ArrayList<BlockElement>(block.getTokens().size());

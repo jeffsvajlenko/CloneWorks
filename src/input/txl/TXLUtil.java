@@ -108,8 +108,7 @@ public class TXLUtil {
 		p.destroy();
 		
 		if(retval != 0) {
-			System.out.println(lines.size());
-			System.out.println("FAILED: " + file + " Code: " + retval);
+			//System.out.println("	FAILED: " + file + " Code: " + retval);
 			return null;
 		}
 		

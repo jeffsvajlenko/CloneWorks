@@ -1,13 +1,14 @@
 package input.worker;
+
 import java.io.FileFilter;
 import java.io.IOException;
-import java.io.Writer;
 import java.nio.file.FileVisitResult;
 import java.nio.file.FileVisitor;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
 import input.file.InputFile;
+import input.utils.FileIDWriter;
 import util.blockingqueue.IEmitter;
 
 /**
@@ -26,7 +27,7 @@ public class FileProducer_FromRoot extends Thread {
 	private Integer exitStatus;
 	private String exitMessage;
 	private long currentid;
-	private Writer writer;
+	private FileIDWriter writer;
 	
 	/**
 	 * 
@@ -35,7 +36,7 @@ public class FileProducer_FromRoot extends Thread {
 	 * @param root The directory to search files in.
 	 * @param maxGroupSize File group sizes.
 	 */
-	public FileProducer_FromRoot(Path root, FileFilter pattern, IEmitter<InputFile> files, Writer writer) {
+	public FileProducer_FromRoot(Path root, FileFilter pattern, IEmitter<InputFile> files, FileIDWriter writer) {
 		this.root = root;
 		this.pattern = pattern;
 		this.output = files;
@@ -79,7 +80,7 @@ public class FileProducer_FromRoot extends Thread {
 					if(pattern.accept(file.toFile())) {
 						InputFile ifile = new InputFile(currentid++, file);
 						if(writer != null)
-							writer.write(ifile.getId() + "\t" + ifile.getPath() + "\n");
+							writer.write(ifile.getId(),ifile.getPath());
 						put(ifile);
 					}
 					return FileVisitResult.CONTINUE;

@@ -34,6 +34,8 @@ public class BlockFileReader {
 				return null;
 			if(line.equals(">"))
 				break;
+			if(line.startsWith("#"))
+				continue;
 			retval += line + "\n";
 		}
 		return retval;

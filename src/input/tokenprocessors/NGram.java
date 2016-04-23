@@ -5,18 +5,18 @@ import java.util.List;
 
 public class NGram implements ITokenProcessor {
 
-	public String toString() {
-		return this.getClass().getName() + " " + n;
-	}
-	
 	private int n;
+	
+	public NGram(String init) {
+		this.n = Integer.parseInt(init);
+	}
 	
 	public NGram(int n) {
 		this.n = n;
-	}
+	}	
 	
 	@Override
-	public List<String> process(List<String> tokens) {
+	public List<String> process(List<String> tokens, int language, int granularity, int tokenType) {
 		String[] toks = new String[tokens.size()];
 		toks = tokens.toArray(toks);
 		
@@ -32,29 +32,9 @@ public class NGram implements ITokenProcessor {
 		
 		return retval;
 	}
-	
-	public static void main(String args[]) {
-		LinkedList<String> tokens = new LinkedList<String>();
-		tokens.add("a");
-		tokens.add("b");
-		tokens.add("c");
-		tokens.add("d");
-		tokens.add("e");
-		tokens.add("f");
-		tokens.add("g");
-		tokens.add("h");
-		tokens.add("i");
-		tokens.add("j");
-		tokens.add("k");
-		tokens.add("l");
-		tokens.add("m");
-		tokens.add("n");
-		tokens.add("o");
-		
-		NGram pngram = new NGram(4);
-		for(String token : pngram.process(tokens)) {
-			System.out.println("|" + token + "|");
-		}
-	}
 
+	public String toString() {
+		return this.getClass().getName() + " " + n;
+	}
+	
 }

@@ -1,13 +1,12 @@
 package input.worker;
 
-import java.io.Writer;
-
 import input.block.InputBlock;
+import input.utils.BlockWriter;
 import util.blockingqueue.IReceiver;
 
 public class BlockConsumer_BlockWriter extends Thread {
 	
-	private Writer output;
+	private BlockWriter output;
 	private IReceiver<InputBlock> blocks_in;
 	
 	private Integer exitStatus;
@@ -15,7 +14,7 @@ public class BlockConsumer_BlockWriter extends Thread {
 	
 	private long currentid;
 	
-	public BlockConsumer_BlockWriter(Writer output, IReceiver<InputBlock> receiver) {
+	public BlockConsumer_BlockWriter(BlockWriter output, IReceiver<InputBlock> receiver) {
 		this.currentid = 0;
 		this.output = output;
 		this.blocks_in = receiver;
@@ -42,8 +41,7 @@ public class BlockConsumer_BlockWriter extends Thread {
 			// Write block, handle error
 			try {
 				buffer.setId(currentid++);
-				output.write(InputBlock.getInputBlockString(buffer));
-				output.write(">\n");
+				output.write(buffer);
 			} catch (Exception e) {
 				exitStatus = -1;
 				exitMessage = "Failed with exception: " + e.getMessage() + ".";

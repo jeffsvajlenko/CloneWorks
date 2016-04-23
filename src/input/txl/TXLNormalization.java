@@ -7,14 +7,10 @@ public class TXLNormalization implements ITXLCommand {
 
 	@Override
 	public String toString() {
-		String retval = script;
-		for(String arg : arguments) {
-			retval += " " + arg;
-		}
-		return retval;
+		return script + " " + arguments;
 	}
 	
-	String[] arguments;
+	String arguments;
 	
 	private String script;
 	private String executable;
@@ -22,7 +18,7 @@ public class TXLNormalization implements ITXLCommand {
 	private boolean existsExec;
 	private boolean existsScript;
 	
-	public TXLNormalization(String name, String[] arguments, String language, String block_granularity) {
+	public TXLNormalization(String name, String arguments, String language, String block_granularity) {
 		script = language + "-" + name + "-" + block_granularity + "s.txl";
 		executable = language + "-" + name + "-" + block_granularity + "s.x";
 		this.arguments = arguments;
@@ -33,20 +29,14 @@ public class TXLNormalization implements ITXLCommand {
 
 	@Override
 	public String getCommandExec() {
-		String command = TXLUtil.getTXLRoot() + "/" + executable + " stdin - ";
-		for(String str : arguments) {
-			command += str + " ";
-		}
+		String command = TXLUtil.getTXLRoot() + "/" + executable + " stdin - " + arguments;
 		return command;
 	}
 
 	@Override
 	public String getCommandScript() {
 		String command;
-		command = "txl stdin " + TXLUtil.getTXLRoot() + "/" + script + " - ";
-		for(String str : arguments) {
-			command += str + " ";
-		}
+		command = "txl stdin " + TXLUtil.getTXLRoot() + "/" + script + " - " + arguments;
 		return command;
 	}
 

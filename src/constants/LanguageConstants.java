@@ -10,26 +10,54 @@ import org.apache.commons.io.filefilter.OrFileFilter;
 import org.apache.commons.io.filefilter.SuffixFileFilter;
 
 public class LanguageConstants {
-	public final static String JAVA = "java";
-	public final static String C = "c";
-	public final static String CS = "cs";
-	public final static String CPP = "cpp";
-	public final static String PYTHON = "python";
 	
-	public static String getCanonical(String language) {
+	public final static int JAVA = 1;
+	public final static String STR_JAVA= "java";
+	
+	public final static int C = 2;
+	public final static String STR_C = "c";
+	
+	public final static int CS = 3;
+	public final static String STR_CS = "cs";
+	
+	public final static int CPP = 4;
+	public final static String STR_CPP = "cpp";
+	
+	public final static int PYTHON = 5;
+	public final static String STR_PYTHON = "python";
+	
+	public static int getCanonical(String language) {
 		language = language.toLowerCase();
-		if(language.equals(JAVA))
+		if(language.equals(STR_JAVA))
 			return JAVA;
-		else if (language.equals(C))
+		else if (language.equals(STR_C))
 			return C;
-		else if (language.equals(CS))
+		else if (language.equals(STR_CS))
 			return CS;
-		else if (language.equals(CPP))
+		else if (language.equals(STR_CPP))
 			return CPP;
-		else if (language.equals(PYTHON))
+		else if (language.equals(STR_PYTHON))
 			return PYTHON;
 		else
 			throw new IllegalArgumentException("Language '" + language + "' is not a valid language.");
+	}
+	
+	public static String getString(int language) {
+		switch(language) {
+			case JAVA:
+				return STR_JAVA;
+			case C:
+				return STR_C;
+			case CS:
+				return STR_CS;
+			case CPP:
+				return STR_CPP;
+			case PYTHON:
+				return STR_PYTHON;
+			default:
+				throw new IllegalArgumentException("No language with constant value: " + language + ".");	
+		
+		}
 	}
 	
 	/**
@@ -37,8 +65,7 @@ public class LanguageConstants {
 	 * @param language
 	 * @return
 	 */
-	public static boolean checkValid(String language) {
-		language = language.toLowerCase();
+	public static boolean checkValid(int language) {
 		if(language == JAVA || language == C || language == CS || language == CPP || language == PYTHON)
 			return true;
 		else
@@ -49,14 +76,12 @@ public class LanguageConstants {
 	 * Throws IllegalArgumentException if language is not supported.
 	 * @param language
 	 */
-	public static void ifInvalidThrowException(String language) {
+	public static void ifInvalidThrowException(int language) {
 		if(!checkValid(language))
 			throw new IllegalArgumentException("Language '" + language + "' is not a valid language.");
 	}
 	
-	public static FileFilter getFileFilter(String language) {
-		if(!checkValid(language))
-			throw new IllegalArgumentException("Language '" + language + "' is not a valid language.");
+	public static FileFilter getFileFilter(int language) {
 		FileFilter retval;
 		switch(language) {
 			case JAVA:
@@ -87,12 +112,12 @@ public class LanguageConstants {
 				retval = new SuffixFileFilter(".py", IOCase.INSENSITIVE);
 				break;
 			default:
-				retval = null;
+				throw new IllegalArgumentException("Language '" + language + "' is not a valid language.");
 		}
 		return retval;
 	}
 	
-	public static boolean isIfDefLanguage(String language) {
+	public static boolean isIfDefLanguage(int language) {
 		if(language == C || language == CPP)
 			return true;
 		else
