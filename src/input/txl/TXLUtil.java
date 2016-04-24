@@ -13,12 +13,13 @@ import org.apache.commons.exec.StreamPumper;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.SystemUtils;
 
+import constants.InstallDir;
 import util.StreamGobbler;
 
 public class TXLUtil {
 	
-	public static String getTXLRoot() {
-		return "./txl";
+	public static Path getTXLRoot() {
+		return InstallDir.getInstallDir().resolve("txl");
 	}
 	
 	public static List<String> run(List<ITXLCommand> commands, Path file) {

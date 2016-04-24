@@ -13,6 +13,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import constants.BlockGranularityConstants;
+import constants.InstallDir;
 import constants.LanguageConstants;
 import constants.TokenGranularityConstants;
 import input.tokenprocessors.ITokenProcessor;
@@ -86,7 +87,7 @@ public class InputBuilderConfiguration {
 	private static Path processConfigFile(String configfile) throws ConfigurationException {
 		Path retval;
 		try {
-			retval = Paths.get("config/" + configfile);
+			retval = InstallDir.getInstallDir().resolve("config/" + configfile);
 		} catch (InvalidPathException e) {
 			throw new ConfigurationException("The specified configuration file is not a valid path: config/" + configfile);
 		}

@@ -11,19 +11,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-public class BCBConvert {
-	public static void main(String args[]) throws IOException {
-		Path files  = Paths.get(args[0]);
-		Path clones = Paths.get(args[1]);
-		Path output = Paths.get(args[2]);
-		
-		BCBConvert.convert(clones, files, output);
-	}
+public class Convert {
 	
 	public static void convert(Path clones, Path files, Path output) throws IOException {
 		Map<Long, String> types = new HashMap<Long, String>();
 		Map<Long, String> names = new HashMap<Long, String>();
-		
 		
 		String line;
 		BufferedReader in_files = new BufferedReader(new FileReader(files.toFile()));
@@ -42,6 +34,8 @@ public class BCBConvert {
 		BufferedReader in_clones = new BufferedReader(new FileReader(clones.toFile()));
 		while((line = in_clones.readLine()) != null) {
 			String [] parts = line.split(",");
+			if(line.startsWith("#"))
+				continue;
 			long file1 = Long.parseLong(parts[0]);
 			long file2 = Long.parseLong(parts[3]);
 			

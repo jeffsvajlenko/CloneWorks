@@ -3,7 +3,6 @@
 # TXL tool size - recommended default 400
 # On 32-bit platoforms, max 1000
 # On 64-bit platformss, max 4000
-
 SIZE=400
 
 # *** WARNING: larger sizes make parsing significantly slower

@@ -11,6 +11,7 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 
+import constants.InstallDir;
 import detection.requirements.Requirements;
 import detection.requirements.SizeRequirements;
 
@@ -142,6 +143,8 @@ public class CloneDetection {
 			return;
 		}
 		
+		InstallDir.setInstallDir(Paths.get(line.getArgList().get(0)));
+		
 		// Input Path
 		try {
 			input = Paths.get(line.getOptionValue("i"));
@@ -260,17 +263,22 @@ public class CloneDetection {
 			}
 		}
 		
-		if(max_size_tokens < min_size_tokens) {
-			System.out.println("ERROR: Maximum tokens muust be greater or equal to minimum tokens.");
-			System.out.println("");
-			panic();
-			return;
+		if(max_size_tokens != 0 && min_size_tokens != 0) {
+			if(max_size_tokens < min_size_tokens) {
+				System.out.println("ERROR: Maximum tokens must be greater or equal to minimum tokens.");
+				System.out.println("");
+				panic();
+				return;
+			}
 		}
-		if(max_size_lines < min_size_lines) {
-			System.out.println("ERROR: Maximum lines muust be greater or equal to minimum lines.");
-			System.out.println("");
-			panic();
-			return;
+		
+		if(max_size_lines != 0 && min_size_lines != 0) {
+			if(max_size_lines < min_size_lines) {
+				System.out.println("ERROR: Maximum lines muust be greater or equal to minimum lines.");
+				System.out.println("");
+				panic();
+				return;
+			}
 		}
 		
 		// Pre-Sorted
