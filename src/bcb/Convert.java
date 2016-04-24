@@ -34,8 +34,10 @@ public class Convert {
 		BufferedReader in_clones = new BufferedReader(new FileReader(clones.toFile()));
 		while((line = in_clones.readLine()) != null) {
 			String [] parts = line.split(",");
-			if(line.startsWith("#"))
+			if(line.startsWith("#")) {
+				out.write(line + "\n"); // echo it
 				continue;
+			}
 			long file1 = Long.parseLong(parts[0]);
 			long file2 = Long.parseLong(parts[3]);
 			
