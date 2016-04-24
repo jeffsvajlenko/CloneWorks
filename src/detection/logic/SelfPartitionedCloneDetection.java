@@ -17,7 +17,10 @@ import detection.index.IIndex;
 import detection.prefixer.MyPrefixer;
 import detection.prefixer.Prefixer;
 import detection.requirements.Requirements;
+import detection.requirements.SizeRequirements;
 import detection.util.BlockFileReader;
+import detection.util.CloneDetectionConfig;
+import detection.util.CloneFileWriter;
 import detection.workers.BlockIndexer;
 import detection.workers.CloneDetection;
 import detection.workers.CloneWriter;
@@ -34,14 +37,21 @@ import util.blockingqueue.QueueBuilder;
 
 public class SelfPartitionedCloneDetection {
 	
-	public static void detect(
-			  Path input,
-			  Path output,
-			  Requirements requirements,
-			  double sim,
-			  int blockgroupsize,
-			  int numThreads
-			 ) throws IOException {
+	public static void detect(CloneDetectionConfig config) throws IOException {
+		//	  Path input,
+		//	  Path output,
+		//	  Requirements requirements,
+		//	  double sim,
+		//	  int blockgroupsize,
+		//	  int numThreads
+		//	 ) throws IOException {
+		
+		Path input = config.getBlocks();
+		Path output = config.getClones();
+		Requirements requirements = new SizeRequirements(config.getMinLines(), config.getMaxLines(), config.getMinTokens(), config.getMaxTokens());
+		int blockgroupsize = config.getMaxPartitionSize();
+		double sim = config.getMinSimilarity();
+		int numThreads = config.getNumThreads();
 		
 		int capacity = 50;
 		int maxGroupSize = 10;
@@ -54,7 +64,7 @@ public class SelfPartitionedCloneDetection {
 		
 // Outputter
 		IQueue<Clone> Q_output = QueueBuilder.groupQueue_arrayBacked(capacity, maxGroupSize);
-		BufferedWriter out = new BufferedWriter(new FileWriter(output.toFile()));
+		CloneFileWriter out = new CloneFileWriter(new BufferedWriter(new FileWriter(output.toFile())), config);
 		CloneWriter W_output = new CloneWriter(Q_output.getReceiver(), out);
 		W_output.start();
 		

@@ -12,8 +12,7 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 
 import constants.InstallDir;
-import detection.requirements.Requirements;
-import detection.requirements.SizeRequirements;
+import detection.util.CloneDetectionConfig;
 
 public class CloneDetection {
 	
@@ -119,8 +118,8 @@ public class CloneDetection {
 				                .build()
 		);
 		
-		Path input;
-		Path output;
+		Path blocks;
+		Path clones;
 		boolean partition_mode = false;
 		int max_partition_size = -1;
 		double minsim;
@@ -131,6 +130,17 @@ public class CloneDetection {
 		int max_size_tokens = 0;
 		boolean pre_sorted = false;
 		
+		//Path blocks,
+        //Path clones,
+        //double minSimilarity,
+        //int minLines,
+        //int maxLines, 
+		//int minTokens,
+		//int maxTokens,
+		//boolean presorted,
+		//boolean partitioned,
+		//int maxPartitionSize)
+			
 		formatter = new HelpFormatter();
 		formatter.setOptionComparator(null);	
 		CommandLineParser parser = new DefaultParser();
@@ -147,7 +157,7 @@ public class CloneDetection {
 		
 		// Input Path
 		try {
-			input = Paths.get(line.getOptionValue("i"));
+			blocks = Paths.get(line.getOptionValue("i"));
 		} catch(Exception e) {
 			System.out.println("ERROR: Invalid input path.");
 			System.out.println("");
@@ -157,7 +167,7 @@ public class CloneDetection {
 
 		// Output Path
 		try {
-			output = Paths.get(line.getOptionValue("o"));
+			clones = Paths.get(line.getOptionValue("o"));
 		} catch(Exception e) {
 			System.out.println("ERROR: Invalid output path.");
 			System.out.println("");
@@ -285,16 +295,16 @@ public class CloneDetection {
 		if(line.hasOption("ps"))
 			pre_sorted = true;
 		
-		Requirements requirements = new SizeRequirements(min_size_lines, max_size_lines, min_size_tokens, max_size_tokens);
+		CloneDetectionConfig config = new CloneDetectionConfig(blocks, clones, minsim, min_size_lines, max_size_lines, min_size_tokens, max_size_tokens, pre_sorted, partition_mode, max_partition_size, num_threads);
 		
-		if(pre_sorted && partition_mode) {
-			detection.logic.SelfPartitionedCloneDetectionPreSorted.detect(input, output, requirements, minsim, max_partition_size, num_threads);
-		} else if (pre_sorted && !partition_mode) {
-			detection.logic.SelfCloneDetectionPreSorted.detect(input, output, requirements, minsim, num_threads);
-		} else if (!pre_sorted && partition_mode) {
-			detection.logic.SelfPartitionedCloneDetection.detect(input, output, requirements, minsim, max_partition_size, num_threads);
+		if(config.isPresorted() && config.isPartitioned()) {
+			detection.logic.SelfPartitionedCloneDetectionPreSorted.detect(config);
+		} else if (config.isPresorted() && !config.isPartitioned()) {
+			detection.logic.SelfCloneDetectionPreSorted.detect(config);
+		} else if (!config.isPresorted() && config.isPartitioned()) {
+			detection.logic.SelfPartitionedCloneDetection.detect(config);
 		} else { //(!pre-sorted && !partition_mode)
-			detection.logic.SelfCloneDetection.detect(input, output, requirements, minsim, num_threads);
+			detection.logic.SelfCloneDetection.detect(config);
 		}
 	}
 	

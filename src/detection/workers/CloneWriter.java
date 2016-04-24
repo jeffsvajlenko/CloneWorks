@@ -1,20 +1,20 @@
 package detection.workers;
 
 import java.io.IOException;
-import java.io.Writer;
 
 import detection.detection.Clone;
+import detection.util.CloneFileWriter;
 import util.blockingqueue.IReceiver;
 
 public class CloneWriter extends Thread {
 
 	private IReceiver<Clone> input;
-	private Writer output;
+	private CloneFileWriter output;
 	
 	private int exitstatus;
 	private String exitmessage;
 	
-	public CloneWriter(IReceiver<Clone> input, Writer output) {
+	public CloneWriter(IReceiver<Clone> input, CloneFileWriter output) {
 		this.input = input;
 		this.output = output;
 		this.input = input;
@@ -32,7 +32,7 @@ public class CloneWriter extends Thread {
 			
 			// Write Clone
 			try {
-				write(clone);
+				output.write(clone);
 			} catch (IOException e) {
 				e.printStackTrace();
 				exitstatus = -1;
@@ -42,7 +42,7 @@ public class CloneWriter extends Thread {
 		}
 		try {
 			output.flush();
-		} catch (IOException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			exitstatus = -1;
 			exitmessage = "Failed to flush writer with exception: " + e.getMessage();
@@ -68,10 +68,6 @@ public class CloneWriter extends Thread {
 	
 	public String getExitMessage() {
 		return this.exitmessage;
-	}
-	
-	private void write(Clone clone) throws IOException {
-		output.write(clone.getFileid1() + "," + clone.getStartline1() + "," + clone.getEndline1() + "," + clone.getFileid2() + "," + clone.getStartline2() + "," + clone.getEndline2() + "\n");
 	}
 
 }

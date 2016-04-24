@@ -14,7 +14,10 @@ import detection.index.ConcurrentHashMapIndex;
 import detection.index.IIndex;
 import detection.prefixer.MyPrefixer;
 import detection.requirements.Requirements;
+import detection.requirements.SizeRequirements;
 import detection.util.BlockFileReader;
+import detection.util.CloneDetectionConfig;
+import detection.util.CloneFileWriter;
 import detection.workers.BlockIndexer;
 import detection.workers.CloneDetection;
 import detection.workers.CloneWriter;
@@ -26,14 +29,20 @@ import util.blockingqueue.QueueBuilder;
 
 public class SelfCloneDetectionPreSorted {
 	
-	public static void detect(
-							  Path input,
-							  Path output,
-							  Requirements requirements,
-							  double sim,
-							  int numThreads
-							 ) throws IOException {
+	public static void detect(CloneDetectionConfig config) throws IOException {
+		//					  Path input,
+		//					  Path output,
+		//					  Requirements requirements,
+		//					  double sim,
+		//					  int numThreads
+		//					 ) throws IOException {
 		long time = System.currentTimeMillis();
+		
+		Path input = config.getBlocks();
+		Path output = config.getClones();
+		Requirements requirements = new SizeRequirements(config.getMinLines(), config.getMaxLines(), config.getMinTokens(), config.getMaxTokens());
+		double sim = config.getMinSimilarity();
+		int numThreads = config.getNumThreads();
 		
 // -- Data
 		
@@ -67,7 +76,7 @@ public class SelfCloneDetectionPreSorted {
 					                            
 		
 		// Outputer
-		BufferedWriter out = new BufferedWriter(new FileWriter(output.toFile()));
+		CloneFileWriter out = new CloneFileWriter(new BufferedWriter(new FileWriter(output.toFile())), config);
 		CloneWriter W_output = new CloneWriter(Q_detection_output.getReceiver(), out);
 		
 // -- Orchestrate
