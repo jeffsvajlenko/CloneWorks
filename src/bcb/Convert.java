@@ -35,7 +35,7 @@ public class Convert {
 		while((line = in_clones.readLine()) != null) {
 			String [] parts = line.split(",");
 			if(line.startsWith("#")) {
-				out.write(line + "\n"); // echo it
+				//out.write(line + "\n"); // echo it
 				continue;
 			}
 			long file1 = Long.parseLong(parts[0]);

@@ -7,8 +7,11 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
 
+import detection.DF.DFHashMap;
+import detection.DF.IDocumentFrequency;
 import detection.GTF.GTFHashMap;
 import detection.GTF.GTFTermFreqComparator;
+import detection.GTF.IGlobalTermFrequency;
 import detection.block.Block;
 import detection.detection.Clone;
 import detection.detection.HeuristicCloneDetector;
@@ -41,7 +44,6 @@ public class SelfCloneDetection {
 		//					  double sim,
 		//					  int numThreads
 		//					 ) throws IOException {
-		long time = System.currentTimeMillis();
 		
 		Path input = config.getBlocks();
 		Path output = config.getClones();
@@ -59,15 +61,21 @@ public class SelfCloneDetection {
 // -- Workers
 		
 		// Structures
-		GTFHashMap gtf = new GTFHashMap(1000);
-		IIndex index = new ConcurrentHashMapIndex(1000);
+		IGlobalTermFrequency gtf = new GTFHashMap(10000);
+		IDocumentFrequency df;
+		if(config.isDF())
+			df = new DFHashMap(10000);
+		else
+			df = null;
+			
+		IIndex index = new ConcurrentHashMapIndex(10000);
 		
 		// GTFBuilders
 		GTFBuilder [] W_gtfbuilder = new GTFBuilder[numThreads];
 		for(int i = 0; i < numThreads; i++)
 			W_gtfbuilder[i] = new GTFBuilder(new StringInputBlockInput(Q_input_gtf.getReceiver()),
 					                         Q_gtf_indexer.getEmitter(),
-					                         gtf);
+					                         gtf, df);
 				
 		// Indexers
 		BlockIndexer [] W_indexers = new BlockIndexer[numThreads];
@@ -76,6 +84,7 @@ public class SelfCloneDetection {
 					                         Q_indexer_detection.getEmitter(),
 					                      	 index,
 					                         new GTFTermFreqComparator(gtf),
+					                         df,
 					                         new MyPrefixer(sim),
 					                         requirements);
 		
@@ -95,13 +104,12 @@ public class SelfCloneDetection {
 // -- Orchestrate
 		
 	// -- Built GTF
-		System.out.println("Building GTF...");
+		//System.out.println("Building GTF...");
 		// Start
 		for(int i = 0; i < numThreads;  i++)
 			W_gtfbuilder[i].start();
 		
 		// Feed
-		int num = 0;
 		IEmitter<String> sblock_emitter = Q_input_gtf.getEmitter();
 		BlockFileReader reader = new BlockFileReader(new BufferedReader(new FileReader(input.toFile())));
 		String sblock;
@@ -109,7 +117,6 @@ public class SelfCloneDetection {
 			while(true) {
 				try {
 					sblock_emitter.put(sblock);
-					num++;
 					break;
 				} catch (InterruptedException e) {
 					e.printStackTrace();
@@ -125,7 +132,7 @@ public class SelfCloneDetection {
 			}
 		}
 		reader.close();
-		System.out.println(num + " blocks fed.");
+		//System.out.println(num + " blocks fed.");
 		
 		// Poison
 		while(true) {try {
@@ -138,7 +145,7 @@ public class SelfCloneDetection {
 			while(true) {
 				try {
 					W_gtfbuilder[i].join();
-					System.out.println("\tGTF Builder [" + i + "] has completed with exit: " + W_gtfbuilder[i].getExitStatus() + " - " + W_gtfbuilder[i].getExitMessage());
+					//System.out.println("\tGTF Builder [" + i + "] has completed with exit: " + W_gtfbuilder[i].getExitStatus() + " - " + W_gtfbuilder[i].getExitMessage());
 					W_gtfbuilder[i] = null;
 					break;
 				} catch (InterruptedException e) {
@@ -146,10 +153,10 @@ public class SelfCloneDetection {
 				}
 			}
 		}
-		System.out.println(gtf.getKeySet().size() + " terms tracked.\n");
+		//System.out.println(gtf.getKeySet().size() + " terms tracked.\n");
 		
 	// -- Index
-		System.out.println("Indexing... " + Q_gtf_indexer.size() + " blocks to process.");
+		//System.out.println("Indexing... " + Q_gtf_indexer.size() + " blocks to process.");
 		// Start Indexer
 		for(int i = 0; i < numThreads; i++)
 			W_indexers[i].start();
@@ -174,13 +181,13 @@ public class SelfCloneDetection {
 					e.printStackTrace();
 				}
 			}
-			System.out.println("\tIndexer [" + i + "] has completed with exit: " + W_indexers[i].getExitValue() + " - " + W_indexers[i].getExitMessage());
+			//System.out.println("\tIndexer [" + i + "] has completed with exit: " + W_indexers[i].getExitValue() + " - " + W_indexers[i].getExitMessage());
 			W_indexers[i] = null;
 		}
-		System.out.println(index.getTerms().size() + " terms indexed.\n");
+		//System.out.println(index.getTerms().size() + " terms indexed.\n");
 		
 	// - Detection
-		System.out.println("Detecting clones... " + Q_indexer_detection.size() + " query blocks to process.");
+		//System.out.println("Detecting clones... " + Q_indexer_detection.size() + " query blocks to process.");
 		
 		// Start Detectors
 		for(int i = 0; i < numThreads; i++)
@@ -209,7 +216,7 @@ public class SelfCloneDetection {
 					e.printStackTrace();
 				}
 			}
-			System.out.println("Detector [" + i + "] has completed with exit: ");
+			//System.out.println("Detector [" + i + "] has completed with exit: ");
 			W_detection[i] = null;
 		}
 		
@@ -232,12 +239,12 @@ public class SelfCloneDetection {
 				e.printStackTrace();
 			}
 		}
-		System.out.println("Outputter has completed with exit: ");
+		//System.out.println("Outputter has completed with exit: ");
 		W_output = null;
 		out.flush();
 		out.close();
 		
-		System.out.println("Total time: " + (System.currentTimeMillis() - time)/1000.0);
+		//System.out.println("Total time: " + (System.currentTimeMillis() - time)/1000.0);
 		
 	}
 	

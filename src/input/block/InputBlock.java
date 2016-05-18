@@ -8,10 +8,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import constants.BlockGranularityConstants;
-import constants.LanguageConstants;
-import constants.TokenGranularityConstants;
-
 public class InputBlock implements Serializable {
 
 	private static final long serialVersionUID = 1L;

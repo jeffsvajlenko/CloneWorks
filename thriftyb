@@ -10,11 +10,11 @@ MEM=2G
 INSTALL_DIR=/home/jeff/Storage/git/ThriftyClone
 
 # Build Classpath
-LIBS=${INSTALL_DIR}/bin/
+LIBS=${INSTALL_DIR}/gbin/
 LIBS=${LIBS}:${INSTALL_DIR}/libs/commons-lang3-3.4/commons-lang3-3.4.jar
 LIBS=${LIBS}:${INSTALL_DIR}/libs/commons-exec-1.3/commons-exec-1.3.jar
 LIBS=${LIBS}:${INSTALL_DIR}/libs/commons-cli-1.3.1/commons-cli-1.3.1.jar
 LIBS=${LIBS}:${INSTALL_DIR}/libs/commons-io-2.4/commons-io-2.4.jar
 
 # Run
-java -Xmx${MEM} -cp ${LIBS} interfaces.InputBuilder $@ ${INSTALL_DIR}
+time java -Xmx${MEM} -cp ${LIBS} interfaces.InputBuilder $@ ${INSTALL_DIR}

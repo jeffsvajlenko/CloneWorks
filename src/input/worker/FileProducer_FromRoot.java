@@ -7,6 +7,8 @@ import java.nio.file.FileVisitor;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
+
+import constants.LanguageConstants;
 import input.file.InputFile;
 import input.utils.FileIDWriter;
 import util.blockingqueue.IEmitter;
@@ -78,7 +80,8 @@ public class FileProducer_FromRoot extends Thread {
 				@Override
 				public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
 					if(pattern.accept(file.toFile())) {
-						InputFile ifile = new InputFile(currentid++, file);
+						int language = LanguageConstants.getLanguage(file);
+						InputFile ifile = new InputFile(currentid++, file, language);
 						if(writer != null)
 							writer.write(ifile.getId(),ifile.getPath());
 						put(ifile);

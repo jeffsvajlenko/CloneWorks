@@ -7,8 +7,11 @@ import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
 
+import detection.DF.DFHashMap;
+import detection.DF.IDocumentFrequency;
 import detection.GTF.GTFHashMap;
 import detection.GTF.GTFTermFreqComparator;
+import detection.GTF.IGlobalTermFrequency;
 import detection.block.Block;
 import detection.detection.Clone;
 import detection.detection.HeuristicCloneDetector;
@@ -69,10 +72,11 @@ public class SelfPartitionedCloneDetection {
 		W_output.start();
 		
 		while(!endReached) {
-			System.out.println("Indexing " + blockPosition + " to " + (blockPosition + blockgroupsize));
+			//System.out.println("Indexing " + blockPosition + " to " + (blockPosition + blockgroupsize));
 			
 // Data
-			GTFHashMap gtf = new GTFHashMap(1000);
+			IGlobalTermFrequency gtf = new GTFHashMap(10000);
+			IDocumentFrequency df = new DFHashMap(10000);
 			IIndex index = new ConcurrentHashMapIndex(1000);
 			GTFTermFreqComparator sorter = new GTFTermFreqComparator(gtf);
 			
@@ -87,7 +91,7 @@ public class SelfPartitionedCloneDetection {
 			for(int i = 0; i < numThreads; i++)
 				W_gtfbuilder[i] = new GTFBuilder(new StringInputBlockInput(Q_input_gtf.getReceiver()),
 						                         Q_gtf_indexer.getEmitter(),
-						                         gtf);
+						                         gtf, df);
 			// Indexers
 			BlockIndexer [] W_indexers = new BlockIndexer[numThreads];
 			for(int i = 0; i < numThreads; i++)
@@ -95,6 +99,7 @@ public class SelfPartitionedCloneDetection {
 												 Q_indexer_out.getEmitter(),
 						                      	 index,
 						                         sorter,
+						                         df,
 						                         prefixer,
 						                         requirements);
 			

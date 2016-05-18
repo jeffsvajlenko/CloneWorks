@@ -1,48 +1,85 @@
 package input.txl;
 
 import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
 
+import constants.BlockGranularityConstants;
+import constants.LanguageConstants;
+
+/**
+ * 
+ * 
+ *
+ */
 public class TXLExtract implements ITXLCommand {
 
 	@Override
 	public String toString() {
-		return script;
+		return "TXLExtract " + block_granularity;
 	}
 	
-	private String script;
-	private String executable;
+	private Map<Integer, String> m_script;
+	private Map<Integer, String> m_executable;
 	
-	private boolean existsExec;
-	private boolean existsScript;
+	private String block_granularity;
 	
-	public TXLExtract(String language, String block_granularity) {
+	/**
+	 * 
+	 * @param block_granularity
+	 * @throws IllegalArgumentException
+	 */
+	public TXLExtract(int block_granularity) throws IllegalArgumentException {
+		this.block_granularity = BlockGranularityConstants.getString(block_granularity);
+		this.m_script = new HashMap<Integer, String>();
+		this.m_executable = new HashMap<Integer, String>();
 		
-		script = language + "-extract-" + block_granularity + "s.txl";
-		executable = language + "-extract-" + block_granularity + "s.x";
-		
-		existsExec = Files.exists(Paths.get(TXLUtil.getTXLRoot() + "/" + executable));
-		
-		existsScript = Files.exists(Paths.get(TXLUtil.getTXLRoot() + "/" + script));
-		
-	}
-	
-	public boolean existsExec() {
-		return this.existsExec;
-	}
-	
-	public boolean existsScript() {
-		return this.existsScript;
+		for(int lang : LanguageConstants.getSupportedLanguages()) {
+			String language = LanguageConstants.getString(lang);
+			
+			// Script
+			String script = language + "-extract-" + this.block_granularity + "s.txl";
+			if(Files.exists(TXLUtil.getTXLRoot().resolve(script))) {
+				this.m_script.put(lang, script);
+			}
+			
+			// Executable
+			String executable = language + "-extract-" + this.block_granularity + "s.x";
+			if(Files.exists(TXLUtil.getTXLRoot().resolve(executable))) {
+				this.m_executable.put(lang, executable);
+			}
+		}
 	}
 	
 	@Override
-	public String getCommandExec() {
-		return TXLUtil.getTXLRoot() + "/" + executable + " stdin";
+	public String getCommandScript(int language) {
+		String script = this.m_script.get(language);
+		if(script == null)
+			throw new IllegalArgumentException("Language not supported/available.");
+		return "txl stdin " + TXLUtil.getTXLRoot() + "/" + script;
+	}
+	
+	@Override
+	public String getCommandExec(int language) {
+		String exec = this.m_executable.get(language);
+		if(exec == null)
+			throw new IllegalArgumentException("Language not supported/available.");
+		return TXLUtil.getTXLRoot() + "/" + exec + " stdin";
 	}
 
 	@Override
-	public String getCommandScript() {
-		return "txl stdin " + TXLUtil.getTXLRoot() + "/" + script;
+	public boolean existsExec(int language) {
+		return m_executable.containsKey(language);
+	}
+
+	@Override
+	public boolean existsScript(int language) {
+		return m_script.containsKey(language);
+	}
+
+	@Override
+	public boolean forLanguage(int language) {
+		return true;
 	}
 	
 }

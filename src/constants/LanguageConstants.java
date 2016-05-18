@@ -1,6 +1,7 @@
 package constants;
 
-import java.io.FileFilter;
+import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -25,6 +26,19 @@ public class LanguageConstants {
 	
 	public final static int PYTHON = 5;
 	public final static String STR_PYTHON = "python";
+	
+	public final static int UNKOWN = 0;
+	public final static String STR_UNKNOWN = "unknown";
+	
+	public static List<Integer> getSupportedLanguages() {
+		List<Integer> retval = new ArrayList<Integer>();
+		retval.add(JAVA);
+		retval.add(C);
+		retval.add(CS);
+		retval.add(CPP);
+		retval.add(PYTHON);
+		return retval;
+	}
 	
 	public static int getCanonical(String language) {
 		language = language.toLowerCase();
@@ -81,8 +95,24 @@ public class LanguageConstants {
 			throw new IllegalArgumentException("Language '" + language + "' is not a valid language.");
 	}
 	
-	public static FileFilter getFileFilter(int language) {
-		FileFilter retval;
+	public static int getLanguage(Path file) {
+		String filename = file.getFileName().toString();
+		if(filename.endsWith(".java"))
+			return JAVA;
+		if(filename.endsWith(".py"))
+			return PYTHON;
+		if(filename.endsWith(".C") || filename.endsWith(".cpp") || filename.endsWith(".cc") || filename.endsWith(".c++") || filename.endsWith(".cxx"))
+			return CPP;
+		if(filename.endsWith(".cs"))
+			return CS;
+		if(filename.endsWith(".c"))
+			return C;
+		return UNKOWN;
+		
+	}
+	
+	public static IOFileFilter getFileFilter(int language) {
+		IOFileFilter retval;
 		switch(language) {
 			case JAVA:
 				retval = new SuffixFileFilter(".java", IOCase.INSENSITIVE);
@@ -100,11 +130,11 @@ public class LanguageConstants {
 				filters.add(new SuffixFileFilter(".cc", IOCase.INSENSITIVE));
 				filters.add(new SuffixFileFilter(".c++", IOCase.INSENSITIVE));
 				filters.add(new SuffixFileFilter(".cxx", IOCase.INSENSITIVE));
-				filters.add(new SuffixFileFilter(".H"));
-				filters.add(new SuffixFileFilter(".h", IOCase.INSENSITIVE));
-				filters.add(new SuffixFileFilter(".hh", IOCase.INSENSITIVE));
-				filters.add(new SuffixFileFilter(".hpp", IOCase.INSENSITIVE));
-				filters.add(new SuffixFileFilter(".h++", IOCase.INSENSITIVE));
+				//filters.add(new SuffixFileFilter(".H"));
+				//filters.add(new SuffixFileFilter(".h", IOCase.INSENSITIVE));
+				//filters.add(new SuffixFileFilter(".hh", IOCase.INSENSITIVE));
+				//filters.add(new SuffixFileFilter(".hpp", IOCase.INSENSITIVE));
+				//filters.add(new SuffixFileFilter(".h++", IOCase.INSENSITIVE));
 				filters.add(new SuffixFileFilter(".hxx", IOCase.INSENSITIVE));
 				retval = new OrFileFilter(filters);
 				break;

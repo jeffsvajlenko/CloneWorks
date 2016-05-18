@@ -1,6 +1,7 @@
 package input.worker;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -8,6 +9,8 @@ import constants.BlockGranularityConstants;
 import constants.LanguageConstants;
 import constants.TokenGranularityConstants;
 import input.block.InputBlock;
+import input.block.tempblock.TempBlock;
+import input.block.tempblock.TempBlockRequirements;
 import input.file.InputFile;
 import input.tokenprocessors.ITokenProcessor;
 import input.txl.ITXLCommand;
@@ -22,12 +25,8 @@ public class FileConsumer_BlockProducer extends Thread {
 	private IReceiver<InputFile> files_in;
 	private IEmitter<InputBlock> blocks_out;
 	
-	private int language;
 	private int granularity;
 	private int tokenType;
-	private String strLanguage;
-	private String strGranularity;
-	private String strTokenType;
 	private List<ITXLCommand> txl_normalizations;
 	
 	private List<ITokenProcessor> token_processors;
@@ -36,11 +35,16 @@ public class FileConsumer_BlockProducer extends Thread {
 	private Integer exitStatus;
 	private String exitMessage;
 	
+	private TempBlockRequirements requirements;
+	
 	public FileConsumer_BlockProducer(IReceiver<InputFile> files_in, IEmitter<InputBlock> blocks_out,
-			                          int language, int granularity, int tokenType, List<ITXLCommand> txl_normalizations,
-			                          List<ITokenProcessor> token_processors) {
+			                          int granularity, int tokenType, List<ITXLCommand> txl_normalizations,
+			                          List<ITokenProcessor> token_processors,
+			                          TempBlockRequirements requirements) {
 		
-		LanguageConstants.ifInvalidThrowException(language);
+		
+		this.requirements = requirements;
+		
 		BlockGranularityConstants.ifInvalidThrowException(granularity);
 		TokenGranularityConstants.ifInvalidThrowException(tokenType);
 		
@@ -48,27 +52,25 @@ public class FileConsumer_BlockProducer extends Thread {
 		this.files_in = files_in;
 		this.blocks_out = blocks_out;
 		
-		this.language = language;
 		this.granularity = granularity;
 		this.tokenType = tokenType;
 		
-		this.strLanguage = LanguageConstants.getString(language);
-		this.strGranularity = BlockGranularityConstants.getString(granularity);
-		this.strTokenType = TokenGranularityConstants.getString(tokenType);
 		this.txl_normalizations = txl_normalizations;
 		
 		this.token_processors = token_processors;
 		
+		//System.out.println("language=" + language);
+		//System.out.println("granularity=" + granularity);
+		//System.out.println("tokenType=" + tokenType);
+		
 		// Prepare Command
 		commands = new LinkedList<ITXLCommand>();
-		if(LanguageConstants.isIfDefLanguage(language))
-			commands.add(TXLUtil.getIfDef());
-		if(this.strLanguage.equals(LanguageConstants.PYTHON))
-			commands.add(TXLUtil.getPythonPreprocess());
-		commands.add(new TXLExtract(this.strLanguage, this.strGranularity));
+		commands.add(TXLUtil.getIfDef());
+		commands.add(TXLUtil.getPythonPreprocess());
+		commands.add(new TXLExtract(this.granularity));
 		commands.addAll(this.txl_normalizations);
-		if(this.strTokenType.equals(TokenGranularityConstants.TOKEN)) {
-			commands.add(new TXLTokenize(this.strLanguage, this.strGranularity));
+		if(this.tokenType == TokenGranularityConstants.TOKEN) {
+			commands.add(new TXLTokenize(this.granularity));
 		}
 	}
 	
@@ -139,21 +141,27 @@ public class FileConsumer_BlockProducer extends Thread {
 		if(blocks == null)
 			return null;
 	
-	// 2 - Token Processors
-		for(ITokenProcessor processor : this.token_processors) {
-			for(TempBlock block : blocks) {
-				block.tokens = processor.process(block.tokens, this.language, this.granularity, this.tokenType);
+	// 2 - Filter Blocks by Requirements
+		for(Iterator<TempBlock> iterator = blocks.iterator(); iterator.hasNext();) {
+			TempBlock block = iterator.next();
+			if(!requirements.approve(block)) {
+				iterator.remove();
 			}
 		}
 		
-		//public InputBlock(long fileid, int startline, int endline, int numOriginalTokens, String language, String granularity, String tokenType, List<String> tokens) 
+	// 3 - Token Processors
+		for(ITokenProcessor processor : this.token_processors) {
+			for(TempBlock block : blocks) {
+				block.setTokens(processor.process(block.getTokens(), file.getLanguage(), this.granularity, this.tokenType));
+			}
+		}
 		
-	// 3 - Build InputBlocks
+	// 4 - Build InputBlocks
 		List<InputBlock> retval = new ArrayList<InputBlock>(blocks.size());
 		for(TempBlock block : blocks) {
-			if(block.tokens.size() == 0) // Skip 0-size blocks.
+			if(block.getTokens().size() == 0) // Skip 0-size blocks.
 				continue;
-			InputBlock iblock = new InputBlock(file.getId(), block.startline, block.endline, block.numOriginalTokens, this.language, this.granularity, this.tokenType, block.tokens);
+			InputBlock iblock = new InputBlock(file.getId(), block.getStartline(), block.getEndline(), block.numOriginalTokens(), file.getLanguage(), this.granularity, this.tokenType, block.getTokens());
 			retval.add(iblock);
 		}
 		
@@ -162,13 +170,19 @@ public class FileConsumer_BlockProducer extends Thread {
 	
 	private List<TempBlock> extractBlocks(InputFile file) {
 		List<TempBlock> ret = new LinkedList<TempBlock>();
-			
+
+		if(file.getLanguage() == LanguageConstants.UNKOWN) {
+			System.out.println("	Can't determine the language of file: " + file.getPath() + ".");
+			return null;
+		}
+		
 	// Execute and Capture Output
-		
-		
-		List<String> lines = TXLUtil.run(commands, file.getPath());
+		List<String> lines = TXLUtil.run(commands, file.getPath(), file.getLanguage());
 		if(lines == null) {
-			System.out.println("    Failed for file: " + file.getPath() + ".");
+			//System.out.println("    Failed for file: " + file + ".");
+			return null;
+		} else if (lines.size() == 0) {
+			//System.out.println("    Failed for file: " + file + ".");
 			return null;
 		}
 		
@@ -215,20 +229,6 @@ public class FileConsumer_BlockProducer extends Thread {
 	 */
 	public String getExitMessage() {
 		return this.exitMessage;
-	}
-	
-	private class TempBlock {
-		int startline;
-		int endline;
-		int numOriginalTokens;
-		List<String> tokens;
-		
-		TempBlock(int startline, int endline, List<String> tokens) {
-			this.startline = startline;
-			this.endline = endline;
-			this.tokens = tokens;
-			this.numOriginalTokens = tokens.size();
-		}
 	}
 	
 }

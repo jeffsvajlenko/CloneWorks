@@ -1,6 +1,7 @@
 package detection.workers;
 
-import detection.GTF.GTFHashMap;
+import detection.DF.IDocumentFrequency;
+import detection.GTF.IGlobalTermFrequency;
 import detection.workers.helpers.InputBlockInput;
 import input.block.InputBlock;
 import input.block.TermFrequency;
@@ -10,15 +11,17 @@ public class GTFBuilder extends Thread {
 
 	private InputBlockInput input;
 	private IEmitter<InputBlock> output;
-	private GTFHashMap gtf;
+	private IGlobalTermFrequency gtf;
+	private IDocumentFrequency df;
 	
 	private Integer exitStatus;
 	private String exitMessage;
 	
-	public GTFBuilder(InputBlockInput input, IEmitter<InputBlock> output, GTFHashMap gtf) {
+	public GTFBuilder(InputBlockInput input, IEmitter<InputBlock> output, IGlobalTermFrequency gtf, IDocumentFrequency df) {
 		this.input = input;
 		this.output = output;
 		this.gtf = gtf;
+		this.df = df;
 	}
 	
 	@Override
@@ -42,10 +45,13 @@ public class GTFBuilder extends Thread {
 			
 			num++;
 			
-			// Update GTF
+			// Update GTF and DF
 			for(TermFrequency tf : block.getTokens()) {
 				gtf.add(tf.getTerm(), tf.getFrequency());
 			}
+			
+			if(df != null)
+				df.add(block);
 			
 			// Put input block (if desired)
 			put(block);

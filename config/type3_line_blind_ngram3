@@ -1,0 +1,15 @@
+#
+# Builds blocks appropriate for single Type-3 detection.
+#
+
+# Tokenize for language tokens
+tokenization=line
+
+# Blind Renaming
+txl=rename-blind
+
+# Normalize literals
+txl=abstract literal
+
+# N-Gram
+tokproc=NGram 3

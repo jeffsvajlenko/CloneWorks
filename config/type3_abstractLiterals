@@ -1,0 +1,15 @@
+#
+# Builds blocks appropriate for single Type-3 detection.
+#
+
+# Tokenize for language tokens
+tokenization=token
+
+# TXL Remove literals
+txl=abstract literal
+
+# Filter Operators
+tokproc=FilterOperators
+
+# Filter Seperators
+tokproc=FilterSeperators

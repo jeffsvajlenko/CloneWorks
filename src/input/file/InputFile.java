@@ -7,13 +7,20 @@ public class InputFile {
 	private Long id;
 	
 	private Path path;
+	
+	private int language;
 		
-	public InputFile(Long id, Path path) {
+	public InputFile(Long id, Path path, int language) {
 		super();
 		this.id = id;
 		this.path = path;
+		this.language = language;
 	}
 
+	public int getLanguage() {
+		return language;
+	}
+	
 	public Long getId() {
 		return id;
 	}

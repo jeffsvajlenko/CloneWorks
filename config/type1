@@ -1,0 +1,10 @@
+#
+# Builds blocks appropriate for Type-1 clone detection.
+# For detection, use pre-sorted (no GTF-Sort) option.
+#
+
+# Tokenize by pretty-printed lines
+tokenization=line
+
+# Append the lines into a single mega-token (whole code fragment) for exact match
+tokproc=Joiner

@@ -91,6 +91,16 @@ public class Convert {
 			return;
 		}
 		
+		// Echo Config
+		System.out.println();
+		System.out.println("ThriftyClone Version 1.0");
+		System.out.println();
+		System.out.println("Clone Converter");
+		System.out.println();
+		System.out.println("FileIDs=" + fileids.toAbsolutePath());
+		System.out.println("Clones=" + clones.toAbsolutePath());
+		System.out.println("Converted=" + output.toAbsolutePath());
+		
 		try {
 			bcb.Convert.convert(clones, fileids, output);
 		} catch(Exception e) {

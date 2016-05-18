@@ -1,6 +1,5 @@
 package input.logic;
 
-import java.io.FileFilter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
@@ -8,10 +7,15 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
+
+import org.apache.commons.io.filefilter.IOFileFilter;
+import org.apache.commons.io.filefilter.OrFileFilter;
 
 import constants.LanguageConstants;
 import input.block.InputBlock;
+import input.block.tempblock.SizeTempBlockRequirement;
 import input.file.InputFile;
 import input.tokenprocessors.ITokenProcessor;
 import input.txl.ITXLCommand;
@@ -42,8 +46,12 @@ public class InputBuilder {
 		Path blocks = config.getBlocks();
 		int token_granularity = config.getTokenType();
 		int block_granularity = config.getBlock_granularity();
-		int language = config.getLanguage();
 		int numthreads = config.getNumThreads();
+		
+		//System.out.println(config.getMinLines() + " " + config.getMaxLines() + " " + config.getMinTokens() + " " + config.getMaxTokens());
+		SizeTempBlockRequirement requirements = new SizeTempBlockRequirement(config.getMinLines(), config.getMaxLines(), config.getMinTokens(), config.getMaxTokens());
+		//System.out.println(requirements.getMinlines() + " " + requirements.getMaxlines() + " " + requirements.getMintokens() + " " + requirements.getMaxtokens());
+		
 		List<ITokenProcessor> token_processors = config.getToken_processors();
 		List<ITXLCommand> txl_normalizations = config.getTxl_commands();
 		
@@ -67,7 +75,12 @@ public class InputBuilder {
 	// Initialize Workers
 		Thread fp;
 		if(Files.isDirectory(root)) {
-			FileFilter filter = LanguageConstants.getFileFilter(language);
+			List<IOFileFilter> filters = new LinkedList<IOFileFilter>();
+			for(int lang : config.getLanguages()) {
+				filters.add(LanguageConstants.getFileFilter(lang));
+			}
+			OrFileFilter filter = new OrFileFilter(filters);
+
 			fp = new FileProducer_FromRoot(root, filter, file_queue.getEmitter(), fidw);
 		} else {
 			fp = new FileProducer_FromFileList(FilePathStreamUtil.createFilePathStream(root), file_queue.getEmitter(), fidw);
@@ -75,8 +88,8 @@ public class InputBuilder {
 		FileConsumer_BlockProducer fc_bp[] = new FileConsumer_BlockProducer[numthreads];
 		for(int i = 0; i < numthreads; i++)
 			fc_bp[i] = new FileConsumer_BlockProducer(file_queue.getReceiver(), block_queue.getEmitter(),
-													  language, block_granularity, token_granularity, txl_normalizations,
-													  token_processors);
+													  block_granularity, token_granularity, txl_normalizations,
+													  token_processors, requirements);
 		BlockConsumer_BlockWriter bc_bw = new BlockConsumer_BlockWriter(bw, block_queue.getReceiver());
 		
 	// Execute

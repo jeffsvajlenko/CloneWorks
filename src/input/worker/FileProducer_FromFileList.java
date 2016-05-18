@@ -1,6 +1,7 @@
 package input.worker;
 import java.nio.file.Path;
 
+import constants.LanguageConstants;
 import input.file.InputFile;
 import input.utils.FileIDWriter;
 import input.utils.FilePathStream;
@@ -62,7 +63,9 @@ public class FileProducer_FromFileList extends Thread {
 			Path path;
 			
 			while((path = in.next()) != null) {
-				InputFile ifile = new InputFile(currentid++, path);
+				int language = LanguageConstants.getLanguage(path);
+				
+				InputFile ifile = new InputFile(currentid++, path, language);
 				
 				// Output to file tracker (optionally)
 				if(writer != null)

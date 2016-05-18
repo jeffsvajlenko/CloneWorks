@@ -24,25 +24,30 @@ public class TXLNamed implements ITXLCommand {
 		existsExec = Files.exists(Paths.get(TXLUtil.getTXLRoot() + "/" + executable));
 		existsScript = Files.exists(Paths.get(TXLUtil.getTXLRoot() + "/" + script));
 	}
-	
+
 	@Override
-	public String getCommandExec() {
+	public String getCommandExec(int language) {
 		return TXLUtil.getTXLRoot() + "/" + executable + " stdin ";
 	}
 
 	@Override
-	public String getCommandScript() {
+	public String getCommandScript(int language) {
 		return "txl stdin " + TXLUtil.getTXLRoot() + "/" + script;
 	}
 
 	@Override
-	public boolean existsExec() {
+	public boolean existsExec(int language) {
 		return this.existsExec;
 	}
 
 	@Override
-	public boolean existsScript() {
+	public boolean existsScript(int language) {
 		return this.existsScript;
+	}
+
+	@Override
+	public boolean forLanguage(int language) {
+		return true;
 	}
 
 }

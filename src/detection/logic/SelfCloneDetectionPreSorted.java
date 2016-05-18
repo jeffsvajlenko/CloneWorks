@@ -36,7 +36,6 @@ public class SelfCloneDetectionPreSorted {
 		//					  double sim,
 		//					  int numThreads
 		//					 ) throws IOException {
-		long time = System.currentTimeMillis();
 		
 		Path input = config.getBlocks();
 		Path output = config.getClones();
@@ -63,6 +62,7 @@ public class SelfCloneDetectionPreSorted {
 					                         Q_indexer_detection.getEmitter(),
 					                      	 index,
 					                         null,
+					                         null,
 					                         new MyPrefixer(sim),
 					                         requirements);
 		
@@ -82,7 +82,7 @@ public class SelfCloneDetectionPreSorted {
 // -- Orchestrate
 		
 	// -- Index
-		System.out.println("Indexing... ");
+		//System.out.println("Indexing... ");
 		// Start Indexer
 		for(int i = 0; i < numThreads; i++)
 			W_indexers[i].start();
@@ -131,13 +131,13 @@ public class SelfCloneDetectionPreSorted {
 					e.printStackTrace();
 				}
 			}
-			System.out.println("\tIndexer [" + i + "] has completed with exit: " + W_indexers[i].getExitValue() + " - " + W_indexers[i].getExitMessage());
+			//System.out.println("\tIndexer [" + i + "] has completed with exit: " + W_indexers[i].getExitValue() + " - " + W_indexers[i].getExitMessage());
 			W_indexers[i] = null;
 		}
-		System.out.println(index.getTerms().size() + " terms indexed.\n");
+		//System.out.println(index.getTerms().size() + " terms indexed.\n");
 		
 	// - Detection
-		System.out.println("Detecting clones... " + Q_indexer_detection.size() + " query blocks to process.");
+		//System.out.println("Detecting clones... " + Q_indexer_detection.size() + " query blocks to process.");
 		
 		// Start Detectors
 		for(int i = 0; i < numThreads; i++)
@@ -166,7 +166,7 @@ public class SelfCloneDetectionPreSorted {
 					e.printStackTrace();
 				}
 			}
-			System.out.println("Detector [" + i + "] has completed with exit: ");
+			//System.out.println("Detector [" + i + "] has completed with exit: ");
 			W_detection[i] = null;
 		}
 		
@@ -189,12 +189,12 @@ public class SelfCloneDetectionPreSorted {
 				e.printStackTrace();
 			}
 		}
-		System.out.println("Outputter has completed with exit: ");
+		//System.out.println("Outputter has completed with exit: ");
 		W_output = null;
 		out.flush();
 		out.close();
 		
-		System.out.println("Total time: " + (System.currentTimeMillis() - time)/1000.0);
+		//System.out.println("Total time: " + (System.currentTimeMillis() - time)/1000.0);
 		
 	}
 	

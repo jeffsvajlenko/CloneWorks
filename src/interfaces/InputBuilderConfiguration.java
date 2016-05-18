@@ -27,27 +27,46 @@ public class InputBuilderConfiguration {
 	private Path system;
 	private Path fileids;
 	private Path blocks;
-	private int language;
+	private int [] languages;
 	private int granularity;
 	private int token_type;
 	private List<ITXLCommand> txl_commands;
 	private List<ITokenProcessor> token_processors;
+	private int minlines;
+	private int maxlines;
+	private int mintokens;
+	private int maxtokens;
 	
 	public InputBuilderConfiguration(	String system,
 										String fileids,
 										String blocks,
-										String language,
+										String[] language,
 										String granularity,
 										String configfile,
-										String numthreads
+										String numthreads,
+										String minlines,
+										String maxlines,
+										String mintokens,
+										String maxtokens
 	) throws ConfigurationException {
 		
-	// Process Provides Configurations
+	// Process Provided Configurations
 		this.system      = processSystemConfiguration(system);
 		this.fileids     = processFileIdsConfiguration(fileids);
 		this.blocks      = processBlocksConfiguration(blocks);
-		this.language    = processLanguage(language);
+		this.languages    = processLanguage(language);
 		this.granularity = processGranularity(granularity);
+		
+		this.minlines = processMinLines(minlines);
+		this.maxlines = processMaxLines(maxlines);
+		this.mintokens = processMinTokens(mintokens);
+		this.maxtokens = processMaxTokens(maxtokens);
+		
+		if(this.minlines > this.maxlines)
+			throw new ConfigurationException("Minlines can't be larger than maxlines.");
+		if(this.mintokens > this.maxtokens)
+			throw new ConfigurationException("Mintokens can't be larger than maxtokens.");
+		
 		this.numthreads  = processNumThreads(numthreads);
 		this.pconfigfile = processConfigFile(configfile);
 		
@@ -69,7 +88,7 @@ public class InputBuilderConfiguration {
 						this.token_type = processTokenType(value);
 						break;
 					case "txl":
-						txl_commands.add(processTxlCommand(value, this.language, this.granularity));
+						txl_commands.add(processTxlCommand(value, this.languages, this.granularity));
 						break;
 					case "tokproc":
 						token_processors.add(processTokenProcessor(value));
@@ -81,6 +100,54 @@ public class InputBuilderConfiguration {
 			br.close();
 		} catch (IOException e) {
 			throw new ConfigurationException("The specified configuration file is not readable.  IOException occured: " + e.getMessage());
+		}
+	}
+	
+	private static int processMinLines(String minlines) throws ConfigurationException {
+		if(minlines == null) {
+			return 0;
+		} else {
+			try {
+				return Integer.parseInt(minlines);
+			} catch (Exception e) {
+				throw new ConfigurationException("The specified minlines is invalid: " + minlines + ".");
+			}
+		}
+	}
+	
+	private static int processMinTokens(String mintokens) throws ConfigurationException {
+		if(mintokens == null) {
+			return 0;
+		} else {
+			try {
+				return Integer.parseInt(mintokens);
+			} catch (Exception e) {
+				throw new ConfigurationException("The specified mintokens is invalid: " + mintokens + ".");
+			}
+		}
+	}
+	
+	private static int processMaxLines(String maxlines) throws ConfigurationException {
+		if(maxlines == null) {
+			return Integer.MAX_VALUE;
+		} else {
+			try {
+				return Integer.parseInt(maxlines);
+			} catch (Exception e) {
+				throw new ConfigurationException("The specified maxlines is invalid: " + maxlines + ".");
+			}
+		}
+	}
+	
+	private static int processMaxTokens(String maxtokens) throws ConfigurationException {
+		if(maxtokens == null) {
+			return Integer.MAX_VALUE;
+		} else {
+			try {
+				return Integer.parseInt(maxtokens);
+			} catch (Exception e) {
+				throw new ConfigurationException("The specified maxlines is invalid: " + maxtokens + ".");
+			}
 		}
 	}
 	
@@ -133,8 +200,8 @@ public class InputBuilderConfiguration {
 		return blocks;
 	}
 
-	public int getLanguage() {
-		return language;
+	public int [] getLanguages() {
+		return languages;
 	}
 
 	public int getBlock_granularity() {
@@ -143,6 +210,22 @@ public class InputBuilderConfiguration {
 
 	public int getTokenType() {
 		return token_type;
+	}
+	
+	public int getMinLines() {
+		return minlines;
+	}
+	
+	public int getMaxLines() {
+		return maxlines;
+	}
+	
+	public int getMinTokens() {
+		return mintokens;
+	}
+	
+	public int getMaxTokens() {
+		return maxtokens;
 	}
 
 	public List<ITXLCommand> getTxl_commands() {
@@ -191,22 +274,25 @@ public class InputBuilderConfiguration {
 		return processor;
 	}
 	
-	public static TXLNormalization processTxlCommand(String command, int language, int block_granularity) throws ConfigurationException {
+	public static TXLNormalization processTxlCommand(String command, int [] langauges, int block_granularity) throws ConfigurationException {
 		String parts[] = command.split(" ", 2);
 		String script = parts[0];
 		String arguments;
 		if(parts.length == 1) {
 			arguments = "";
 		} else if (parts.length == 2) {
-			arguments = parts[2];
+			arguments = parts[1];
 		} else {
 			System.err.println("Coding error in InputBuilderConfiguration.");
 			System.exit(-1);
 			return null;
 		}
-		TXLNormalization txl = new TXLNormalization(script, arguments, LanguageConstants.getString(language), BlockGranularityConstants.getString(block_granularity));
-		if(!txl.existsScript())
-			throw new ConfigurationException("TXL script: '" + txl.getCommandScript() + "' does not exist.");
+		TXLNormalization txl = new TXLNormalization(script, arguments, block_granularity);
+		for(int lang : langauges) {
+			if(!txl.existsScript(lang) && !txl.existsExec(lang))
+				throw new ConfigurationException("TXL script: '" + txl.toString() + "' does not exist as script or executable for language " + LanguageConstants.getString(lang) + ".");
+		}
+		
 		return txl;
 	}
 	
@@ -230,12 +316,15 @@ public class InputBuilderConfiguration {
 		return retval;
 	}
 	
-	public static int processLanguage(String language) throws ConfigurationException {
-		int retval;
+	public static int [] processLanguage(String [] language) throws ConfigurationException {
+		int [] retval = new int[language.length];
+		int i = 0;
 		try {
-			retval = LanguageConstants.getCanonical(language);
+			for(i = 0; i < language.length; i++) {
+				retval[i] = LanguageConstants.getCanonical(language[i]);
+			}
 		} catch (IllegalArgumentException e) {
-			throw new ConfigurationException("Unsupported language.");
+			throw new ConfigurationException("Unsupported language: " + retval[i] + ".");
 		}
 		return retval;
 	}

@@ -118,6 +118,13 @@ public class CloneDetection {
 				                .build()
 		);
 		
+		// GTF-Balance
+		options.addOption(Option.builder("idf")
+							    .longOpt("inverse-document-frequency")
+							    .desc("Weights the token frequencies by their inverse-document-frequency.")
+							    .build()
+		);
+		
 		Path blocks;
 		Path clones;
 		boolean partition_mode = false;
@@ -129,6 +136,7 @@ public class CloneDetection {
 		int min_size_tokens = 0;
 		int max_size_tokens = 0;
 		boolean pre_sorted = false;
+		boolean idfweight = false;
 		
 		//Path blocks,
         //Path clones,
@@ -187,6 +195,10 @@ public class CloneDetection {
 			return;
 		}
 
+		if(line.hasOption("idf")) {
+			idfweight = true;
+		}
+		
 		// Partition-Mode
 		if(line.hasOption("p")) {
 			partition_mode = true;
@@ -295,16 +307,43 @@ public class CloneDetection {
 		if(line.hasOption("ps"))
 			pre_sorted = true;
 		
-		CloneDetectionConfig config = new CloneDetectionConfig(blocks, clones, minsim, min_size_lines, max_size_lines, min_size_tokens, max_size_tokens, pre_sorted, partition_mode, max_partition_size, num_threads);
+		CloneDetectionConfig config = new CloneDetectionConfig(blocks, clones, minsim, min_size_lines, max_size_lines, min_size_tokens, max_size_tokens, pre_sorted, partition_mode, idfweight, max_partition_size, num_threads);
 		
-		if(config.isPresorted() && config.isPartitioned()) {
-			detection.logic.SelfPartitionedCloneDetectionPreSorted.detect(config);
-		} else if (config.isPresorted() && !config.isPartitioned()) {
-			detection.logic.SelfCloneDetectionPreSorted.detect(config);
-		} else if (!config.isPresorted() && config.isPartitioned()) {
-			detection.logic.SelfPartitionedCloneDetection.detect(config);
-		} else { //(!pre-sorted && !partition_mode)
-			detection.logic.SelfCloneDetection.detect(config);
+		// Echo Config
+		System.out.println();
+		System.out.println("ThriftyClone Version 1.0");
+		System.out.println();
+		System.out.println("Clone Detection");
+		System.out.println();
+		System.out.println("Blocks=" + config.getBlocks().toAbsolutePath());
+		System.out.println("Clones=" + config.getClones().toAbsolutePath());
+		System.out.println("MinimumSimilarity=" + config.getMinSimilarity());
+		System.out.println("Pre-Sorted=" + config.isPresorted());
+		System.out.print("Partitioned=" + config.isPartitioned());
+		if(config.isPartitioned()) {
+			System.out.println(" " + config.getMaxPartitionSize());
+		} else {
+			System.out.println("");
+		}
+		System.out.println("MinLines=" + config.getMinLines());
+		System.out.println("MaxLines=" + config.getMaxLines());
+		System.out.println("MinTokens=" + config.getMinTokens());
+		System.out.println("MaxTokens=" + config.getMaxTokens());
+		
+		
+		try {
+			if(config.isPresorted() && config.isPartitioned()) {
+				detection.logic.SelfPartitionedCloneDetectionPreSorted.detect(config);
+			} else if (config.isPresorted() && !config.isPartitioned()) {
+				detection.logic.SelfCloneDetectionPreSorted.detect(config);
+			} else if (!config.isPresorted() && config.isPartitioned()) {
+				detection.logic.SelfPartitionedCloneDetection.detect(config);
+			} else { //(!pre-sorted && !partition_mode)
+				detection.logic.SelfCloneDetection.detect(config);
+			}
+		} catch (Exception e) {
+			System.out.println("Clone detection failed with exception: " + e.getMessage());
+			e.printStackTrace();
 		}
 	}
 	

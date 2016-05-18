@@ -21,7 +21,7 @@ public class BlockWriter {
 		this.out.write("#system=" + config.getSystem() + "\n");
 		this.out.write("#fileids=" + config.getFileids() + "\n");
 		this.out.write("#blocks=" + config.getBlocks() + "\n");
-		this.out.write("#language=" + config.getLanguage() + "\n");
+		this.out.write("#language=" + config.getLanguages() + "\n");
 		this.out.write("#granularity=" + config.getBlock_granularity() + "\n");
 		this.out.write("#configuration=" + config.getConfigFile() + "\n");
 		int i = 1;

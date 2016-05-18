@@ -63,7 +63,7 @@ public class SelfPartitionedCloneDetectionPreSorted {
 		W_output.start();
 		
 		while(!endReached) {
-			System.out.println("Indexing " + blockPosition + " to " + (blockPosition + blockgroupsize));
+			//System.out.println("Indexing " + blockPosition + " to " + (blockPosition + blockgroupsize));
 			
 // Data
 			IIndex index = new ConcurrentHashMapIndex(1000);
@@ -80,6 +80,7 @@ public class SelfPartitionedCloneDetectionPreSorted {
 				W_indexers[i] = new BlockIndexer(new StringInputBlockInput(Q_indexer_in.getReceiver()),
 												 Q_indexer_out.getEmitter(),
 						                      	 index,
+						                         null,
 						                         null,
 						                         prefixer,
 						                         requirements);

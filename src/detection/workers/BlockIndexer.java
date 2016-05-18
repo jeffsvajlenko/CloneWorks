@@ -3,6 +3,7 @@ package detection.workers;
 import java.util.Comparator;
 import java.util.Objects;
 
+import detection.DF.IDocumentFrequency;
 import detection.block.Block;
 import detection.index.IIndex;
 import detection.prefixer.Prefixer;
@@ -20,11 +21,11 @@ public class BlockIndexer extends Thread {
 	private Prefixer prefixer;
 	private Comparator<TermFrequency> sorter;
 	private Requirements requirements;
-	
+	private IDocumentFrequency df;
 	private int exitvalue;
 	private String exitmsg;
 	
-	public BlockIndexer(InputBlockInput input, IEmitter<Block> output, IIndex index, Comparator<TermFrequency> sorter, Prefixer prefixer, Requirements requirements) {
+	public BlockIndexer(InputBlockInput input, IEmitter<Block> output, IIndex index, Comparator<TermFrequency> sorter, IDocumentFrequency df, Prefixer prefixer, Requirements requirements) {
 		Objects.requireNonNull(input);
 		Objects.requireNonNull(index);
 		Objects.requireNonNull(prefixer);
@@ -33,6 +34,7 @@ public class BlockIndexer extends Thread {
 		this.input = input;
 		this.output = output;
 		
+		this.df = df;
 		this.index = index;
 		this.sorter = sorter;
 		this.prefixer = prefixer;
@@ -60,6 +62,11 @@ public class BlockIndexer extends Thread {
 			// Sort
 			if(sorter != null)
 				iblock.sort(sorter);
+			
+			// Re-Weight
+			if(df != null) {
+				
+			}
 			
 			// Convert to Detection Block
 			Block dblock = prefixer.prefix(iblock);

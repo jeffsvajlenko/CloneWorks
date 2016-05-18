@@ -11,13 +11,14 @@ public class CloneDetectionConfig {
 	private int maxLines;
 	private int minTokens;
 	private int maxTokens;
-	boolean presorted;
-	boolean partitioned;
-	int maxPartitionSize;
-	int numThreads;
+	private boolean presorted;
+	private boolean partitioned;
+	private boolean dfweight;
+	private int maxPartitionSize;
+	private int numThreads;
 	
 	public CloneDetectionConfig(Path blocks, Path clones, double minSimilarity, int minLines, int maxLines,
-			int minTokens, int maxTokens, boolean presorted, boolean partitioned, int maxPartitionSize,
+			int minTokens, int maxTokens, boolean presorted, boolean partitioned, boolean dfweight, int maxPartitionSize,
 			int numThreads) {
 		super();
 		this.blocks = blocks;
@@ -31,8 +32,13 @@ public class CloneDetectionConfig {
 		this.partitioned = partitioned;
 		this.maxPartitionSize = maxPartitionSize;
 		this.numThreads = numThreads;
+		this.dfweight = dfweight;
 	}
 
+	public boolean isDF() {
+		return dfweight;
+	}
+	
 	public Path getBlocks() {
 		return blocks;
 	}

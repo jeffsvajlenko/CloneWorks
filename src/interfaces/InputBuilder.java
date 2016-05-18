@@ -11,7 +11,10 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.lang3.time.DurationFormatUtils;
 
+import constants.BlockGranularityConstants;
 import constants.InstallDir;
+import constants.LanguageConstants;
+import constants.TokenGranularityConstants;
 import input.tokenprocessors.ITokenProcessor;
 import input.txl.ITXLCommand;
 
@@ -64,8 +67,8 @@ public class InputBuilder {
 		options.addOption(Option.builder("l")
 								.longOpt("language")
 								.required()
-								.hasArg()
-								.argName("str")
+								.hasArgs()
+								.argName("str [str2 st3 ...]")
 								.desc("The language of the input system.  One of: {java,c,cpp,cs,python}.")
 				                .build()
 		);
@@ -99,13 +102,53 @@ public class InputBuilder {
 				                .build()
 		);
 		
+		// Minimum Clone Size - Original Lines		
+		options.addOption(Option.builder("mil")
+				                .longOpt("min-lines")
+				                .hasArg()
+				                .argName("num")
+				                .desc("Minimum code fragment size in (original) source lines.")
+				                .build()
+		);
+				
+		// Maximum Clone Size - Original Lines
+		options.addOption(Option.builder("mal")
+				                .longOpt("max-lines")
+				                .hasArg()
+				                .argName("num")
+				                .desc("Maximum code fragment size in (original) source lines.")
+				                .build()
+		);
+				
+		// Minimum Tokens - Original Tokens
+		options.addOption(Option.builder("mit")
+				                .longOpt("min-tokens")
+				                .hasArg()
+				                .argName("num")
+				                .desc("Minimum code fragment size in (original, pre-processing) parsed tokens.")
+				                .build()
+		);
+				
+		// Maximum Tokens - Original Tokens
+		options.addOption(Option.builder("mat")
+				                .longOpt("max-tokens")
+				                .hasArg()
+				                .argName("num")
+				                .desc("Maximum code fragment size in (original, pre-processing) parsed tokens.")
+				                .build()
+		);
+		
 		String system;
 		String fileids;
 		String blocks;
-		String language;
+		String [] language;
 		String granularity;
 		String configfile;
 		String numthreads = null;
+		String minlines = null;
+		String maxlines = null;
+		String mintokens = null;
+		String maxtokens = null;
 		
 		formatter = new HelpFormatter();
 		formatter.setOptionComparator(null);	
@@ -114,25 +157,30 @@ public class InputBuilder {
 		try {
 			line = parser.parse(options, args);
 		} catch (Exception e) {
+			System.out.println("\n" + e.getMessage() + "\n");
 			panic();
 			return;
 		}
+		
 		
 		InstallDir.setInstallDir(Paths.get(line.getArgList().get(0)));
 		
 		system = line.getOptionValue("i");
 		fileids = line.getOptionValue("f");
 		blocks = line.getOptionValue("b");
-		language = line.getOptionValue("l");
+		language = line.getOptionValues("l");
 		granularity = line.getOptionValue("g");
 		configfile = line.getOptionValue("c");
 		if(line.hasOption("t"))
 			numthreads = line.getOptionValue("t");
-		
+		minlines = line.getOptionValue("mil");
+		maxlines = line.getOptionValue("mal");
+		mintokens = line.getOptionValue("mit");
+		maxtokens = line.getOptionValue("mat");
 		
 		InputBuilderConfiguration config;
 		try {
-			config = new InputBuilderConfiguration(system, fileids, blocks, language, granularity, configfile, numthreads);
+			config = new InputBuilderConfiguration(system, fileids, blocks, language, granularity, configfile, numthreads, minlines, maxlines, mintokens, maxtokens);
 		} catch(ConfigurationException e) {
 			System.err.println("Error: " + e.getMessage());
 			System.out.println("");
@@ -149,9 +197,19 @@ public class InputBuilder {
 		System.out.println("System=" + config.getSystem().toAbsolutePath());
 		System.out.println("FileIDs=" + config.getFileids().toAbsolutePath());
 		System.out.println("Blocks=" + config.getBlocks().toAbsolutePath());
-		System.out.println("Language=" + config.getLanguage());
-		System.out.println("Granularity=" + config.getBlock_granularity());
 		System.out.println("Configuration=" + configfile);
+		System.out.print("Languages=");
+		for(int lang : config.getLanguages()) {
+			System.out.print(LanguageConstants.getString(lang) + ",");
+		}
+		System.out.println("");
+		
+		
+		//LanguageConstants.getString(config.getLanguages())
+		
+		
+		System.out.println("Granularity=" + BlockGranularityConstants.getString(config.getBlock_granularity()));
+		System.out.println("TokenType=" + TokenGranularityConstants.getString(config.getTokenType()));
 		
 		if(config.getTxl_commands().size() > 0) {
 			System.out.println();
