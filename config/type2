@@ -4,7 +4,7 @@
 #
 
 # Tokenize by pretty-printed lines
-tokenization=line
+termsplit=line
 
 # Normalize identifiers
 txl=rename-blind
@@ -13,4 +13,4 @@ txl=rename-blind
 txl=abstract literal
 
 # Append the lines into a single mega-token (whole code fragment) for exact match
-tokproc=Joiner
+termproc=Joiner

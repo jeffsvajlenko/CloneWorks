@@ -16,7 +16,7 @@ import constants.BlockGranularityConstants;
 import constants.InstallDir;
 import constants.LanguageConstants;
 import constants.TokenGranularityConstants;
-import input.tokenprocessors.ITokenProcessor;
+import input.termprocessors.ITermProcessor;
 import input.txl.ITXLCommand;
 import input.txl.TXLNormalization;
 
@@ -31,7 +31,7 @@ public class InputBuilderConfiguration {
 	private int granularity;
 	private int token_type;
 	private List<ITXLCommand> txl_commands;
-	private List<ITokenProcessor> token_processors;
+	private List<ITermProcessor> token_processors;
 	private int minlines;
 	private int maxlines;
 	private int mintokens;
@@ -72,7 +72,7 @@ public class InputBuilderConfiguration {
 		
 	// Process Configuration File
 		txl_commands = new LinkedList<ITXLCommand>();
-		token_processors = new LinkedList<ITokenProcessor>();
+		token_processors = new LinkedList<ITermProcessor>();
 		try {
 			BufferedReader br = new BufferedReader(new FileReader(pconfigfile.toFile()));
 			String line;
@@ -84,13 +84,13 @@ public class InputBuilderConfiguration {
 				String declaration = parts[0].toLowerCase().trim();
 				String value = parts[1].trim();
 				switch(declaration) {
-					case "tokenization":
+					case "termsplit":
 						this.token_type = processTokenType(value);
 						break;
 					case "txl":
 						txl_commands.add(processTxlCommand(value, this.languages, this.granularity));
 						break;
-					case "tokproc":
+					case "termproc":
 						token_processors.add(processTokenProcessor(value));
 						break;
 					default:
@@ -232,12 +232,12 @@ public class InputBuilderConfiguration {
 		return txl_commands;
 	}
 
-	public List<ITokenProcessor> getToken_processors() {
+	public List<ITermProcessor> getToken_processors() {
 		return token_processors;
 	}
 	
-	public static ITokenProcessor processTokenProcessor(String value) throws ConfigurationException {
-		ITokenProcessor processor;
+	public static ITermProcessor processTokenProcessor(String value) throws ConfigurationException {
+		ITermProcessor processor;
 		
 		String parts[] = value.split(" ", 2);
 		String sclass = parts[0];
@@ -253,9 +253,9 @@ public class InputBuilderConfiguration {
 		}
 		
 		try {
-			Class<?> clazz = Class.forName("input.tokenprocessors." + sclass);
+			Class<?> clazz = Class.forName("input.termprocessors." + sclass);
 			Constructor<?> ctor = clazz.getConstructor(String.class);
-			processor = (ITokenProcessor) ctor.newInstance(new Object[]{init});
+			processor = (ITermProcessor) ctor.newInstance(new Object[]{init});
 		} catch (ClassNotFoundException e) {
 			throw new ConfigurationException("Could not find token processor class " + sclass + ".  Exception: " + e.getMessage());
 		} catch (NoSuchMethodException e) {

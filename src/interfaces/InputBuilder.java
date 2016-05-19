@@ -15,7 +15,7 @@ import constants.BlockGranularityConstants;
 import constants.InstallDir;
 import constants.LanguageConstants;
 import constants.TokenGranularityConstants;
-import input.tokenprocessors.ITokenProcessor;
+import input.termprocessors.ITermProcessor;
 import input.txl.ITXLCommand;
 
 public class InputBuilder {
@@ -222,7 +222,7 @@ public class InputBuilder {
 		if(config.getToken_processors().size() > 0) {
 			System.out.println();
 			int i = 1;
-			for(ITokenProcessor tokproc : config.getToken_processors()) {
+			for(ITermProcessor tokproc : config.getToken_processors()) {
 				System.out.println("tokproc[" + (i++) + "]=" + tokproc);
 			}
 		}

@@ -12,7 +12,7 @@ import input.block.InputBlock;
 import input.block.tempblock.TempBlock;
 import input.block.tempblock.TempBlockRequirements;
 import input.file.InputFile;
-import input.tokenprocessors.ITokenProcessor;
+import input.termprocessors.ITermProcessor;
 import input.txl.ITXLCommand;
 import input.txl.TXLExtract;
 import input.txl.TXLTokenize;
@@ -29,7 +29,7 @@ public class FileConsumer_BlockProducer extends Thread {
 	private int tokenType;
 	private List<ITXLCommand> txl_normalizations;
 	
-	private List<ITokenProcessor> token_processors;
+	private List<ITermProcessor> token_processors;
 	private List<ITXLCommand> commands;
 	
 	private Integer exitStatus;
@@ -39,7 +39,7 @@ public class FileConsumer_BlockProducer extends Thread {
 	
 	public FileConsumer_BlockProducer(IReceiver<InputFile> files_in, IEmitter<InputBlock> blocks_out,
 			                          int granularity, int tokenType, List<ITXLCommand> txl_normalizations,
-			                          List<ITokenProcessor> token_processors,
+			                          List<ITermProcessor> token_processors,
 			                          TempBlockRequirements requirements) {
 		
 		
@@ -150,7 +150,7 @@ public class FileConsumer_BlockProducer extends Thread {
 		}
 		
 	// 3 - Token Processors
-		for(ITokenProcessor processor : this.token_processors) {
+		for(ITermProcessor processor : this.token_processors) {
 			for(TempBlock block : blocks) {
 				block.setTokens(processor.process(block.getTokens(), file.getLanguage(), this.granularity, this.tokenType));
 			}

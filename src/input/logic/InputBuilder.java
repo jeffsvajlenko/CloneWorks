@@ -17,7 +17,7 @@ import constants.LanguageConstants;
 import input.block.InputBlock;
 import input.block.tempblock.SizeTempBlockRequirement;
 import input.file.InputFile;
-import input.tokenprocessors.ITokenProcessor;
+import input.termprocessors.ITermProcessor;
 import input.txl.ITXLCommand;
 import input.utils.BlockWriter;
 import input.utils.FileIDWriter;
@@ -52,7 +52,7 @@ public class InputBuilder {
 		SizeTempBlockRequirement requirements = new SizeTempBlockRequirement(config.getMinLines(), config.getMaxLines(), config.getMinTokens(), config.getMaxTokens());
 		//System.out.println(requirements.getMinlines() + " " + requirements.getMaxlines() + " " + requirements.getMintokens() + " " + requirements.getMaxtokens());
 		
-		List<ITokenProcessor> token_processors = config.getToken_processors();
+		List<ITermProcessor> token_processors = config.getToken_processors();
 		List<ITXLCommand> txl_normalizations = config.getTxl_commands();
 		
 		

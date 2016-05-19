@@ -5,7 +5,7 @@ import java.io.Writer;
 import java.sql.Timestamp;
 
 import input.block.InputBlock;
-import input.tokenprocessors.ITokenProcessor;
+import input.termprocessors.ITermProcessor;
 import input.txl.ITXLCommand;
 import interfaces.InputBuilderConfiguration;
 
@@ -29,7 +29,7 @@ public class BlockWriter {
 			this.out.write("#txl[" + (i++) + "]=" + txlc + "\n");
 		}
 		i = 1;
-		for(ITokenProcessor tokproc : config.getToken_processors()) {
+		for(ITermProcessor tokproc : config.getToken_processors()) {
 			this.out.write("#tokproc[" + (i++) + "]=" + tokproc + "\n");
 		}
 	}

@@ -3,10 +3,10 @@
 #
 
 # Tokenize for language tokens
-tokenization=token
+termsplit=token
 
 # Filter Operators
-tokproc=FilterOperators
+termproc=FilterOperators
 
 # Filter Seperators
-tokproc=FilterSeperators
+termproc=FilterSeperators

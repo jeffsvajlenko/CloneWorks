@@ -3,7 +3,7 @@
 #
 
 # Tokenize for language tokens
-tokenization=line
+termsplit=line
 
 # Blind Renaming
 txl=rename-blind
