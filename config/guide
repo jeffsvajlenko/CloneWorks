@@ -1,0 +1,26 @@
+# TXL Transformations
+# Provide a list of TXL tranformations to apply to the code fragments.
+# These are applied in the order specified.  Specified in format:
+# txl=name[ param1 param2 ...]
+# e.g.: txl=blind-rename
+# e.g.: txl=abstract literal
+
+
+
+# Tokenization
+# How to split the code into terms.  Can be lines or language-tokens.
+# When splitting by line, use TXL transformations to layout the code
+# for custom term definitions.
+# e.g.: tokenization=line
+# e.g.: tokenization=token
+
+
+# Term processors
+# Transformations/processing to apply on the terms.  Applied in the order
+# specified.  Specified in format:
+# tokproc=name[ initialization string]
+# e.g.: tokproc=NGram 3
+# e.g.: tokproc=FilterSeperators
+# e.g.: tokproc=FilterOperators
+
+

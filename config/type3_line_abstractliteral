@@ -1,9 +1,0 @@
-#
-# Builds blocks appropriate for single Type-3 detection.
-#
-
-# Tokenize for language tokens
-tokenization=line
-
-# Normalize literals
-txl=abstract literal
