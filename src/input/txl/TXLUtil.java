@@ -1,7 +1,10 @@
 package input.txl;
 
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.nio.file.Path;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -9,6 +12,8 @@ import java.util.List;
 
 import org.apache.commons.exec.OS;
 import org.apache.commons.io.IOUtils;
+
+import com.sun.xml.internal.ws.util.xml.ContentHandlerToXMLStreamWriter;
 
 import constants.InstallDir;
 import constants.LanguageConstants;
@@ -28,24 +33,23 @@ public class TXLUtil {
 		return new TXLOptional(new TXLNamed("pyindent"), new int[]{LanguageConstants.PYTHON});
 	}
 	
-	public static List<String> run(List<ITXLCommand> commands, Path file, int language) {
+	public static List<String> run(List<ITXLCommand> commands, byte[] file, int language) {
 		//long time = System.currentTimeMillis();
 		
 	// Build Command
 		String chain = "";
 		
-		if(OS.isFamilyWindows()) {
-			chain += "cat `cygpath -up '" + file.toString() + "'`";
-		} else {
-			chain += "cat " + file.toString();
-		}
+		//if(OS.isFamilyWindows()) {
+		//	chain += "cat `cygpath -up '" + file.toString() + "'`";
+		//} else {
+		//	chain += "cat " + file.toString();
+		//}
 		
 		Iterator<ITXLCommand> iter = commands.iterator();
 		
 		while(iter.hasNext()) {
 			ITXLCommand command = iter.next();
 			if(command.forLanguage(language)) {
-				chain += " | ";
 				if(command.existsExec(language)) {
 					chain += command.getCommandExec(language);
 				} else if (command.existsScript(language)) {
@@ -54,6 +58,8 @@ public class TXLUtil {
 					System.err.println("One of the TXL commands is impossible to execute (does not exist in script or compiled): " + command.toString());
 					System.exit(-1);
 				}
+				if(iter.hasNext())
+					chain += " | ";
 			}
 		}
 		
@@ -71,6 +77,7 @@ public class TXLUtil {
 		//}
 		//System.out.println("");
 		
+		
 	// Execute Process and Collect Output
 		int retval = 0;
 		List<String> lines = null;
@@ -79,6 +86,13 @@ public class TXLUtil {
 		try {
 			p = pb.start();
 			new StreamGobbler(p.getErrorStream()).start();
+			
+			// Write
+			OutputStream out = p.getOutputStream();
+			IOUtils.write(file, out);
+			out.close();
+			
+			// Read
 			lines = IOUtils.readLines(new InputStreamReader(p.getInputStream()));
 		} catch (IOException e) {
 			e.printStackTrace();

@@ -311,7 +311,7 @@ public class CloneDetection {
 		
 		// Echo Config
 		System.out.println();
-		System.out.println("ThriftyClone Version 1.0");
+		System.out.println("CloneWorks Version 1.0");
 		System.out.println();
 		System.out.println("Clone Detection");
 		System.out.println();
@@ -348,7 +348,7 @@ public class CloneDetection {
 	}
 	
 	private static void panic() {
-		formatter.printHelp(200, "thriftyd", "Clone detection with ThriftyClone.", options, "", true);
+		formatter.printHelp(200, "cwdetect", "Clone detection with CloneWorks.", options, "", true);
 		System.exit(-1);
 		return;
 	}

@@ -9,12 +9,19 @@ public class InputFile {
 	private Path path;
 	
 	private int language;
+	
+	private byte[] content;
 		
-	public InputFile(Long id, Path path, int language) {
+	public InputFile(Long id, Path path, int language, byte[] content) {
 		super();
 		this.id = id;
 		this.path = path;
 		this.language = language;
+		this.content = content;
+	}
+	
+	public byte[] getContent() {
+		return this.content;
 	}
 
 	public int getLanguage() {

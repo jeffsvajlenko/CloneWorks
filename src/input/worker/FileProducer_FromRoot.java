@@ -1,12 +1,16 @@
 package input.worker;
 
+import java.io.BufferedInputStream;
 import java.io.FileFilter;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.FileVisitResult;
 import java.nio.file.FileVisitor;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
+
+import org.apache.commons.io.IOUtils;
 
 import constants.LanguageConstants;
 import input.file.InputFile;
@@ -81,7 +85,7 @@ public class FileProducer_FromRoot extends Thread {
 				public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
 					if(pattern.accept(file.toFile())) {
 						int language = LanguageConstants.getLanguage(file);
-						InputFile ifile = new InputFile(currentid++, file, language);
+						InputFile ifile = new InputFile(currentid++, file, language, IOUtils.toByteArray(new FileInputStream(file.toFile())));
 						if(writer != null)
 							writer.write(ifile.getId(),ifile.getPath());
 						put(ifile);

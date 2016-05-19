@@ -177,7 +177,7 @@ public class FileConsumer_BlockProducer extends Thread {
 		}
 		
 	// Execute and Capture Output
-		List<String> lines = TXLUtil.run(commands, file.getPath(), file.getLanguage());
+		List<String> lines = TXLUtil.run(commands, file.getContent(), file.getLanguage());
 		if(lines == null) {
 			//System.out.println("    Failed for file: " + file + ".");
 			return null;

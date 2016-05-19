@@ -24,7 +24,7 @@ public class InputBuilder {
 	private static HelpFormatter formatter;
 	
 	private static void panic() {
-		formatter.printHelp(200, "thriftyb", "ThriftyCloneBuilder - ThriftyCLone code block parser.", options, "", true);
+		formatter.printHelp(200, "cwbuild", "CloneWorks-InputBuilder - CloneWorks input builder.", options, "", true);
 		System.exit(-1);
 		return;
 	}
@@ -190,7 +190,7 @@ public class InputBuilder {
 		
 		// Echo Config
 		System.out.println();
-		System.out.println("ThriftyClone Version 1.0");
+		System.out.println("CloneWorks Version 1.0");
 		System.out.println();
 		System.out.println("Input Builder");
 		System.out.println();

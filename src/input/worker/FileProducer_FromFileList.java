@@ -1,5 +1,8 @@
 package input.worker;
+import java.io.FileInputStream;
 import java.nio.file.Path;
+
+import org.apache.commons.io.IOUtils;
 
 import constants.LanguageConstants;
 import input.file.InputFile;
@@ -65,7 +68,7 @@ public class FileProducer_FromFileList extends Thread {
 			while((path = in.next()) != null) {
 				int language = LanguageConstants.getLanguage(path);
 				
-				InputFile ifile = new InputFile(currentid++, path, language);
+				InputFile ifile = new InputFile(currentid++, path, language, IOUtils.toByteArray(new FileInputStream(path.toFile())));
 				
 				// Output to file tracker (optionally)
 				if(writer != null)
