@@ -18,7 +18,6 @@ import input.block.InputBlock;
 import input.block.tempblock.SizeTempBlockRequirement;
 import input.file.InputFile;
 import input.termprocessors.ITermProcessor;
-import input.txl.ITXLCommand;
 import input.utils.BlockWriter;
 import input.utils.FileIDWriter;
 import input.utils.FilePathStreamUtil;
@@ -53,7 +52,6 @@ public class InputBuilder {
 		//System.out.println(requirements.getMinlines() + " " + requirements.getMaxlines() + " " + requirements.getMintokens() + " " + requirements.getMaxtokens());
 		
 		List<ITermProcessor> token_processors = config.getToken_processors();
-		List<ITXLCommand> txl_normalizations = config.getTxl_commands();
 		
 		
 	// Output
@@ -88,7 +86,7 @@ public class InputBuilder {
 		FileConsumer_BlockProducer fc_bp[] = new FileConsumer_BlockProducer[numthreads];
 		for(int i = 0; i < numthreads; i++)
 			fc_bp[i] = new FileConsumer_BlockProducer(file_queue.getReceiver(), block_queue.getEmitter(),
-													  block_granularity, token_granularity, txl_normalizations,
+													  block_granularity, token_granularity, config.getTransformChains(),
 													  token_processors, requirements);
 		BlockConsumer_BlockWriter bc_bw = new BlockConsumer_BlockWriter(bw, block_queue.getReceiver());
 		

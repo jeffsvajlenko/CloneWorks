@@ -7,7 +7,7 @@ import java.sql.Timestamp;
 
 import constants.LanguageConstants;
 import input.termprocessors.ITermProcessor;
-import input.txl.ITXLCommand;
+import input.transformations.ITransform;
 import interfaces.InputBuilderConfiguration;
 
 public class FileIDWriter {
@@ -30,8 +30,8 @@ public class FileIDWriter {
 		this.out.write("#granularity=" + config.getBlock_granularity() + "\n");
 		this.out.write("#configuration=" + config.getConfigFile() + "\n");
 		int i = 1;
-		for(ITXLCommand txlc : config.getTxl_commands()) {
-			this.out.write("#txl[" + (i++) + "]=" + txlc + "\n");
+		for(ITransform txlc : config.getTransforms()) {
+			this.out.write("#transform[" + (i++) + "]=" + txlc + "\n");
 		}
 		i = 1;
 		for(ITermProcessor tokproc : config.getToken_processors()) {

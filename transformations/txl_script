@@ -1,0 +1,30 @@
+#!/bin/bash
+
+### Standard Options
+# $1 = mode
+# $2 = install dir
+# $3 = language
+# $4 = granularity
+
+### Parameters
+# $5 = script name
+
+# Script
+script=${2}/txl/${5}.txl
+
+if [ "$1" = "r" ]
+then
+	txl stdin ${script} 
+	exit $?
+fi
+
+if [ "$1" = "v" ]
+then
+	if [ -e ${script} ]
+	then
+		exit 0
+	else
+		echo "TXL script ${4} does not exist."
+		exit 1
+	fi
+fi

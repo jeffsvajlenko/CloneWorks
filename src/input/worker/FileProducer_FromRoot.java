@@ -1,6 +1,5 @@
 package input.worker;
 
-import java.io.BufferedInputStream;
 import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.IOException;

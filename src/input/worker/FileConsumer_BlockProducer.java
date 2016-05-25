@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import constants.BlockGranularityConstants;
 import constants.LanguageConstants;
@@ -13,10 +14,9 @@ import input.block.tempblock.TempBlock;
 import input.block.tempblock.TempBlockRequirements;
 import input.file.InputFile;
 import input.termprocessors.ITermProcessor;
-import input.txl.ITXLCommand;
-import input.txl.TXLExtract;
-import input.txl.TXLTokenize;
-import input.txl.TXLUtil;
+import input.transformations.TransformChain;
+import input.transformations.TransformOutput;
+import input.transformations.TransformUtil;
 import util.blockingqueue.IEmitter;
 import util.blockingqueue.IReceiver;
 
@@ -27,10 +27,9 @@ public class FileConsumer_BlockProducer extends Thread {
 	
 	private int granularity;
 	private int tokenType;
-	private List<ITXLCommand> txl_normalizations;
+	private Map<Integer,TransformChain> commands;
 	
 	private List<ITermProcessor> token_processors;
-	private List<ITXLCommand> commands;
 	
 	private Integer exitStatus;
 	private String exitMessage;
@@ -38,7 +37,7 @@ public class FileConsumer_BlockProducer extends Thread {
 	private TempBlockRequirements requirements;
 	
 	public FileConsumer_BlockProducer(IReceiver<InputFile> files_in, IEmitter<InputBlock> blocks_out,
-			                          int granularity, int tokenType, List<ITXLCommand> txl_normalizations,
+			                          int granularity, int tokenType, Map<Integer,TransformChain> commands,
 			                          List<ITermProcessor> token_processors,
 			                          TempBlockRequirements requirements) {
 		
@@ -55,23 +54,10 @@ public class FileConsumer_BlockProducer extends Thread {
 		this.granularity = granularity;
 		this.tokenType = tokenType;
 		
-		this.txl_normalizations = txl_normalizations;
+		this.commands = commands;
 		
 		this.token_processors = token_processors;
 		
-		//System.out.println("language=" + language);
-		//System.out.println("granularity=" + granularity);
-		//System.out.println("tokenType=" + tokenType);
-		
-		// Prepare Command
-		commands = new LinkedList<ITXLCommand>();
-		commands.add(TXLUtil.getIfDef());
-		commands.add(TXLUtil.getPythonPreprocess());
-		commands.add(new TXLExtract(this.granularity));
-		commands.addAll(this.txl_normalizations);
-		if(this.tokenType == TokenGranularityConstants.TOKEN) {
-			commands.add(new TXLTokenize(this.granularity));
-		}
 	}
 	
 	@Override
@@ -177,12 +163,16 @@ public class FileConsumer_BlockProducer extends Thread {
 		}
 		
 	// Execute and Capture Output
-		List<String> lines = TXLUtil.run(commands, file.getContent(), file.getLanguage());
-		if(lines == null) {
-			//System.out.println("    Failed for file: " + file + ".");
-			return null;
-		} else if (lines.size() == 0) {
-			//System.out.println("    Failed for file: " + file + ".");
+		TransformOutput toutput = TransformUtil.run(commands.get(file.getLanguage()), file.getContent());
+		if(!toutput.success()) {
+			if(toutput.exception() == null) {
+				System.out.println("\tFailed for file: " + file + ".");
+			} else {
+				System.out.println("\tFailed for file: " + file + ".  Exception: " + toutput.exception().getMessage());
+			}
+		}
+		List<String> lines = toutput.output();
+		if(lines.size() == 0) {
 			return null;
 		}
 		

@@ -9,15 +9,21 @@ import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import constants.BlockGranularityConstants;
 import constants.InstallDir;
 import constants.LanguageConstants;
 import constants.TokenGranularityConstants;
 import input.termprocessors.ITermProcessor;
-import input.txl.ITXLCommand;
+import input.transformations.ITransform;
+import input.transformations.Transform;
+import input.transformations.TransformChain;
+import input.transformations.TransformUtil;
+import input.transformations.TransformValidation;
 import input.txl.TXLNormalization;
 
 public class InputBuilderConfiguration {
@@ -30,12 +36,17 @@ public class InputBuilderConfiguration {
 	private int [] languages;
 	private int granularity;
 	private int token_type;
-	private List<ITXLCommand> txl_commands;
+	private List<ITransform> transforms;
+	private Map<Integer, TransformChain> transformchains;
 	private List<ITermProcessor> token_processors;
 	private int minlines;
 	private int maxlines;
 	private int mintokens;
 	private int maxtokens;
+	
+	public Map<Integer, TransformChain> getTransformChains() {
+		return transformchains;
+	}
 	
 	public InputBuilderConfiguration(	String system,
 										String fileids,
@@ -71,7 +82,7 @@ public class InputBuilderConfiguration {
 		this.pconfigfile = processConfigFile(configfile);
 		
 	// Process Configuration File
-		txl_commands = new LinkedList<ITXLCommand>();
+		transforms = new LinkedList<ITransform>();
 		token_processors = new LinkedList<ITermProcessor>();
 		try {
 			BufferedReader br = new BufferedReader(new FileReader(pconfigfile.toFile()));
@@ -87,8 +98,8 @@ public class InputBuilderConfiguration {
 					case "termsplit":
 						this.token_type = processTokenType(value);
 						break;
-					case "txl":
-						txl_commands.add(processTxlCommand(value, this.languages, this.granularity));
+					case "transform":
+						transforms.add(processTransformCommand(value));
 						break;
 					case "termproc":
 						token_processors.add(processTokenProcessor(value));
@@ -101,6 +112,48 @@ public class InputBuilderConfiguration {
 		} catch (IOException e) {
 			throw new ConfigurationException("The specified configuration file is not readable.  IOException occured: " + e.getMessage());
 		}
+		
+		// Validate Transforms
+		
+		for(ITransform transform : transforms) {
+			for(String lang : language) {
+				TransformValidation validate = TransformUtil.validate(transform, lang, granularity);
+				if(!validate.isvalid()) {
+					throw new ConfigurationException("Transform " + transform.toString() + " is not valid for language " + lang + " and granularity " + granularity + " giving error message: " + validate.getErrorMsg());
+				}
+			}
+		}
+		
+		// Build Chains
+		this.transformchains = new HashMap<Integer, TransformChain>();
+		for(int lang : languages) {
+			List<ITransform> ltranforms = new LinkedList<ITransform>();
+			
+			// Add Language Specific Processing
+			//System.out.println(lang + " " + LanguageConstants.PYTHON);
+			if(lang == LanguageConstants.PYTHON) {
+				ltranforms.add(new Transform("txl_script","pyindent"));
+			}
+			if(lang == LanguageConstants.C || lang == LanguageConstants.CPP || lang == LanguageConstants.CS) {
+				ltranforms.add(new Transform("txl_script","ifdef"));
+			}
+			
+			// Add Extract
+			ltranforms.add(new Transform("txl_normalization","extract"));
+			
+			// Add Specifies
+			ltranforms.addAll(transforms);
+			
+			// Add Tokenize
+			if(token_type == TokenGranularityConstants.TOKEN) {
+				ltranforms.add(new Transform("txl_normalization", "tokenize"));
+			}
+			
+			this.transformchains.put(lang, TransformUtil.createChain(ltranforms, LanguageConstants.getString(lang), BlockGranularityConstants.getString(this.granularity)));
+			//System.out.println(this.transformchains.get(lang).get());
+		}
+		
+		
 	}
 	
 	private static int processMinLines(String minlines) throws ConfigurationException {
@@ -228,8 +281,8 @@ public class InputBuilderConfiguration {
 		return maxtokens;
 	}
 
-	public List<ITXLCommand> getTxl_commands() {
-		return txl_commands;
+	public List<ITransform> getTransforms() {
+		return transforms;
 	}
 
 	public List<ITermProcessor> getToken_processors() {
@@ -274,8 +327,27 @@ public class InputBuilderConfiguration {
 		return processor;
 	}
 	
+	public static ITransform processTransformCommand(String command) {
+		ITransform retval = null;
+		String parts[] = command.split(" ",2);
+		String exec = parts[0];
+		String params;
+		if(parts.length == 1) {
+			params = "";
+		} else if (parts.length == 2) {
+			params = parts[1];
+		} else {
+			System.err.println("Coding error in InputBuilderConfiguration.");
+			System.exit(-1);
+			return null;
+		}
+		retval = new Transform(exec, params);
+		return retval;
+	}
+	
 	public static TXLNormalization processTxlCommand(String command, int [] langauges, int block_granularity) throws ConfigurationException {
 		String parts[] = command.split(" ", 2);
+		//System.out.println("|" + parts[1] + "|");
 		String script = parts[0];
 		String arguments;
 		if(parts.length == 1) {

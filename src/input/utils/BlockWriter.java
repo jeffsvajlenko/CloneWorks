@@ -6,7 +6,7 @@ import java.sql.Timestamp;
 
 import input.block.InputBlock;
 import input.termprocessors.ITermProcessor;
-import input.txl.ITXLCommand;
+import input.transformations.ITransform;
 import interfaces.InputBuilderConfiguration;
 
 public class BlockWriter {
@@ -25,7 +25,7 @@ public class BlockWriter {
 		this.out.write("#granularity=" + config.getBlock_granularity() + "\n");
 		this.out.write("#configuration=" + config.getConfigFile() + "\n");
 		int i = 1;
-		for(ITXLCommand txlc : config.getTxl_commands()) {
+		for(ITransform txlc : config.getTransforms()) {
 			this.out.write("#txl[" + (i++) + "]=" + txlc + "\n");
 		}
 		i = 1;

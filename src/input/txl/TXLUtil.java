@@ -1,19 +1,14 @@
 package input.txl;
 
-import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.nio.file.Path;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.apache.commons.exec.OS;
 import org.apache.commons.io.IOUtils;
-
-import com.sun.xml.internal.ws.util.xml.ContentHandlerToXMLStreamWriter;
 
 import constants.InstallDir;
 import constants.LanguageConstants;

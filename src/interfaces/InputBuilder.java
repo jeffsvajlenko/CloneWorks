@@ -16,7 +16,7 @@ import constants.InstallDir;
 import constants.LanguageConstants;
 import constants.TokenGranularityConstants;
 import input.termprocessors.ITermProcessor;
-import input.txl.ITXLCommand;
+import input.transformations.ITransform;
 
 public class InputBuilder {
 
@@ -211,11 +211,11 @@ public class InputBuilder {
 		System.out.println("Granularity=" + BlockGranularityConstants.getString(config.getBlock_granularity()));
 		System.out.println("TokenType=" + TokenGranularityConstants.getString(config.getTokenType()));
 		
-		if(config.getTxl_commands().size() > 0) {
+		if(config.getTransforms().size() > 0) {
 			System.out.println();
 			int i = 1;
-			for(ITXLCommand txlc : config.getTxl_commands()) {
-				System.out.println("txl[" + (i++) + "]=" + txlc);
+			for(ITransform txlc : config.getTransforms()) {
+				System.out.println("transform[" + (i++) + "]=" + txlc);
 			}
 		}
 		

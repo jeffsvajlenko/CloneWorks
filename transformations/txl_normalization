@@ -1,0 +1,32 @@
+#!/bin/bash
+
+### Standard Options
+# $1 = mode
+# $2 = install dir
+# $3 = language
+# $4 = granularity
+
+### Parameters
+# $5 = script name
+
+# Script
+script=${2}/txl/${3}-${5}-${4}s.txl
+
+if [ "$1" = "r" ]
+then
+	txl stdin ${script} 
+	exit $?
+fi
+
+if [ "$1" = "v" ]
+then
+	if [ -e ${script} ]
+	then
+		exit 0
+	else
+		echo "TXL normalization with name ${5} does not exist for language ${3} and granularity ${4}."
+		exit 1
+	fi
+fi
+
+exit 1

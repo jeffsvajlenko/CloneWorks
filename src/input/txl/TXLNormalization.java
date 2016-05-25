@@ -4,6 +4,7 @@ import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
 
+import constants.BlockGranularityConstants;
 import constants.LanguageConstants;
 
 public class TXLNormalization implements ITXLCommand {
@@ -22,7 +23,7 @@ public class TXLNormalization implements ITXLCommand {
 	public TXLNormalization(String name, String arguments, int block_granularity) {
 		this.name = name;
 		this.arguments = arguments;
-		this.block_granularity = LanguageConstants.getString(block_granularity);
+		this.block_granularity = BlockGranularityConstants.getString(block_granularity);
 		this.m_script = new HashMap<Integer,String>();
 		this.m_executable = new HashMap<Integer,String>();
 		
