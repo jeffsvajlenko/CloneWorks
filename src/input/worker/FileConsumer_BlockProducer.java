@@ -170,6 +170,7 @@ public class FileConsumer_BlockProducer extends Thread {
 			} else {
 				System.out.println("\tFailed for file: " + file + ".  Exception: " + toutput.exception().getMessage());
 			}
+			return null;
 		}
 		List<String> lines = toutput.output();
 		if(lines.size() == 0) {

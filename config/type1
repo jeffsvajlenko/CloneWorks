@@ -1,10 +1,30 @@
 #
 # Builds blocks appropriate for Type-1 clone detection.
-# For detection, use pre-sorted (no GTF-Sort) option.
+# For detection, use the pre-sorted (no GTF-sort) option.
 #
 
-# Tokenize by pretty-printed lines
+# Extraction automatically performs Type-1 normalization (pretty-printing).
+# The code fragment is then split by pretty-printed lines, and then joined back
+# into a single term represeting the whole code fragment.  The Type-1 clones
+# then have identical single-term.
+
+###################
+# Transformations #
+###################
+
+
+
+##############
+# Term Split #
+##############
+
 termsplit=line
 
-# Append the lines into a single mega-token (whole code fragment) for exact match
+####################
+# Token Processors #
+####################
+
 termproc=Joiner
+
+
+

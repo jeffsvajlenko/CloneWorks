@@ -1,26 +1,48 @@
-# TXL Transformations
-# Provide a list of TXL tranformations to apply to the code fragments.
-# These are applied in the order specified.  Specified in format:
-# txl=name[ param1 param2 ...]
-# e.g.: txl=blind-rename
-# e.g.: txl=abstract literal
+#
+# Guide for creating configuration files.
+
+###################
+# Transformations #
+###################
+
+# Provide a list of transformations to apply to the code fragments.  Applied in
+# the order specified.  Specified as format:
+#
+#transform=name[ parameters]
+#
+# name - Name of executable in 'transformations/'
+# parameters - Parameters passe to the transformation executable (in addition
+#              to the standard ones).
+#
+#e.g.: 'transform=txl rename-blind'
+#e.g.: 'transform=txl abstract literals'
 
 
+##############
+# Term Split #
+##############
 
-# Term Splitting
-# How to split the code into terms.  Can be lines or language-tokens.
-# When splitting by line, use TXL transformations to layout the code
-# for custom term definitions.
-# e.g.: termsplit=line
-# e.g.: termsplit=token
+# How to split the code into terms.  Can be lines or language-tokens.  When
+# splitting by line, use transformations to layout the code for the desired
+# term definition.  By default, extraction performs strict pretty-printing
+# and removes comments.  So split by line without any custom layout splits by
+# pretty-printed code statements.
 
+####################
+# Token Processors #
+####################
 
-# Term processors
 # Transformations/processing to apply on the terms.  Applied in the order
-# specified.  Specified in format:
-# tokproc=name[ initialization string]
-# e.g.: termproc=NGram 3
-# e.g.: termproc=FilterSeperators
-# e.g.: termproc=FilterOperators
+# specified.  Specified as format:
+#
+#tokproc=name[ initialization string]
+#
+# name - The name of the token processor class.
+# initialization string - A string passed to teh class to initialize it.
+#
+#e.g.: 'termproc=FilterSeperators'
+#e.g.: 'termproc=FilterOperators'
+#e.g.: 'termproc=NGram 3'
+
 
 

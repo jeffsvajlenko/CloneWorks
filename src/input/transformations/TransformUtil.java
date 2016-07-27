@@ -86,7 +86,7 @@ public class TransformUtil {
 		List<String> lines = null;
 		ProcessBuilder pb = new ProcessBuilder("bash", "-c", chain.get());
 		Process p = null;
-		
+		//System.out.println(chain.get());
 		try {
 			p = pb.start();
 			new StreamGobbler(p.getErrorStream()).start();

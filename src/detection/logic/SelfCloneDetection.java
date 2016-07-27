@@ -104,7 +104,7 @@ public class SelfCloneDetection {
 // -- Orchestrate
 		
 	// -- Built GTF
-		//System.out.println("Building GTF...");
+		System.out.println("Building GTF...");
 		// Start
 		for(int i = 0; i < numThreads;  i++)
 			W_gtfbuilder[i].start();
@@ -158,6 +158,7 @@ public class SelfCloneDetection {
 	// -- Index
 		//System.out.println("Indexing... " + Q_gtf_indexer.size() + " blocks to process.");
 		// Start Indexer
+		System.out.println("Indexing...");
 		for(int i = 0; i < numThreads; i++)
 			W_indexers[i].start();
 		
@@ -189,6 +190,7 @@ public class SelfCloneDetection {
 	// - Detection
 		//System.out.println("Detecting clones... " + Q_indexer_detection.size() + " query blocks to process.");
 		
+		System.out.println("Detection...");
 		// Start Detectors
 		for(int i = 0; i < numThreads; i++)
 			W_detection[i].start();

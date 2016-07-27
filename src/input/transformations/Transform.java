@@ -40,7 +40,7 @@ public class Transform implements ITransform {
 	
 	@Override
 	public String toString() {
-		return "Transform[" + exec + "," + params + "," + exists + "]";
+		return "Transform[" + exec + "," + params + "]";
 	}
 	
 }

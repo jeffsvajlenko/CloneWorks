@@ -19,5 +19,4 @@ termsplit=line
 # Token Processors
 #
 
-
-
+termproc=NGram 2

@@ -1,12 +1,25 @@
 #
-# Builds blocks appropriate for single Type-3 detection.
+# Builds blocks for conservative  Type-3 detection.  Prioritizes precision over recall.
 #
 
-# Tokenize for language tokens
+#
+# Transformations
+#
+
+
+
+#
+# Term Split
+#
+
 termsplit=token
 
-# Filter Operators
-termproc=FilterOperators
+#
+# Token Processors
+#
 
-# Filter Seperators
+termproc=FilterOperators
 termproc=FilterSeperators
+
+
+

@@ -36,6 +36,7 @@ public class InputBuilder {
 		Thread.UncaughtExceptionHandler exception_handler = new Thread.UncaughtExceptionHandler() {
 		    public void uncaughtException(Thread th, Throwable ex) {
 		        System.err.println("Error: Failed with exception: " + ex);
+		        ex.printStackTrace();
 		    }
 		};
 		

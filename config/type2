@@ -1,16 +1,30 @@
 #
 # Builds blocks appropriate for Type-2 clone detection.
-# For detection, use pre-sorted (no GTF-Sort) option.
+# For detection, use the pre-sorted (no GTF-sort) option.
 #
 
-# Tokenize by pretty-printed lines
+# Performs Type-2 normalization, then splits by pretty-printed lines.  The
+# source lines are then joined int oa single term representing the whole code
+# fragment.  Type-2 clones then have identical single-term.
+
+###################
+# Transformations #
+###################
+
+transform=rename-blind
+transform=abstract literal
+
+##############
+# Term Split #
+##############
+
 termsplit=line
 
-# Normalize identifiers
-txl=rename-blind
+####################
+# Token Processors #
+####################
 
-# Normalize literals
-txl=abstract literal
-
-# Append the lines into a single mega-token (whole code fragment) for exact match
 termproc=Joiner
+
+
+

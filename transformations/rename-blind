@@ -1,0 +1,29 @@
+#!/bin/bash
+
+### Standard Options
+# $1 = mode
+# $2 = install dir
+# $3 = language
+# $4 = granularity
+
+# Script
+script=${2}/txl/${3}-rename-blind-${4}s.txl
+
+if [ "$1" = "r" ]
+then
+	txl stdin ${script} 
+	exit $?
+fi
+
+if [ "$1" = "v" ]
+then
+	if [ -e ${script} ]
+	then
+		exit 0
+	else
+		echo "Blind-rename does not exist for language ${3} and granularity ${4}."
+		exit 1
+	fi
+fi
+
+exit 1
