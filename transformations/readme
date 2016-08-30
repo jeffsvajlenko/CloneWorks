@@ -1,0 +1,136 @@
+Source transformations must be installed in this directory as an executable
+implementing a input/output specification.
+
+= Available Source Transformations
+==================================
+
+The included source transformations are TXL-based, and parse the code fragments into
+abstract-syntax-trees (AST) for transformation.  Their pre-requiste is that the 
+code fragments must be in a state that is compatible with the TXL language grammar.
+It is reccomended you use these transformations before your custom transformations
+if your transformations may break the compatibility.
+
+Transformations can have pre-conditions for use, but the framework is unable to
+check these.
+
+rename-blind
+------------
+This transformation normalized every identifier name to 'X'.
+
+Can be used by adding the following command to the configuration file:
+
+transform=rename-blind
+
+
+rename-consistent
+-----------------
+This transformation consistently renames each identifier value.  If the identifier
+'myvar' is the 5th unique identifier in the code fragment, then it, and all other
+referencs to it, will be replaced by 'X5'.
+
+Can be used by adding the following command to the configuration file:
+
+transform=rename-consistent
+
+
+abstract
+--------
+This transformation replaces non-terminals with the name of their type.  For example,
+the abstraction of literal will replace every literal value with 'literal', and the
+abstraction of modifier will replace all modifiers (e.g., public, private, etc) with
+'modifier'.
+
+Can be used by adding the following command to the configuration file:
+
+transform=abstract nonterminal_1 nonterminal_2 ...
+
+See the TXL grammar for the language of interest in txl/ for the names of the
+non-terminals.
+
+
+filter
+------
+Like abstract, but the non-terminals are replaced with an empty string: "".  I.e.,
+they are filtered.
+
+Can be used by adding the following command to the configuration file:
+
+transform=filter nonterminal_1 nonterminal_2 ...
+
+See the TXL grammar for the language of interest in txl/ for the names of the
+non-terminals.
+
+
+normalize-ifconditions
+======================
+This replaces the conditions in if statements with the string 'expression'.  For example
+if(x == 2) -> if(expression).
+
+Can be used by adding the following command to the configuration file:
+
+transform=normalize-ifconditions
+
+This transformation is only compatible with Java function code fragments.
+
+
+
+
+= Implementing a Source Transformation
+======================================
+
+Input Parameters
+----------------
+
+The executable will be executed by the input builder with the following
+parameters:
+
+$1 = mode		# Execution mode, 'v' = validate, 'r' = run.
+$2 = install dir	# The installation directory of CloneWorks.
+$3 = language		# The source language of the file being processed.
+$4 = granularity	# The granularity of the code fragments being processed.
+#5 = param1		# The first parameter from the configuration.
+#6 = param2		# The second parameter from the configuration.
+.. = ...                # ...
+
+The parameters are optional, and are those provided in the config script for the
+input builder.
+
+
+Validate Mode
+-------------
+The validate, 'v', mode is used to validate the source transformation.  This is
+sort of a dry run.  The transformation will be executed with 'v' for the mode
+parameter, and all other parameters as expected during the experiment.  The
+transformation should examine these parameters and exit with status '0' if the
+language, granularity and parameters are valid, or otherwise exit with status
+'1' with an error message (a single line) output to stdout.
+
+The input builder will run the validate mode for each specified language at
+the start of execution to discover transformation configuration errors before
+processing the source code.  Otherwise it would just fail on each file.
+
+
+Run Mode
+--------
+When the run mode is specified, the transfomation is to be applied.
+
+The executable will receive the code fragments form a source file on stdin in
+an xml-like (not perfectly compliant) format.  An example of this is shown in
+example.xml.  The transformation should extract the code fragment text from this
+input, perform its transformation, and output the transformed code fragments in
+the same format.  The transformation can also filter code fragments by not
+not outputing the code fragmetns to be filtered.
+
+Note that the representation of the code fragments will depend on the previous
+transformations applied.  So the transformation may need to provide some
+expectation on what it receives.
+
+If transformation fails, it should exit with a non-0 exit code. This will fail
+for all code fragments in the source file.  Optionally, invalid ones can be
+discarded.
+
+
+Examples
+--------
+Please see the rename-blind as an example.  This uses a TXL normalization to
+normalize the identifier names.

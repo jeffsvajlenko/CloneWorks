@@ -14,8 +14,8 @@
 # parameters - Parameters passe to the transformation executable (in addition
 #              to the standard ones).
 #
-#e.g.: 'transform=txl rename-blind'
-#e.g.: 'transform=txl abstract literals'
+#e.g.: 'transform=rename-blind'
+#e.g.: 'transform=abstract literals'
 
 
 ##############

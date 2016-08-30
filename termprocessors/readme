@@ -1,0 +1,125 @@
+= Available Term Processors
+=========================
+
+The included term processors are shown in the termproc/src directory for review.
+These are already included in the distribution and can be used with the input
+builder.
+
+Stemmer
+-------
+This term processor performs stemming on the terms, as described by Martin Porter
+(http://tartarus.org/~martin/PorterStemmer/).  It has no parameters, and can be
+used in a configuration script as:
+
+Usage: termproc=Stemmer
+
+
+NGram
+-----
+This performs a n-gram transformation over the terms.  It takes a single pramater, the
+value of n.
+
+Usage: termproc=NGram n
+
+
+FilterOperators
+---------------
+This filters terms which match operator tokens of code fragment's given language.
+
+Usage:
+termproc=FilterOperators
+
+
+FilterSeperators
+----------------
+This filters terms which match seperator tokens of the code fragment's given language.
+
+Usage: termproc=FilterSeperators
+
+
+RemoveEmpty
+-----------
+This removes empty terms.  Use if a previous transformation may produce empty terms.
+
+Usage: termproc=RemoveEmpty
+
+
+ToLowerCase
+-----------
+Normalizes the terms to lower case characters only.
+
+Usage: termproc=ToLowerCase
+
+
+TrimLeadingTrailingWhitespace
+-----------------------------
+Removes any leading or trailing whitespace from the terms.
+
+Usage: termproc=TrimLeadingTrailingWhitespace
+
+
+SplitStrings
+------------
+Splits string literals into its containing terms.  Identifies string literals as terms
+that start and end with a double quote, and splits on whitespace.
+
+E.g.: "This is a     string" -> {This,is,a,string}.
+
+Usage: termproc=SplitStrings
+
+ 
+NormalizeStrings
+----------------
+Normalizes string literals.  Identifie string literals as terms that start and end with
+a double quote character.  Replaces with "".
+
+Usage: termproc=NormalizeStrings
+
+
+Joiner
+------
+Combines all of the terms into a single term with a single space as a delimiter.
+
+E.g.: {term1,term2,term3,term4} -> {term1 term2 term3 term4 }
+
+Usage: termproc=Joiner
+
+
+CombineAndHash
+--------------
+Like joiner, but replaces the joined terms by their hash value.  Requires the hashing
+algorithm to be provided as a parameter.
+
+Usage: termproc=CombineAndHash algorithm
+
+Where algorithm must be one of the hashing algorithms supported by your JVM verison.
+(See MessageDigest javadoc)
+
+
+
+
+
+= How to add a Custom Term Processor
+=================================
+
+Write a Java class implementing the ITermProcessor interface provided. The class needs
+to be in the package "input.termprocessors".  Your class must have a consturctor that
+takes a single string as a parameter and initializes the term processor using that
+string.  Your class receives the parameter string provided in the input builder
+config file, or an empty string if no parameters are provided.
+
+The interface requires the process() function, which takes a list of terms and must output
+a list of terms after the documented processing.  Your term processor also receives
+the language, granularity, and term splitting used.  These constants are available in the
+ITermProcessor.  You can use these if your processing is depenant on these, or simply
+ignore them.
+
+Compile your class and add its .class file to the bin/input/termprocessors/ directory.
+Your processor can now be found by reflection by the input builder.  If your processor
+has additional dependancies, you must also add these to the bin/ directory in the
+appropraite class heirarchy directories.  Or they can be added as a jar in the libs/
+directory, requiring that the cwbuilder script is also modified to include the 
+new libraries on the classpath.
+
+The NGram term processor is incldued here as an example.
+

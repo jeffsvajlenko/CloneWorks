@@ -1,0 +1,60 @@
+<source file="../example/JHotDraw54b1/src/CH/ifa/draw/util/FloatingTextField.java" startline="33" endline="35">
+public FloatingTextField () {
+    fEditWidget = new JTextField (20);
+}
+</source>
+<source file="../example/JHotDraw54b1/src/CH/ifa/draw/util/FloatingTextField.java" startline="40" endline="42">
+public void createOverlay (Container container) {
+    createOverlay (container, null);
+}
+</source>
+<source file="../example/JHotDraw54b1/src/CH/ifa/draw/util/FloatingTextField.java" startline="48" endline="54">
+public void createOverlay (Container container, Font font) {
+    container.add (fEditWidget, 0);
+    if (font != null) {
+        fEditWidget.setFont (font);
+    }
+    fContainer = container;
+}
+</source>
+<source file="../example/JHotDraw54b1/src/CH/ifa/draw/util/FloatingTextField.java" startline="59" endline="61">
+public void addActionListener (ActionListener listener) {
+    fEditWidget.addActionListener (listener);
+}
+</source>
+<source file="../example/JHotDraw54b1/src/CH/ifa/draw/util/FloatingTextField.java" startline="66" endline="68">
+public void removeActionListener (ActionListener listener) {
+    fEditWidget.removeActionListener (listener);
+}
+</source>
+<source file="../example/JHotDraw54b1/src/CH/ifa/draw/util/FloatingTextField.java" startline="73" endline="79">
+public void setBounds (Rectangle r, String text) {
+    fEditWidget.setText (text);
+    fEditWidget.setBounds (r.x, r.y, r.width, r.height);
+    fEditWidget.setVisible (true);
+    fEditWidget.selectAll ();
+    fEditWidget.requestFocus ();
+}
+</source>
+<source file="../example/JHotDraw54b1/src/CH/ifa/draw/util/FloatingTextField.java" startline="84" endline="86">
+public String getText () {
+    return fEditWidget.getText ();
+}
+</source>
+<source file="../example/JHotDraw54b1/src/CH/ifa/draw/util/FloatingTextField.java" startline="91" endline="94">
+public Dimension getPreferredSize (int cols) {
+    fEditWidget.setColumns (cols);
+    return fEditWidget.getPreferredSize ();
+}
+</source>
+<source file="../example/JHotDraw54b1/src/CH/ifa/draw/util/FloatingTextField.java" startline="99" endline="108">
+public void endOverlay () {
+    fContainer.requestFocus ();
+    if (fEditWidget != null) {
+        fEditWidget.setVisible (false);
+        fContainer.remove (fEditWidget);
+        Rectangle bounds = fEditWidget.getBounds ();
+        fContainer.repaint (bounds.x, bounds.y, bounds.width, bounds.height);
+    }
+}
+</source>

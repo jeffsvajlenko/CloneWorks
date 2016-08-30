@@ -1,1 +1,160 @@
-Thrifty-Clone
+  CloneWorks
+================================================================================
+
+Please send your questions and bug reports to: jeff.svajlenko@gmail.com.  I am
+happy to assist you in using CloneWorks.
+
+Please refer to the publication for additional details.  A link to the paper is
+provided at jeff.svajlenko.com/cloneworks.  There is also a tool demonstration
+video provided.
+
+Setup
+-----
+
+CloneWorks can be used on Linux and other unix-like systems.  It has been tested
+on the latest Ubuntu and OS X.  It should also work on Cygwin, but the input
+builder is slower due to process creation being slower on Windows.  We plan to
+support Windows 10 "redstone" update with its native Ubuntu kernel.
+
+CloneWorks requires FreeTXL 10.6 or later, which can be download from:
+
+	http://www.txl.ca/
+
+CloneWorks requires configuration for your available memory.  By defualt the 
+input builder is set to use up to 2GB of memory, and the clone detector up to
+4GB of memory.  These can be modified by editing the cwbuild and cwdetect
+scripts.  The input builder is probably fine with 2GB unless you receive an out
+of memory error from the JVM.  The clone detector should be set for your
+available memory, leaving room for system usage.
+
+By defualt, CloneWorks must be executed from its installation directory.  To
+run CloneWorks from another directory, the cwbuild and cwdetect scripts must
+be modified with 'INSTALL_DIR=...' set to the install directory (absolute path).
+If the installation directory is specified, cwbuild and cwdetect can also be
+added to the PATH variable for execution anywhere.
+
+The TXL scripts need to be compiled for your computer.  Enter the txl/ directory
+and run make.
+
+
+
+Testing CloneWorks
+------------------
+Once installed, CloneWorks can be tested by executing the following commands in
+the installation directory:
+
+./cwbuild -i example/JHotDraw54b1/ -f example/JHotDraw.files -b example/JHotDraw.fragments -l java -g function -c type3_conservative
+./cwdetect -i example/JHotDraw.fragments -o example/JHotDraw.clones -s 0.7
+
+This performs Type-3 clone detection on JHotDraw.  The clones are in the file
+example/JHotDraw.clones, the code fragments are in example/JHotDraw.fragments,
+and the mapping of ID to source-file paths are in example/JHotDraw.files.
+
+
+
+Using CloneWorks
+----------------
+
+The input builder (cwbuild) is used to prepare the source code for clone
+detection, which is performed by the clone detector (cwdetect).
+
+    Input Builder
+    -------------
+The input builder has the following usage:
+
+usage: cwbuild -i <path> -f <path> -b <path> -l <str [str2 st3 ...]> -g <str> -c <config> [-t <num>] [-mil <num>] [-mal <num>] [-mit <num>] [-mat <num>]
+CloneWorks-InputBuilder - CloneWorks input builder.
+ -i,--input <path>                    Input subject system.  Either the root directory of the system, or a file containing
+                                      a list of source file paths.
+ -f,--fileids <path>                  File to write the FileID<->FilePath mapping to.
+ -b,--blocks <path>                   File to write the parsed blocks to.
+ -l,--language <str [str2 st3 ...]>   The language of the input system.  One of: {java,c,cpp,cs,python}.
+ -g,--granularity <str>               The block granularity.  One of: {block,function,file}.
+ -c,--configuration <config>          The configuration file.  Name of a file in INSTALL_DIR/config/.
+ -t,--num-threads <num>               The number of threads to use per execution task.  Default is number of available cores.
+ -mil,--min-lines <num>               Minimum code fragment size in (original) source lines.
+ -mal,--max-lines <num>               Maximum code fragment size in (original) source lines.
+ -mit,--min-tokens <num>              Minimum code fragment size in (original, pre-processing) parsed tokens.
+ -mat,--max-tokens <num>              Maximum code fragment size in (original, pre-processing) parsed tokens.
+
+You must specify the directory of source code to process, a file to output a
+mapping of the source file paths to IDs, and a file to output the code fragments
+to.  The language(s) of the soruce files of interest must be specified, as well
+as the code granularity for extraction.  The configuration file from the config/
+directory needs to also be supplied.
+
+Optionally, the minimum and maximum size of the code fragments to consider (by
+source line and terms) can also be specified.  The target number of threads per 
+task can also be provided, by default the number of available cores is used.
+
+The input builder's source transformation, term splitting and term processors
+are specified in the configuration file.  The name of the configuration file
+must be provided.  The configuration files are stored in the config/ directory,
+including a template and some sample configurations for generic clone detection
+with the first three clone types.
+
+For information on implementing your own source transformations and term
+processors please see the documentation and examples in the transformations/ and
+termprocessors/ directory.
+
+
+
+    Clone Detector
+    --------------
+
+The clone detector has the following usage:
+
+usage: cwdetect -i <file> -o <file> -s <ratio> [-p <num>] [-t <num>] [-mil <num>] [-mal <num>] [-mit <num>] [-mat <num>] [-ps]
+Clone detection with CloneWorks.
+ -i,--input <file>                   File containing blocks produced by thrifty-builder.
+ -o,--output <file>                  File to output clones to.
+ -s,--min-similarity <ratio>         Minimum clone similarity.
+ -p,--partition-mode <num>           Run using index-partitioning mode with the specified maximum partition size in code blocks.
+                                     Use when index size exhausts available memory.
+ -t,--num-threads <num>              Number of execution threads to use per task.  Defaults to number of cores.
+ -mil,--min-lines <num>              Minimum clone size in (original) source lines.
+ -mal,--max-lines <num>              Maximum clone size in (original) source lines.
+ -mit,--min-tokens <num>             Minimum clone size in (original, pre-processing) parsed tokens.
+ -mat,--max-tokens <num>             Maximum clone size in (original, pre-processing) parsed tokens.
+ -ps,--pre-sorted                    Indicates input blocks are pre-sorted, and GTF-sorting should be skipped.
+                                     This makes clone detection with pre-sorted blocks more efficient.  If the
+                                     blocks are not pre-sorted, or are sorted incorrectly, this can cause false
+                                     negatives.  Skipping sorting on pre-sorted blocks can improve performance.
+
+You must specify the code fragment file to detect clones within, a file to
+output the clones to, and the minimum clone similarity threshold in range
+[0.0,1.0].  Optionally, the minimum and maximimum clone sizes can be specified.
+
+If there are too many code fragments to fit in memory, then the partitioned
+partial indexes pappraoch can be eanbled with the "-p" flag, including the
+maximum number of code fragments in each partition.  This number needs to be
+found experimentally.  However, the first step is to load the code fragmnets
+into memory, so an out of memory exception should be encountered early if it is
+going to happen.
+
+In our expirence, we found we can comfortably load 500000 code fragments into
+memory given a Java heap size of 8GB, with actual usage not exceeding approx.
+6GB.  This option is not needed for small inputs.
+
+The "-ps" flag can be used to skip sorting the blocks.  This is for use when the
+code-fragments are pre-sorted, or where the code fragments only have a single
+term (as is the case with our Type-1 and Type-2 configurations).  Sorting the
+code fragment's terms is not the expensive part of clone detection, so its safer
+just to skip this flag unless you know your blocks are sorted properly and need
+the small performance boost by skipping sorting.
+
+Clones are found in the output file in the following format:
+
+10,40,50,20,60,70
+
+This indicates a clone pair between lines 40-50 (inclusive) in source file 10
+and lins 60-70 (inclusive) in source file 20.  The mapping of IDs to source
+paths are in the fileids file produced by the input builder.
+
+
+
+
+
+
+
+

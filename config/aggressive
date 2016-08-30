@@ -1,0 +1,3 @@
+transform=rename-blind
+transform=abstract literal
+termsplit=line
