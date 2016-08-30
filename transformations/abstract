@@ -10,12 +10,15 @@
 # $5 = parameters
 
 # Script
-script=${2}/txl/${3}-abstract-${4}s.txl
+#script=${2}/txl/${3}-abstract-${4}s.txl
+script=${2}/txl/${3}-abstract-${4}s.x
 
 if [ "$1" = "r" ]
 then
-	txl stdin "${script}" - "${5}"
+	
+	#txl stdin "${script}" - "${5}"
 	#echo txl stdin "${script}" "${5}"
+	./${script} stdin "${5}"
 	exit $?
 fi
 

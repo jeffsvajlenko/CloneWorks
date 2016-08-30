@@ -4,7 +4,7 @@
 ulimit -s hard
 
 # Maximum memory usage
-MEM=2G
+MEM=10G
 
 # Install Directory
 INSTALL_DIR=.

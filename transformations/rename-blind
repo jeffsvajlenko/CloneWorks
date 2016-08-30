@@ -7,11 +7,13 @@
 # $4 = granularity
 
 # Script
-script=${2}/txl/${3}-rename-blind-${4}s.txl
+#script=${2}/txl/${3}-rename-blind-${4}s.txl
+script=${2}/txl/${3}-rename-blind-${4}s.x
 
 if [ "$1" = "r" ]
 then
-	txl stdin ${script} 
+	./${script} stdin
+	#txl stdin ${script} 
 	exit $?
 fi
 

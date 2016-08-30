@@ -4,7 +4,7 @@
 INSTALL_DIR=/home/jeff/Storage/git/ThriftyClone/
 
 # Maximum Memory
-TC_MEMORY=2G
+TC_MEMORY=10G
 
 # Build Classpath
 LIBS=${INSTALL_DIR}/bin/

@@ -68,8 +68,8 @@ public class InputBuilder {
 		
 		
 	// Queues
-		IQueue<InputFile> file_queue = QueueBuilder.<InputFile>groupQueue_arrayBacked(50, 20);
-		IQueue<InputBlock> block_queue = QueueBuilder.<InputBlock>groupQueue_arrayBacked(500000, 20);
+		IQueue<InputFile> file_queue = QueueBuilder.<InputFile>groupQueue_arrayBacked(100, 20);
+		IQueue<InputBlock> block_queue = QueueBuilder.<InputBlock>groupQueue_arrayBacked(100, 20);
 		
 	// Initialize Workers
 		Thread fp;

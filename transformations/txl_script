@@ -10,11 +10,13 @@
 # $5 = script name
 
 # Script
-script=${2}/txl/${5}.txl
+#script=${2}/txl/${5}.txl
+script=${2}/txl/${5}.x
 
 if [ "$1" = "r" ]
 then
-	txl stdin ${script} 
+	./${script} stdin
+#	txl stdin ${script} 
 	exit $?
 fi
 
