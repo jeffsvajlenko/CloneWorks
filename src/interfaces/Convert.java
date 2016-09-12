@@ -102,7 +102,7 @@ public class Convert {
 		System.out.println("Converted=" + output.toAbsolutePath());
 		
 		try {
-			bcb.Convert.convert(clones, fileids, output);
+			cwformat.bcb.Convert.convert(clones, fileids, output);
 		} catch(Exception e) {
 			System.err.println(e.getMessage());
 			return;

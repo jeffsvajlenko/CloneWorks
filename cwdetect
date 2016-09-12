@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Installation Directory
-INSTALL_DIR=/home/jeff/Storage/git/ThriftyClone/
+INSTALL_DIR=.
 
 # Maximum Memory
 TC_MEMORY=10G
@@ -14,4 +14,4 @@ LIBS=${LIBS}:${INSTALL_DIR}/libs/commons-cli-1.3.1/commons-cli-1.3.1.jar
 LIBS=${LIBS}:${INSTALL_DIR}/libs/commons-io-2.4/commons-io-2.4.jar
 
 # Run
-time java -Xmx${TC_MEMORY} -cp ${LIBS} interfaces.CloneDetection $@ $INSTALL_DIR
+time java -Xmx${TC_MEMORY} -cp ${LIBS} cwdetect.ui.CloneDetectionCLI $@ $INSTALL_DIR

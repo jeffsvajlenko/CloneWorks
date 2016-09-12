@@ -17,4 +17,4 @@ LIBS=${LIBS}:${INSTALL_DIR}/libs/commons-cli-1.3.1/commons-cli-1.3.1.jar
 LIBS=${LIBS}:${INSTALL_DIR}/libs/commons-io-2.4/commons-io-2.4.jar
 
 # Run
-time java -Xmx${MEM} -cp ${LIBS} interfaces.InputBuilder $@ ${INSTALL_DIR}
+time java -Xmx${MEM} -cp ${LIBS} cwbuild.ui.InputBuilderCLI $@ ${INSTALL_DIR}
