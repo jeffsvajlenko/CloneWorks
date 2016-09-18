@@ -306,7 +306,7 @@ public class InputBuilderConfiguration {
 		}
 		
 		try {
-			Class<?> clazz = Class.forName("input.termprocessors." + sclass);
+			Class<?> clazz = Class.forName("cwbuild.termprocessors." + sclass);
 			Constructor<?> ctor = clazz.getConstructor(String.class);
 			processor = (ITermProcessor) ctor.newInstance(new Object[]{init});
 		} catch (ClassNotFoundException e) {

@@ -19,6 +19,12 @@ public class CloneDetectionCLI {
 	private static Options options;
 	private static HelpFormatter formatter;
 	
+	private static void panic() {
+		formatter.printHelp(200, "cwdetect", "Clone detection with CloneWorks.", options, "", true);
+		System.exit(-1);
+		return;
+	}
+	
 	public static void main(String args[]) throws IOException {
 		options = new Options();
 		
@@ -345,12 +351,6 @@ public class CloneDetectionCLI {
 			System.out.println("Clone detection failed with exception: " + e.getMessage());
 			e.printStackTrace();
 		}
-	}
-	
-	private static void panic() {
-		formatter.printHelp(200, "cwdetect", "Clone detection with CloneWorks.", options, "", true);
-		System.exit(-1);
-		return;
 	}
 	
 }
