@@ -8,6 +8,6 @@ import cwformat.logic.ReportReader;
 
 public interface Formatter {
 
-	public void format(ReportReader rreader, Writer output) throws IOException;
+	public void format(ReportReader rreader, Writer output) throws Exception;
 	
 }
