@@ -1,0 +1,3 @@
+Enhancements:
+  - When partitioning, vary the size of the partitions to spread the load better between executions.  Then the executions can be distributed.
+  - Make sure jaccard is measured going from last to most common
