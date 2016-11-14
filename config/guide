@@ -1,21 +1,21 @@
 #
 # Guide for creating configuration files.
 
-###################
-# Transformations #
-###################
+###########################
+# Code-Fragment Procesors #
+###########################
 
-# Provide a list of transformations to apply to the code fragments.  Applied in
+# Provide a list of code fragment processors to apply to the code fragments.  Applied in
 # the order specified.  Specified as format:
 #
 #transform=name[ parameters]
 #
-# name - Name of executable in 'transformations/'
-# parameters - Parameters passe to the transformation executable (in addition
+# name - Name of executable in 'cfprocessor/'
+# parameters - Parameters passed to the transformation executable (in addition
 #              to the standard ones).
 #
-#e.g.: 'transform=rename-blind'
-#e.g.: 'transform=abstract literals'
+#e.g.: 'cfproc=rename-blind'
+#e.g.: 'cfproc=abstract literals'
 
 
 ##############
@@ -29,13 +29,13 @@
 # pretty-printed code statements.
 
 ####################
-# Token Processors #
+# Term Processors #
 ####################
 
-# Transformations/processing to apply on the terms.  Applied in the order
-# specified.  Specified as format:
+# Processing to apply on the terms.  Applied in the order specified.
+# Specified as format:
 #
-#tokproc=name[ initialization string]
+#termproc=name[ initialization string]
 #
 # name - The name of the token processor class.
 # initialization string - A string passed to teh class to initialize it.

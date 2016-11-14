@@ -13,6 +13,7 @@
 ############################
 
 
+
 ##############
 # Term Split #
 ##############
@@ -23,7 +24,7 @@ termsplit=line
 # Token Processors #
 ####################
 
-termproc=Joiner
+termproc=CombineAndHash md5
 
 
 

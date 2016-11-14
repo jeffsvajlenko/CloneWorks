@@ -1,0 +1,7 @@
+\contentsline {section}{\numberline {1}Type-1 Clone Detection}{3}{section.1}
+\contentsline {section}{\numberline {2}Type-2 Clone Detection}{5}{section.2}
+\contentsline {section}{\numberline {3}Type-3 Clone Detection}{8}{section.3}
+\contentsline {section}{\numberline {4}Clones of API Usages}{11}{section.4}
+\contentsline {section}{\numberline {5}Cloning in Test Code}{12}{section.5}
+\contentsline {section}{\numberline {6}Type-4 Detection Additions}{13}{section.6}
+\contentsline {section}{\numberline {7}Semantic Clone Detection with Topic Modeling}{14}{section.7}

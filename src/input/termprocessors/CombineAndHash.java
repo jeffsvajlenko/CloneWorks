@@ -30,6 +30,7 @@ public class CombineAndHash implements ITermProcessor {
 			combine += token + " ";
 		
 		// Hash
+		//System.out.println(combine);
 		md.update(combine.getBytes());
 		byte[] bytes = md.digest();
 		md.reset(); // for re-use

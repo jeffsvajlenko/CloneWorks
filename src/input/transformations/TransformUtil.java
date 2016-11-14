@@ -15,7 +15,7 @@ import util.StreamGobbler;
 public class TransformUtil {
 
 	public static Path getTransformationRoot() {
-		return InstallDir.getInstallDir().resolve("transformations");
+		return InstallDir.getInstallDir().resolve("cfprocessors");
 	}
 	
 	public static TransformChain createChain(List<ITransform> transformations, String language, String granularity) {

@@ -87,14 +87,14 @@ Optionally, the minimum and maximum size of the code fragments to consider (by
 source line and terms) can also be specified.  The target number of threads per 
 task can also be provided, by default the number of available cores is used.
 
-The input builder's source transformation, term splitting and term processors
+The input builder's code-fragment processors, term splitting and term processors
 are specified in the configuration file.  The name of the configuration file
 must be provided.  The configuration files are stored in the config/ directory,
 including a template and some sample configurations for generic clone detection
 with the first three clone types.
 
-For information on implementing your own source transformations and term
-processors please see the documentation and examples in the transformations/ and
+For information on implementing your own code-fragment processors and term
+processors please see the documentation and examples in the cfprocessors/ and
 termprocessors/ directory.
 
 

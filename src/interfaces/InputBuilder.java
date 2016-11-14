@@ -215,7 +215,7 @@ public class InputBuilder {
 			System.out.println();
 			int i = 1;
 			for(ITransform txlc : config.getTransforms()) {
-				System.out.println("transform[" + (i++) + "]=" + txlc);
+				System.out.println("cfproc[" + (i++) + "]=" + txlc);
 			}
 		}
 		

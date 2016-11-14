@@ -11,8 +11,7 @@
 # Code-Fragment Processors #
 ############################
 
-cfproc=rename-blind
-cfproc=abstract literal
+cfproc=rename-consistent
 
 ##############
 # Term Split #
@@ -25,6 +24,3 @@ termsplit=line
 ####################
 
 termproc=Joiner
-
-
-

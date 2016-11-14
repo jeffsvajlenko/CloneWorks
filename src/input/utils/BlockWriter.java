@@ -26,7 +26,7 @@ public class BlockWriter {
 		this.out.write("#configuration=" + config.getConfigFile() + "\n");
 		int i = 1;
 		for(ITransform txlc : config.getTransforms()) {
-			this.out.write("#txl[" + (i++) + "]=" + txlc + "\n");
+			this.out.write("#cfproc[" + (i++) + "]=" + txlc + "\n");
 		}
 		i = 1;
 		for(ITermProcessor tokproc : config.getToken_processors()) {

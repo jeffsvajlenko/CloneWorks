@@ -1,0 +1,17 @@
+\BOOKMARK [1][-]{section.1}{CloneWorks}{}% 1
+\BOOKMARK [1][-]{section.2}{Contact}{}% 2
+\BOOKMARK [1][-]{section.3}{Setup}{}% 3
+\BOOKMARK [1][-]{section.4}{Testing Setup}{}% 4
+\BOOKMARK [1][-]{section.5}{Basic Usage}{}% 5
+\BOOKMARK [2][-]{subsection.5.1}{Input Building \(cwbuild\)}{section.5}% 6
+\BOOKMARK [3][-]{subsubsection.5.1.1}{Standard Input Builder Configurations}{subsection.5.1}% 7
+\BOOKMARK [2][-]{subsection.5.2}{Clone Detection \(cwdetect\)}{section.5}% 8
+\BOOKMARK [2][-]{subsection.5.3}{Clone Output Formatting \(cwformat\)}{section.5}% 9
+\BOOKMARK [1][-]{section.6}{Advanced Usage}{}% 10
+\BOOKMARK [2][-]{subsection.6.1}{Input Builder Architecture}{section.6}% 11
+\BOOKMARK [2][-]{subsection.6.2}{Input Builder Configuration}{section.6}% 12
+\BOOKMARK [2][-]{subsection.6.3}{Available Code-Fragment Processors}{section.6}% 13
+\BOOKMARK [2][-]{subsection.6.4}{Adding a Custom Code-Fragment Processor}{section.6}% 14
+\BOOKMARK [2][-]{subsection.6.5}{Available Term Processors}{section.6}% 15
+\BOOKMARK [2][-]{subsection.6.6}{Adding a Custom Term Processor}{section.6}% 16
+\BOOKMARK [2][-]{subsection.6.7}{Adding a Custom Clone Output Formatter}{section.6}% 17

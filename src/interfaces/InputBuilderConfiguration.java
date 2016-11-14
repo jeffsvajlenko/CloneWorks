@@ -98,7 +98,7 @@ public class InputBuilderConfiguration {
 					case "termsplit":
 						this.token_type = processTokenType(value);
 						break;
-					case "transform":
+					case "cfproc":
 						transforms.add(processTransformCommand(value));
 						break;
 					case "termproc":
