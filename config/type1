@@ -12,18 +12,15 @@
 # Code-Fragment Processors #
 ############################
 
-
 ##############
 # Term Split #
 ##############
 
-termsplit=line
+termsplit=token
 
 ####################
 # Token Processors #
 ####################
 
 termproc=Joiner
-
-
 

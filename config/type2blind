@@ -11,15 +11,17 @@
 # Code-Fragment Processors #
 ############################
 
-cfproc=rename-consistent
+cfproc=rename-blind
+cfproc=abstract literal
 
 ##############
 # Term Split #
 ##############
 
-termsplit=line
+termsplit=token
 
 ####################
 # Token Processors #
 ####################
 
+termproc=Joiner
