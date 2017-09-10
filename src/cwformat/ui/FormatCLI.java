@@ -66,7 +66,7 @@ public class FormatCLI {
 				                .required()
 				                .hasArg()
 				                .argName("formater")
-				                .desc("The formatter to use.")
+				                .desc("The formatter to use: [csv,xml,xml_withsrc].")
 				                .build()
 		);
 		

@@ -136,9 +136,12 @@ public class FileConsumer_BlockProducer extends Thread {
 		}
 		
 	// 3 - Token Processors
-		for(ITermProcessor processor : this.token_processors) {
-			for(TempBlock block : blocks) {
-				block.setTokens(processor.process(block.getTokens(), file.getLanguage(), this.granularity, this.tokenType));
+		for(TempBlock block : blocks) {
+			for(ITermProcessor processor : this.token_processors) {
+				List<String> newTokens = processor.process(block.getTokens(), file.getLanguage(), this.granularity, this.tokenType);
+				block.setTokens(newTokens);
+				if(newTokens.size() == 0)
+					break;
 			}
 		}
 		

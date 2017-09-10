@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" revision="0.9.5" language="Java" filename="test.java"><function><specifier>private</specifier> <type><name>boolean</name></type> <name>isClone</name> <parameter_list>(<parameter><decl><type><name>Block</name></type> <name>qBlock</name></decl></parameter>, <parameter><decl><type><name>Block</name></type> <name>cBlock</name></decl></parameter>)</parameter_list> <block>{
+    <if>if <condition>(<expr><call><name><name>qBlock</name><operator>.</operator><name>getID</name></name> <argument_list>()</argument_list></call> <operator>&lt;</operator> <call><name><name>cBlock</name><operator>.</operator><name>getID</name></name> <argument_list>()</argument_list></call></expr>)</condition><then> <block type="pseudo"><return>return <expr><literal type="boolean">false</literal></expr>;</return></block></then></if>
+
+    <if>if <condition>(<expr><call><name><name>qBlock</name><operator>.</operator><name>doesOverlap</name></name> <argument_list>(<argument><expr><name>cBlock</name></expr></argument>)</argument_list></call></expr>)</condition><then> <block>{
+        <return>return <expr><literal type="boolean">false</literal></expr>;</return>
+    }</block></then></if>
+    <decl_stmt><decl><type><name>Block</name></type> <name>min</name></decl>, <decl><type ref="prev"/><name>max</name></decl>;</decl_stmt>
+    <if>if <condition>(<expr><call><name><name>qBlock</name><operator>.</operator><name>numTokens</name></name> <argument_list>()</argument_list></call> <operator>&gt;</operator> <call><name><name>cBlock</name><operator>.</operator><name>numTokens</name></name> <argument_list>()</argument_list></call></expr>)</condition><then> <block>{
+        <expr_stmt><expr><name>max</name> <operator>=</operator> <name>qBlock</name></expr>;</expr_stmt>
+        <expr_stmt><expr><name>min</name> <operator>=</operator> <name>cBlock</name></expr>;</expr_stmt>
+    }</block></then> <else>else <block>{
+        <expr_stmt><expr><name>max</name> <operator>=</operator> <name>cBlock</name></expr>;</expr_stmt>
+        <expr_stmt><expr><name>min</name> <operator>=</operator> <name>qBlock</name></expr>;</expr_stmt>
+    }</block></else></if>
+    <decl_stmt><decl><type><name>int</name></type> <name>threshold</name> <init>= <expr><operator>(</operator><name>int</name><operator>)</operator> <call><name><name>Math</name><operator>.</operator><name>ceil</name></name> <argument_list>(<argument><expr><call><name><name>max</name><operator>.</operator><name>numTokens</name></name> <argument_list>()</argument_list></call> <operator>*</operator> <name><name>this</name><operator>.</operator><name>sim</name></name></expr></argument>)</argument_list></call></expr></init></decl>;</decl_stmt>
+    <decl_stmt><decl><type><name>int</name></type> <name>sharedTokens</name> <init>= <expr><literal type="number">0</literal></expr></init></decl>;</decl_stmt>
+    <decl_stmt><decl><type><name>int</name></type> <name>remainingTokens</name> <init>= <expr><call><name><name>max</name><operator>.</operator><name>numTokens</name></name> <argument_list>()</argument_list></call></expr></init></decl>;</decl_stmt>
+    <if>if <condition>(<expr><call><name><name>min</name><operator>.</operator><name>numTokens</name></name> <argument_list>()</argument_list></call> <operator>&lt;</operator> <name>threshold</name></expr>)</condition><then> <block>{
+        <return>return <expr><literal type="boolean">false</literal></expr>;</return>
+    }</block></then></if>
+    <for>for <control>(<init><decl><type><name>BlockElement</name></type> <name>be</name> <range>: <expr><call><name><name>max</name><operator>.</operator><name>getBlockAsList</name></name> <argument_list>()</argument_list></call></expr></range></decl></init>)</control> <block>{
+        <decl_stmt><decl><type><name>String</name></type> <name>term</name> <init>= <expr><call><name><name>be</name><operator>.</operator><name>getTerm</name></name> <argument_list>()</argument_list></call></expr></init></decl>;</decl_stmt>
+        <decl_stmt><decl><type><name>int</name></type> <name>maxFreq</name> <init>= <expr><call><name><name>be</name><operator>.</operator><name>getFrequency</name></name> <argument_list>()</argument_list></call></expr></init></decl>;</decl_stmt>
+        <decl_stmt><decl><type><name>Integer</name></type> <name>minFreq</name> <init>= <expr><call><name><name>min</name><operator>.</operator><name>getBlockAsMap</name></name> <argument_list>()</argument_list></call><operator>.</operator><call><name>get</name> <argument_list>(<argument><expr><name>term</name></expr></argument>)</argument_list></call></expr></init></decl>;</decl_stmt>
+        <if>if <condition>(<expr><name>minFreq</name> <operator>!=</operator> <literal type="null">null</literal></expr>)</condition><then> <block type="pseudo"><expr_stmt><expr><name>sharedTokens</name> <operator>+=</operator> <call><name><name>Math</name><operator>.</operator><name>min</name></name> <argument_list>(<argument><expr><name>minFreq</name></expr></argument>, <argument><expr><name>maxFreq</name></expr></argument>)</argument_list></call></expr>;</expr_stmt></block></then></if>
+
+        <expr_stmt><expr><name>remainingTokens</name> <operator>-=</operator> <name>maxFreq</name></expr>;</expr_stmt>
+        <if>if <condition>(<expr><name>sharedTokens</name> <operator>&gt;=</operator> <name>threshold</name></expr>)</condition><then> <block>{
+            <return>return <expr><literal type="boolean">true</literal></expr>;</return>
+        }</block></then></if>
+        <if>if <condition>(<expr><operator>(</operator><name>sharedTokens</name> <operator>+</operator> <name>remainingTokens</name><operator>)</operator> <operator>&lt;</operator> <name>threshold</name></expr>)</condition><then> <block>{
+            <return>return <expr><literal type="boolean">false</literal></expr>;</return>
+        }</block></then></if>
+    }</block></for>
+
+    <expr_stmt><expr><name><name>text</name><index>[<expr><literal type="number">0</literal></expr>]</index></name><operator>.</operator><call><name>something</name><argument_list>()</argument_list></call></expr>;</expr_stmt>
+    <expr_stmt><expr><name><name>Foo</name><operator>.</operator></name>&lt;<name>String</name><operator>&gt;</operator><call><name>function</name><argument_list>()</argument_list></call></expr>;</expr_stmt>
+    <expr_stmt><expr><call><name><name>System</name><operator>.</operator><name>err</name><operator>.</operator><name>println</name></name> <argument_list>(<argument><expr><literal type="string">"HeuristicCloneDetector -- Bug?"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+    <if>if <condition>(<expr><name>sharedTokens</name> <operator>&gt;=</operator> <name>threshold</name></expr>)</condition><then> <block type="pseudo"><return>return <expr><literal type="boolean">true</literal></expr>;</return></block></then>
+    <else>else <block type="pseudo"><return>return <expr><literal type="boolean">false</literal></expr>;</return></block></else></if>
+
+}</block></function>
+
+</unit>

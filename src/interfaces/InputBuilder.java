@@ -55,11 +55,11 @@ public class InputBuilder {
 		
 		// Blocks
 		options.addOption(Option.builder("b")
-								.longOpt("blocks")
+								.longOpt("code-fragments")
 								.required()
 								.hasArg()
 								.argName("path")
-								.desc("File to write the parsed blocks to.")
+								.desc("File to write the parsed and processed code-fragments to.")
 				                .build()
 		);
 		

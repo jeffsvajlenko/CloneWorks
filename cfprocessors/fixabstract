@@ -1,0 +1,27 @@
+#!/bin/bash
+
+### Standard Options
+# $1 = mode
+# $2 = install dir
+# $3 = language
+# $4 = granularity
+
+### Parameters
+# $5 = parameters
+
+# Script
+#script=${2}/txl/${3}-abstract-${4}s.txl
+script=${2}/txl/${3}-abstract-${4}s.x
+
+if [ "$1" = "r" ]
+then
+	sed -E 's$_statement$_statement\n$g;s$for_init$for_init\n$g;s$for_initializer$for_initializer\n$g'
+	exit $?
+fi
+
+if [ "$1" = "v" ]
+then
+	exit 0
+fi
+
+exit 1

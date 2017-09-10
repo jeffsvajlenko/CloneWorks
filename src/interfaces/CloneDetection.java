@@ -29,7 +29,7 @@ public class CloneDetection {
 								.argName("file")
 				                .longOpt("input")
 				                .required()
-				                .desc("File containing blocks produced by thrifty-builder.")
+				                .desc("File containing code fragments produced by cwbuild.")
 				                .build()
 		);
 		

@@ -18,6 +18,7 @@ public class ConcurrentHashMapIndex extends AbstractIndex {
 	
 	@Override
 	public void put(String term, Block block) {
+//		System.out.println(term + " " + block);
 		index.putIfAbsent(term, new ConcurrentLinkedQueue<Block>());
 		index.get(term).add(block);
 	}

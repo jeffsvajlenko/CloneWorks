@@ -1,0 +1,44 @@
+<source file="systems/JHotDraw54b1/src/CH/ifa/draw/contrib/PolygonFigure.java" startline="421" endline="461">
+        public static Point chop(Polygon poly, Point p) {
+                Point ctr = center(poly);
+                int cx = -1;
+                int cy = -1;
+                long len = Long.MAX_VALUE;
+
+                // Try for points along edge
+
+                for (int i = 0; i < poly.npoints; ++i) {
+                        int nxt = (i + 1) % poly.npoints;
+                        Point chop = Geom.intersect(poly.xpoints[i],
+                                                                                 poly.ypoints[i],
+                                                                                 poly.xpoints[nxt],
+                                                                                 poly.ypoints[nxt],
+                                                                                 p.x,
+                                                                                 p.y,
+                                                                                 ctr.x,
+                                                                                 ctr.y);
+                        if (chop != null) {
+                                long cl = Geom.length2(chop.x, chop.y, p.x, p.y);
+                                if (cl < len) {
+                                        len = cl;
+                                        cx = chop.x;
+                                        cy = chop.y;
+                                }
+                        }
+                }
+                // if none found, pick closest vertex
+                //if (len ==  Long.MAX_VALUE) {
+                { // try anyway
+                        for (int i = 0; i < poly.npoints; ++i) {
+                                long l = Geom.length2(poly.xpoints[i], poly.ypoints[i], p.x, p.y);
+                                if (l < len) {
+                                        len = l;
+                                        cx = poly.xpoints[i];
+                                        cy = poly.ypoints[i];
+                                }
+                        }
+                }
+                return new Point(cx, cy);
+        }
+</source>
+

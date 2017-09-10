@@ -3,6 +3,7 @@ package input.termprocessors;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -13,18 +14,24 @@ import java.util.List;
 public class Hasher implements ITermProcessor {
 
 	public String toString() {
-		return this.getClass().getName() + " " + md.getAlgorithm();
+		return this.getClass().getName() + " " + algorithm;
 	}
 	
-	private MessageDigest md;
+	private String algorithm;
 	
 	public Hasher(String algorithm) throws NoSuchAlgorithmException {
-		md = MessageDigest.getInstance(algorithm);
+		this.algorithm = algorithm;
+		MessageDigest.getInstance(algorithm);
 	}
 	
 	@Override
 	public List<String> process(List<String> tokens, int language, int granularity, int tokenType) {
-		
+		MessageDigest md;
+		try {
+			md = MessageDigest.getInstance(algorithm);
+		} catch (NoSuchAlgorithmException e) {
+			return new LinkedList<String>();
+		}
 		
 		List<String> retval = new ArrayList<String>(tokens.size());
 		for(String token : tokens) {

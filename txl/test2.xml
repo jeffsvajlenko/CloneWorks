@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" revision="0.9.5" language="Java" filename="test.java">
+<call><name><name>qBlock</name><operator>.</operator><name>getID</name></name> <argument_list>()</argument_list></call>
+<call><name><name>cBlock</name><operator>.</operator><name>getID</name></name> <argument_list>()</argument_list></call>
+<call><name><name>qBlock</name><operator>.</operator><name>doesOverlap</name></name> <argument_list>(<argument><expr><name>cBlock</name></expr></argument>)</argument_list></call>
+<call><name><name>qBlock</name><operator>.</operator><name>numTokens</name></name> <argument_list>()</argument_list></call>
+<call><name><name>cBlock</name><operator>.</operator><name>numTokens</name></name> <argument_list>()</argument_list></call>
+<call><name><name>Math</name><operator>.</operator><name>ceil</name></name> <argument_list>(<argument><expr><call><name><name>max</name><operator>.</operator><name>numTokens</name></name> <argument_list>()</argument_list></call> <operator>*</operator> <name><name>this</name><operator>.</operator><name>sim</name></name></expr></argument>)</argument_list></call>
+<call><name><name>max</name><operator>.</operator><name>numTokens</name></name> <argument_list>()</argument_list></call>
+<call><name><name>max</name><operator>.</operator><name>numTokens</name></name> <argument_list>()</argument_list></call>
+<call><name><name>min</name><operator>.</operator><name>numTokens</name></name> <argument_list>()</argument_list></call>
+<call><name><name>max</name><operator>.</operator><name>getBlockAsList</name></name> <argument_list>()</argument_list></call>
+<call><name><name>be</name><operator>.</operator><name>getTerm</name></name> <argument_list>()</argument_list></call>
+<call><name><name>be</name><operator>.</operator><name>getFrequency</name></name> <argument_list>()</argument_list></call>
+<call><name><name>min</name><operator>.</operator><name>getBlockAsMap</name></name> <argument_list>()</argument_list></call>
+<call><name>get</name> <argument_list>(<argument><expr><name>term</name></expr></argument>)</argument_list></call>
+<call><name><name>Math</name><operator>.</operator><name>min</name></name> <argument_list>(<argument><expr><name>minFreq</name></expr></argument>, <argument><expr><name>maxFreq</name></expr></argument>)</argument_list></call><call><name><name>System</name><operator>.</operator><name>err</name><operator>.</operator><name>println</name></name> <argument_list>(<argument><expr><literal type="string">"HeuristicCloneDetector -- Bug?"</literal></expr></argument>)</argument_list></call>
+</unit>

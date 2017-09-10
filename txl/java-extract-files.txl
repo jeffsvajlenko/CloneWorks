@@ -48,6 +48,24 @@ function main
 		</source>
 end function
 
+%function main
+%	replace [program]
+%		FileName [srcfilename]
+%		File [package_declaration]
+%	construct Zero [number]
+%		0
+%	construct ZeroString [stringlit]
+%		_ [quote Zero]
+%	construct FileNameString [stringlit]
+%		_ [quote FileName]
+%	construct XmlHeader [xml_source_coordinate]
+%		<source file=FileNameString startline=ZeroString endline=ZeroString>
+%	by
+%		XmlHeader
+%		File [removeOptSemis] [removeEmptyStatements]
+%		</source>
+%end function
+
 rule removeOptSemis
 	replace [opt ';]
 		';

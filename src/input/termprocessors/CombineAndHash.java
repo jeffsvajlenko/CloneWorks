@@ -13,17 +13,24 @@ import java.util.List;
 public class CombineAndHash implements ITermProcessor {
 
 	public String toString() {
-		return this.getClass().getName() + " " + md.getAlgorithm();
+		return this.getClass().getName() + " " + algorithm;
 	}
 	
-	private MessageDigest md;
+	private String algorithm;
 	
 	public CombineAndHash(String algorithm) throws NoSuchAlgorithmException {
-		md = MessageDigest.getInstance(algorithm);
+		this.algorithm = algorithm;
+		MessageDigest.getInstance(algorithm);
 	}
 	
 	@Override
 	public List<String> process(List<String> tokens, int language, int granularity, int tokenType) {
+		MessageDigest md;
+		try {
+			md = MessageDigest.getInstance(algorithm);
+		} catch (NoSuchAlgorithmException e) {
+			return new ArrayList<String>();
+		}
 		// Create String
 		String combine = "";
 		for(String token : tokens)

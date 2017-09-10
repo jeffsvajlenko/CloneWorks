@@ -1,0 +1,15 @@
+c void setPixels (int x, int y, int w, int h, int iArray [], DataBuffer data) {
+    int Offset = 0;
+    int x1 = x + w;
+    int y1 = y + h;
+    if (x < 0 || x >= width || w > width || x1 < 0 || x1 > width || y < 0 || y >= height || h > height || y1 < 0 || y1 > height) {
+        throw new ArrayIndexOutOfBoundsException ("Invalid coordinates.");
+    }
+    for (int i = y; i < y1; i ++) {
+        for (int j = x; j < x1; j ++) {
+            for (int k = 0; k < numBands; k ++) {
+                setSample (j, i, k, iArray [Offset ++], data);
+            }
+        }
+    }
+}

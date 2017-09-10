@@ -86,7 +86,7 @@ public class TransformUtil {
 		List<String> lines = null;
 		ProcessBuilder pb = new ProcessBuilder("bash", "-c", chain.get());
 		Process p = null;
-		//System.out.println(chain.get());
+		
 		try {
 			p = pb.start();
 			new StreamGobbler(p.getErrorStream()).start();
@@ -94,12 +94,15 @@ public class TransformUtil {
 			// Write
 			OutputStream out = p.getOutputStream();
 			IOUtils.write(file, out);
+			out.flush();
 			out.close();
 			
 			// Read
 			lines = IOUtils.readLines(new InputStreamReader(p.getInputStream()));
 			
+			
 			retval = p.waitFor();
+			
 			
 		} catch (IOException e) {
 			return new TransformOutput(false,null,e);
@@ -110,6 +113,8 @@ public class TransformUtil {
 		}
 		
 		if(retval != 0) {
+			//System.out.println(retval);
+			//System.out.println(chain.get());
 			return new TransformOutput(false,null,null);
 		}
 		

@@ -1,0 +1,64 @@
+<source file="../src/detection/detection/HeuristicCloneDetector.java" startline="17" endline="19">
+public HeuristicCloneDetector (double sim) {
+    ;
+}
+</source>
+<source file="../src/detection/detection/HeuristicCloneDetector.java" startline="22" endline="48">
+public List < Clone > detectClones (Block qBlock, IIndex index) {
+    List < Clone > clones =;
+    Set < Block > candidates =;
+    for (BlockElement be :) {
+        if () break;
+
+        Queue < Block > blocks =;
+        if ();
+
+    }
+    for (Block cBlock :) {
+        if ();
+
+    }
+    return;
+}
+</source>
+<source file="../src/detection/detection/HeuristicCloneDetector.java" startline="50" endline="113">
+private boolean isClone (Block qBlock, Block cBlock) {
+    if () return;
+
+    if () {
+        return;
+    }
+    Block min, max;
+    if () {
+        ;
+        ;
+    } else {
+        ;
+        ;
+    }
+    int threshold =;
+    int sharedTokens =;
+    int remainingTokens =;
+    if () {
+        return;
+    }
+    for (BlockElement be :) {
+        String term =;
+        int maxFreq =;
+        Integer minFreq =;
+        if ();
+
+        ;
+        if () {
+            return;
+        }
+        if () {
+            return;
+        }
+    }
+    ;
+    if () return;
+    else return;
+
+}
+</source>

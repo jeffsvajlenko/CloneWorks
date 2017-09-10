@@ -150,7 +150,7 @@ public class InputBuilderConfiguration {
 			}
 			
 			this.transformchains.put(lang, TransformUtil.createChain(ltranforms, LanguageConstants.getString(lang), BlockGranularityConstants.getString(this.granularity)));
-			//System.out.println(this.transformchains.get(lang).get());
+			System.out.println(TransformUtil.createChain(ltranforms, LanguageConstants.getString(lang), BlockGranularityConstants.getString(this.granularity)).get());
 		}
 		
 		

@@ -23,7 +23,7 @@ public class xml_withsrc implements Formatter {
 	public void format(ReportReader rreader, Writer output) throws Exception {
 		Clone clone;
 		int i = 0;
-		output.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+		output.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
 		while((clone = rreader.nextClone()) != null) {
 			output.write("<clone id=\"" + (++i) +  "\">\n");
 			output.write("<source file=\"" + clone.getFile1() + "\"" + " startline=\"" + clone.getStart1() + "\" endline=\"" + clone.getEnd1() + "\">\n");

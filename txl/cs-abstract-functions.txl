@@ -31,4 +31,3 @@ end define
 
 % Generic abstract
 include "generic-abstract.txl"
-
