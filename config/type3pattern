@@ -1,0 +1,25 @@
+#
+# Builds blocks appropriate for aggressive Type-3 clone detection.
+# Use with a clone-detection threshold between 50\% and 95% (reccomendation: 70%)
+# With a 70% threshold, this configuration has excellent recall (90-95%+) and
+# good precision (85-90%+).
+#
+# Represents the code-fragments as the set of code-statement code patterns they contain.
+# Normalizes both identifiers and literal values within the code-statements.
+
+############################
+# Code-Fragment Processors #
+############################
+cfproc=rename-blind
+cfproc=abstract literal
+
+##############
+# Term Split #
+##############
+termsplit=line
+
+####################
+# Token Processors #
+####################
+
+
