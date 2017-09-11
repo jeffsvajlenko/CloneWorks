@@ -49,11 +49,23 @@ rule main
 		EndXML [end_xml_source_coordinate]
     by
 		BeginXML 
-	 	   PC [normalizeif][normalizeswitch][normalizewhile][normalizedo][normalizefor][normalizeforin][normalizecatch]
+	 	   PC [normalizeif][normalizeswitch][normalizewhile][normalizedo][normalizefor][normalizeforin][normalizecatch][normalizeheader]
 		EndXML 
 end rule
 
 % The custom context-dependent normalizing rule you want applied
+
+redefine method_header
+	...
+|	'method_header
+end redefine
+
+rule normalizeheader
+	replace $ [method_header]
+		A [repeat modifier] B [opt generic_parameter] C [opt type_specifier] D [method_declarator] E [opt throws]
+	by
+		'method_header
+end rule
 
 redefine if_statement
 	...

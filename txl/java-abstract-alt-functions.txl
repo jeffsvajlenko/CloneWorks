@@ -59,6 +59,11 @@ define method_header
 	[repeat modifier] [opt generic_parameter] [opt type_specifier] [method_declarator] [opt throws] 
 end define
 
+redefine method_header
+	...
+|	'method_header
+end define
+
 define potential_clone
     [method_definition]
 end define
