@@ -13,18 +13,18 @@ import detection.index.IIndex;
 public class HeuristicCloneDetector implements CloneDetector {
 
 	private double sim;
-	public long countC;
-	public long countS;
+	//public long countC;
+	//public long countS;
 	
 	public HeuristicCloneDetector(double sim) {
 		this.sim = sim;
-		this.countC = 0;
-		this.countS = 0;
+		//this.countC = 0;
+		//this.countS = 0;
 	}
 	
-	public String getCount() {
-		return countC + " " + countS;
-	}
+	//public String getCount() {
+	//	return countC + " " + countS;
+	//d}
 	
 	@Override
 	public List<Clone> detectClones(Block qBlock, IIndex index) {
@@ -67,7 +67,7 @@ public class HeuristicCloneDetector implements CloneDetector {
 			return false;
 		}
 		
-		this.countC++;
+		//this.countC++;
 		
 		// Sort blocks as min/max size
 		Block min, max;
@@ -88,7 +88,7 @@ public class HeuristicCloneDetector implements CloneDetector {
 			return false;
 		}
 		
-		this.countS++;
+		//this.countS++;
 		
 		for(BlockElement be : max.getBlockAsList()) {
 			
