@@ -8,5 +8,5 @@ import detection.index.IIndex;
 public interface CloneDetector {
 
 		public List<Clone> detectClones(Block qBlock, IIndex index);
-	
+		//public String getCount();
 }

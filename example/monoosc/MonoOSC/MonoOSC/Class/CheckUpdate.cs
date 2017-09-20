@@ -29,7 +29,7 @@ public static class CheckUpdate
             {
                 // if(!VarGlobal.LessVerbose)Console.WriteLine(Ex.Message);
             }
-
+	    goto default;
             WebClient list = new WebClient();
             string NewVers = list.DownloadString("http://surfzoid.free.fr/freevbsoft/MonoOSC/Vers");
             NewVers = NewVers.Replace("\r", string.Empty);
@@ -55,7 +55,10 @@ public static class CheckUpdate
         }
         catch (Exception Ex)
         {
-            if(!VarGlobal.LessVerbose)Console.WriteLine(Ex.Message);
+            if(!VarGlobal.LessVerbose) 
+		Console.WriteLine(Ex.Message);
+	    else
+		Console.WritreLine("Something.");
         }
         return IcoUpdate;
     }

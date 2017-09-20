@@ -13,9 +13,17 @@ import detection.index.IIndex;
 public class HeuristicCloneDetector implements CloneDetector {
 
 	private double sim;
+	public long countC;
+	public long countS;
 	
 	public HeuristicCloneDetector(double sim) {
 		this.sim = sim;
+		this.countC = 0;
+		this.countS = 0;
+	}
+	
+	public String getCount() {
+		return countC + " " + countS;
 	}
 	
 	@Override
@@ -40,8 +48,9 @@ public class HeuristicCloneDetector implements CloneDetector {
 		
 		// Detect
 		for(Block cBlock : candidates) {
-			if(isClone(qBlock,cBlock))
+			if(isClone(qBlock,cBlock)) {
 				clones.add(new Clone(qBlock.getFileID(), qBlock.getStartLine(), qBlock.getEndLine(), cBlock.getFileID(), cBlock.getStartLine(), cBlock.getEndLine()));
+			}
 		}
 
 		return clones;
@@ -57,6 +66,8 @@ public class HeuristicCloneDetector implements CloneDetector {
 		if(qBlock.doesOverlap(cBlock)) {
 			return false;
 		}
+		
+		this.countC++;
 		
 		// Sort blocks as min/max size
 		Block min, max;
@@ -76,6 +87,8 @@ public class HeuristicCloneDetector implements CloneDetector {
 		if(min.numTokens() < threshold) {
 			return false;
 		}
+		
+		this.countS++;
 		
 		for(BlockElement be : max.getBlockAsList()) {
 			

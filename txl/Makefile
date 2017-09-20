@@ -1,10 +1,6 @@
-# Makefile to compile all TXL tools used in NiCad
 
-# TXL tool size - recommended default 400
-# On 32-bit platoforms, max 1000
-# On 64-bit platformss, max 4000
-
-SIZE=25
+# Increase if you get many failed parsing.  Decrease to increase parsing perforamnce.
+SIZE=100
 
 # *** WARNING: larger sizes make parsing significantly slower
 #     in the presence of syntax errors.

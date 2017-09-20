@@ -50,6 +50,7 @@ public class CloneDetection extends Thread {
 		}
 		
 		flush();
+		System.out.println(detector.getCount());
 	}
 	
 	private void flush() {
