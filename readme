@@ -17,8 +17,15 @@ builder is slower due to process creation being slower on Windows.  We plan to
 support Windows 10 "redstone" update with its native Ubuntu kernel.
 
 CloneWorks requires FreeTXL 10.6 or later, which can be download from:
-
 	http://www.txl.ca/
+It should be installed at a system level.  If installed at a user-level, you will
+need to add txl on your $PATH variable.
+
+CloneWorks also requires the following:
+	- gcc, make (build-essential on ubuntu)
+	- java (7+)
+	
+Run ./build from the install directory to compile.
 
 CloneWorks requires configuration for your available memory.  By defualt the 
 input builder is set to use up to 2GB of memory, and the clone detector up to
