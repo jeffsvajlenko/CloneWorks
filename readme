@@ -1,5 +1,4 @@
-  CloneWorks
-================================================================================
+# CloneWorks
 
 Please send your questions and bug reports to: jeff.svajlenko@gmail.com.  I am
 happy to assist you in using CloneWorks.
@@ -8,8 +7,7 @@ Please refer to the publication for additional details.  A link to the paper is
 provided at jeff.svajlenko.com/cloneworks.  There is also a tool demonstration
 video provided.
 
-Setup
------
+## Setup
 
 CloneWorks can be used on Linux and other unix-like systems.  It has been tested
 on the latest Ubuntu and OS X.  It should also work on Cygwin, but the input
@@ -45,8 +43,7 @@ and run make.
 
 
 
-Testing CloneWorks
-------------------
+## Testing CloneWorks
 Once installed, CloneWorks can be tested by executing the following commands in
 the installation directory:
 
@@ -59,14 +56,12 @@ and the mapping of ID to source-file paths are in example/JHotDraw.files.
 
 
 
-Using CloneWorks
-----------------
+## Using CloneWorks
 
 The input builder (cwbuild) is used to prepare the source code for clone
 detection, which is performed by the clone detector (cwdetect).
 
-    Input Builder
-    -------------
+### Input Builder
 The input builder has the following usage:
 
 usage: cwbuild -i <path> -f <path> -b <path> -l <str [str2 st3 ...]> -g <str> -c <config> [-t <num>] [-mil <num>] [-mal <num>] [-mit <num>] [-mat <num>]
@@ -106,9 +101,7 @@ termprocessors/ directory.
 
 
 
-    Clone Detector
-    --------------
-
+### Clone Detector
 The clone detector has the following usage:
 
 usage: cwdetect -i <file> -o <file> -s <ratio> [-p <num>] [-t <num>] [-mil <num>] [-mal <num>] [-mit <num>] [-mat <num>] [-ps]
